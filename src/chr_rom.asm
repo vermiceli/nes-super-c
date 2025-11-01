@@ -1,0 +1,20 @@
+; 128 KiB of character rom data
+.segment "CHR_ROM"
+
+; each chr 'bank' contains 8 KiB of CHR ROM data
+.incbin "assets/chr_rom/bank-0.bin"
+.incbin "assets/chr_rom/bank-1.bin"
+.incbin "assets/chr_rom/bank-2.bin"
+.incbin "assets/chr_rom/bank-3.bin"
+.incbin "assets/chr_rom/bank-4.bin"
+.incbin "assets/chr_rom/bank-5.bin"
+.incbin "assets/chr_rom/bank-6.bin"
+.incbin "assets/chr_rom/bank-7.bin"
+.incbin "assets/chr_rom/bank-8.bin"
+.incbin "assets/chr_rom/bank-9.bin"
+.incbin "assets/chr_rom/bank-a.bin"
+.incbin "assets/chr_rom/bank-b.bin"
+.incbin "assets/chr_rom/bank-c.bin"
+.incbin "assets/chr_rom/bank-d.bin"
+.incbin "assets/chr_rom/bank-e.bin"
+.incbin "assets/chr_rom/bank-f.bin"
