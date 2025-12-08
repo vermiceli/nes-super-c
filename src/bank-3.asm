@@ -648,7 +648,7 @@ grenade_routine_02:
     sta ENEMY_DESTROY_ATTRS,x      ; set spike explosion and allow bullets to travel through enemy
     rts
 
-; set empty sprite, play optional enemy destroyed sound, disable collisions
+; set empty sprite, play optional enemy destroyed sound, disable collisions, advance routine
 ; red bubble (enemy type #$2a) enemy destroyed routine
 ; falling ceiling tile (enemy type #$2d) enemy destroyed routine
 ; falling rock (enemy type #$2f) enemy destroyed routine
@@ -674,9 +674,9 @@ enemy_explosion_routine_00:
     beq remove_enemy     ; set the enemy type to #$7f (slot available), and sets the enemy sprite to 0
     jsr update_enemy_pos ; adjust position based on scroll (does not apply velocity)
 
+; set empty sprite, play optional enemy destroyed sound, disable collisions, advance routine
 ; used by helicopter core, fortress wall core, final boss, temple of terror skull,
 ; krypto-crustacean, jagger froid, suspicious face, tank boss, and laser chandelier
-; set empty sprite, play optional enemy destroyed sound, disable collisions
 bg_enemy_explosion_routine_00:
     lda #$02
     sta ENEMY_SPRITE_ATTR,x
@@ -1640,6 +1640,8 @@ set_y_pos_for_bg:
 ; draws the 4 supertiles for the destroyed overhead tank
 ; input
 ;  * a - starting index of the 4 supertiles to draw (always 0)
+; output
+;  * carry - set when graphics buffer isn't empty, no supertiles were drawn, clear for success
 overhead_tank_soldier_draw_destroyed:
     asl
     asl

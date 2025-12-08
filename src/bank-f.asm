@@ -6443,4 +6443,4 @@ bank_f_unused_space:
 ; stored in the .nes ROM as the last $06 bytes (CPU addresses $fffa-$ffff)
 ; these are stored at known locations so the NES can point the instruction
 ; pointer at known locations for triggering interrupts.
-  .addr nmi_start, reset_vector, irq
+    .addr nmi_start, reset_vector, irq

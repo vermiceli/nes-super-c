@@ -2883,7 +2883,7 @@ create_screen_enemies:
 
 ; input
 ;  * $02
-;  * $03
+;  * $03 - screen offset
 @create_screen_enemies:
     jsr get_enemy_screen_data ; initialize ($08) to the level-specific screen-specific $03 enemy data, e.g. level_4_enemy_screen_01
     ldy #$00                  ; initialize level_x_enemy_screen_xx read offset

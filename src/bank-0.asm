@@ -887,9 +887,11 @@ handle_x_autoscroll:
 ; calculate level 4 (Base Area 3) Y scroll speed when elevator enabled
 ; contains !(UNUSED) logic to vary rate of speed of elevator based on players jumping and game over state
 set_elevator_vel:
-    lda ELEVATOR_ENABLED
+    lda ELEVATOR_ENABLED        ; see if elevator enabled
+                                ; enabled in level_4_y_tile_routine_03
+                                ; when player passes Y_SCREEN #$08, Y_SCROLL #$40 (see level_4_y_tile_routine_pts_tbl)
     beq elevator_speed_exit     ; exit if elevator is not enabled/moving
-    and #$c0                    ; !(OBS) only bit 7 is ever used, but the line keeps bit 6 and 7
+    and #$c0                    ; !(OBS) only bit 7 is ever used, but this line keeps bit 6 and 7
     sta $00                     ; set elevator enabled value
     eor LEVEL_Y_SCROLL_FLAGS    ; checking to see if bit 7 is set (cannot scroll up)
     and $00                     ; !(OBS) elevator is always enabled here, just looking to see if can scroll up
@@ -3462,6 +3464,8 @@ bullet_apply_y_scroll:
 ; input
 ;  * x - bullet offset
 ;  * y = number of children flames to spawn
+; output
+;  * $10 - !(BUG) accidentally overwrites ENEMY_CURRENT_SLOT and doesn't restore it
 create_flame_split:
     stx $10 ; store flame bullet offset
     sty $00 ; store number of children flames to create

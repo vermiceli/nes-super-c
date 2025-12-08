@@ -133,16 +133,17 @@
 
 ; enemy type #$2e
 overhead_tank_soldier_routine_ptr_tbl:
-    .addr overhead_tank_soldier_routine_00
-    .addr overhead_tank_soldier_routine_01
-    .addr overhead_tank_soldier_routine_02
-    .addr overhead_tank_soldier_routine_03 ; remove if at bottom, fire when delay elapsed, go to overhead_tank_soldier_routine_02
+    .addr overhead_tank_soldier_routine_00 ; set hp, destroy attributes, position, delays, aim dir, increment number of tanks, advance routine
+    .addr overhead_tank_soldier_routine_01 ; update position, see if scrolled into active position, and if so advance routine
+    .addr overhead_tank_soldier_routine_02 ; set tank sprite for aim direction, wait for firing delay, fire single center shot, advance routine
+    .addr overhead_tank_soldier_routine_03 ; remove if at bottom, fire 3 shots when delay elapsed, go to overhead_tank_soldier_routine_02
     .addr enemy_routine_init_explosions    ; enemy destroyed routine - configure for 5 explosions
     .addr enemy_routine_explosions         ; generate 5 explosions, with an #$08 frame delay between each one
     .addr overhead_tank_soldier_routine_06 ; set scroll flags, draw destroyed tank, start explosions
     .addr enemy_explosion_routine_01       ; animate explosion sequence
     .addr enemy_explosion_routine_03       ; mark destroyed, remove enemy
 
+; set hp, destroy attributes, position, delays, aim dir, increment number of tanks, advance routine
 overhead_tank_soldier_routine_00:
     lda #$10                    ; HP = #$10, #$14, or #$17
     jsr set_enemy_hp            ; set ENEMY_HP calculated using easiest HP difficulty (adjusted by ENEMY_DIFFICULTY)
@@ -161,13 +162,14 @@ overhead_tank_soldier_routine_00:
     lda #$1b
     sta ENEMY_FIRING_DELAY,x
     lda #$06
-    sta ENEMY_VAR_1,x
+    sta ENEMY_VAR_1,x           ; set aim direction to be straight down (6 o'clock)
     lda #$03
     sta ENEMY_VAR_2,x           ; set default enemy aim direction (7 o'clock)
     inc NUM_TANKS               ; increment number of tanks on screen
     jsr update_enemy_pos        ; adjust position based on scroll (does not apply velocity)
     jmp advance_enemy_routine   ; advance to next routine
 
+; update position, see if scrolled into active position, and if so advance routine
 overhead_tank_soldier_routine_01:
     jsr update_enemy_pos            ; adjust position based on scroll (does not apply velocity)
     lda ENEMY_Y_POS,x               ; load enemy's Y position
@@ -181,6 +183,7 @@ overhead_tank_soldier_routine_01:
 @exit:
     rts
 
+; set tank sprite for aim direction, wait for firing delay, fire single center shot, advance routine
 overhead_tank_soldier_routine_02:
     ldy ENEMY_VAR_2,x                           ; load tank aim direction
     lda overhead_tank_soldier_sprite_tbl,y      ; load appropriate sprite for aim direction
@@ -203,10 +206,10 @@ overhead_tank_soldier_routine_02:
     sta ENEMY_FIRING_DELAY,x                    ; set bullet fire recoil timer to #$4d
 
 @check_target:
-    dec ENEMY_ANIMATION_DELAY,x
+    dec ENEMY_ANIMATION_DELAY,x  ; decrement targeting delay
     bne @continue
     lda #$08
-    sta ENEMY_ANIMATION_DELAY,x
+    sta ENEMY_ANIMATION_DELAY,x  ; set net target time to target delay
     jsr player_enemy_x_dist      ; a = closest x distance to enemy from players, y = closest player (#$00 or #$01)
     tya                          ; transfer closest player index to a
     sta ENEMY_VAR_3,x            ; set to targeted player index
@@ -214,7 +217,7 @@ overhead_tank_soldier_routine_02:
                                  ; then use that value to update the overhead aim direction ENEMY_VAR_2,x
 
 @continue:
-    dec ENEMY_DELAY,x
+    dec ENEMY_DELAY,x               ; decrement delay before firing 3 shots
     bne @exit
     lda #$00
     sta ENEMY_FRAME,x
@@ -224,13 +227,14 @@ overhead_tank_soldier_routine_02:
 @exit:
     rts
 
+; sprite_53, sprite_52, sprite_51
 overhead_tank_soldier_sprite_tbl:
     .byte $53,$52,$51,$52,$53,$53,$53,$53
 
 overhead_tank_soldier_sprite_attr_tbl:
     .byte $40,$40,$00,$00,$00,$00,$00,$40
 
-; remove if at bottom, fire when delay elapsed, go to overhead_tank_soldier_routine_02
+; remove if at bottom, fire 3 shots when delay elapsed, go to overhead_tank_soldier_routine_02
 overhead_tank_soldier_routine_03:
     lda ENEMY_Y_POS,x ; load enemy's Y position
     cmp #$c0
@@ -244,7 +248,7 @@ overhead_tank_soldier_routine_03:
     lda ENEMY_FRAME,x
     asl
     tay
-    lda overhead_tank_supertile_tbl,y
+    lda overhead_tank_supertile_tbl,y   ; create recoil effect by updating bg tiles for tank
     sta $08                             ; set first supertile
     lda overhead_tank_supertile_tbl+1,y
     sta $0c                             ; set second supertile index
@@ -265,6 +269,7 @@ overhead_tank_soldier_routine_03:
     lda #$02
     sta $08
 
+; firing 3 shots
 @tank_turret_loop:
     ldy #$30                           ; enemy type = overhead tank soldier bullet
     jsr try_create_enemy_from_existing ; create overhead tank soldier bullet
@@ -310,7 +315,7 @@ overhead_tank_supertile_tbl:
 ; set scroll flags, draw destroyed tank, start explosions
 overhead_tank_soldier_routine_06:
     dec NUM_TANKS            ; tank destroyed decrement number of tanks on screen
-    bne @draw_destroyed_tank ; branch to skip setting UNKNOWN_73 and LEVEL_Y_SCROLL_FLAGS if another tank is on screen
+    bne @draw_destroyed_tank ; branch to skip setting Y_SCROLL_FLAGS and LEVEL_Y_SCROLL_FLAGS if another tank is on screen
     lda #$40                 ; both tanks destroyed, allow scroll
     sta Y_SCROLL_FLAGS
     sta LEVEL_Y_SCROLL_FLAGS
@@ -318,8 +323,12 @@ overhead_tank_soldier_routine_06:
 @draw_destroyed_tank:
     lda #$00
     jsr overhead_tank_soldier_draw_destroyed ; draw 4 supertiles for the destroyed overhead tank
-    bcs @continue
+    bcs @continue                            ; branch if unable to draw supertiles to try again next frame
+                                             ; !(BUG) if tiles weren't drawn, the routine wasn't advanced and NUM_TANKS will be decremented again
+                                             ; this means that if 2 tanks are on screen and one is destroyed, but drawing of supertiles failed,
+                                             ; then the player can scroll past the second tank without destroying it
     jmp enemy_explosion_routine_00           ; set empty sprite, play optional enemy destroyed sound, disable collisions
+                                             ; and advance routine
 
 @continue:
     jmp update_enemy_pos ; adjust position based on scroll (does not apply velocity)
@@ -2422,29 +2431,31 @@ spinning_bubbles_routine_02:
 ; enemy type #$39
 elevator_routine_ptr_tbl:
     .addr elevator_routine_00 ; set collision properties, advance routine
-    .addr elevator_routine_01 ; set location and delay, advance routine
-    .addr elevator_routine_02
+    .addr elevator_routine_01 ; wait for activation, set location and delay, advance routine
+    .addr elevator_routine_02 ; wait for delay, enable scanline interrupts, advance routine
     .addr elevator_routine_03
-    .addr elevator_routine_04
-    .addr elevator_routine_05
-    .addr elevator_routine_06
+    .addr elevator_routine_04 ; slow elevator Y speed to -0.25, advance routine
+    .addr elevator_routine_05 ; play siren, wait for Y_SCROLL to be #$00, advance routine
+    .addr elevator_routine_06 ; stop any elevator velocity, remove enemy, remove scanline interrupts
 
 ; set collision properties, advance routine
 elevator_routine_00:
     lda #$81
-    sta ENEMY_DESTROY_ATTRS,x ; bullets travel through enemy and player can collide
+    sta ENEMY_DESTROY_ATTRS,x ; bullets travel through elevator floor and player can collide
     jmp advance_enemy_routine ; advance to next routine
 
-; set location and delay, advance routine
+; wait for activation, set location and delay, advance routine
 elevator_routine_01:
     lda Y_SCROLL             ; load PPU vertical scroll
-    bne elevator_exit        ; branch if not auto-scrolled to player on elevator
+    bne elevator_exit        ; branch if not yet at activation point
+                             ; set_elevator_vel will y autoscroll until nametable is fully visible
+                             ; this will cause Y_SCROLL to be 0 and the elevator to activate
     lda #$00                 ; player on elevator
     sta ELEVATOR_ENABLED     ; disable elevator
     lda #$c0
-    sta LEVEL_Y_SCROLL_FLAGS
+    sta LEVEL_Y_SCROLL_FLAGS ; don't allow player to scroll
     lda #$a0
-    sta ENEMY_Y_POS,x        ; set enemy Y position
+    sta ENEMY_Y_POS,x        ; set elevator Y position
 
 elevator_set_delay_adv_routine:
     lda #$00
@@ -2456,7 +2467,7 @@ elevator_set_delay_adv_routine:
 elevator_exit:
     rts
 
-; wait for delay
+; wait for delay, enable scanline interrupts, advance routine
 elevator_routine_02:
     lda ENEMY_DELAY,x
     beq @continue
@@ -2484,6 +2495,7 @@ elevator_routine_03:
     bcc elevator_exit
     jmp advance_enemy_routine ; advance to next routine
 
+; slow elevator Y speed to -0.25, advance routine
 elevator_routine_04:
     jsr elevator_scroll
     lda #$80
@@ -2491,12 +2503,13 @@ elevator_routine_04:
     lda #$c0
     sta ELEVATOR_FRACT_VEL
     lda #$ff
-    sta ELEVATOR_FAST_VEL
+    sta ELEVATOR_FAST_VEL           ; -0.25 Y velocity
     lda #$40
-    sta LEVEL_Y_SCROLL_FLAGS
+    sta LEVEL_Y_SCROLL_FLAGS        ; allow player to cause Y scroll
     lda #$01
     jmp set_delay_adv_enemy_routine ; set delay to #$01 and set routine to elevator_routine_05
 
+; play siren, wait for Y_SCROLL to be #$00, advance routine
 elevator_routine_05:
     lda GLOBAL_TIMER
     and #$03
@@ -2516,6 +2529,7 @@ elevator_routine_05:
     bne elevator_exit
     jmp elevator_set_delay_adv_routine
 
+; stop any elevator velocity, remove enemy, remove scanline interrupts
 elevator_routine_06:
     jsr elevator_scroll
     ldy #$02

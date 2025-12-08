@@ -2961,28 +2961,29 @@ level_2_run_y_tile_routine:
     jsr run_routine_from_tbl_below
 
 level_2_y_tile_routine_ptr_tbl:
-    .addr level_2_y_tile_routine_00
+    .addr level_2_y_tile_routine_00 ; right before tile color change, change palettes
+    .addr level_2_y_tile_routine_01 ; initialize number of tanks, set Y auto-stop position (revealing first overhead tank)
+    .addr level_2_y_tile_routine_02 ; clear Y auto-stop, set Y scroll flags
     .addr level_2_y_tile_routine_01
-    .addr level_2_y_tile_routine_02
-    .addr level_2_y_tile_routine_01
-    .addr level_2_y_tile_routine_02
+    .addr level_2_y_tile_routine_02 ; clear Y auto-stop, set Y scroll flags
     .addr level_2_y_tile_routine_05
     .addr level_2_y_tile_routine_06 ; level 2 (mid-level) collision code indices
     .addr level_2_y_tile_routine_07
     .addr level_2_y_tile_routine_08
     .addr level_2_y_tile_routine_09
     .addr level_2_y_tile_routine_08
-    .addr level_2_y_tile_routine_02
-    .addr level_2_y_tile_routine_02
+    .addr level_2_y_tile_routine_02 ; clear Y auto-stop, set Y scroll flags
+    .addr level_2_y_tile_routine_02 ; clear Y auto-stop, set Y scroll flags
     .addr level_2_y_tile_routine_0d
 
+; right before tile color change, change palettes
 level_2_y_tile_routine_00:
     ldy #$68                            ; dark olive, light gray, dark gray
     jsr set_level_palette               ; set background palette 1
     ldy #$6c                            ; dark olive, light gray, medium olive
     jsr set_level_palette               ; set background palette 2
     ldy #$70                            ; background palette 3 (white, light gray, dark gray)
-    bne level_2_set_palette_adv_routine
+    bne level_2_set_palette_adv_routine ; always branch
 
 level_2_y_tile_routine_05:
     ldy #$74 ; background palette 2 (white, light gray, dark gray)
@@ -3019,11 +3020,12 @@ level_2_y_tile_routine_09:
     ldx #$32
     bne level_2_set_bottom_half_adv_routine
 
+; initialize number of tanks, set Y auto-stop position (revealing first overhead tank)
 level_2_y_tile_routine_01:
     lda #$88
     ldy #$00
     sty NUM_TANKS                        ; clear number of tanks on screen
-    beq level_2_set_stop_pos_adv_routine
+    beq level_2_set_stop_pos_adv_routine ; always branch
 
 level_2_y_tile_routine_08:
     lda #$ee
@@ -3032,6 +3034,7 @@ level_2_set_stop_pos_adv_routine:
     sta Y_AUTOSCROLL_STOP_POS
     jmp level_2_adv_tile_routine
 
+; clear Y auto-stop, set Y scroll flags
 level_2_y_tile_routine_02:
     lda #$00
     sta Y_AUTOSCROLL_STOP_POS
@@ -3288,7 +3291,7 @@ level_4_y_tile_routine_pts_tbl:
     .byte $0b,$e0 ; Y_TILE_ROUTINE #$00, screen #$0b, scroll #$e0
     .byte $09,$30 ; Y_TILE_ROUTINE #$01, screen #$09, scroll #$30
     .byte $09,$00 ; Y_TILE_ROUTINE #$02, screen #$09, scroll #$00
-    .byte $08,$40 ; Y_TILE_ROUTINE #$03, screen #$08, scroll #$49
+    .byte $08,$40 ; Y_TILE_ROUTINE #$03, screen #$08, scroll #$40
     .byte $06,$00 ; Y_TILE_ROUTINE #$04, screen #$06, scroll #$00
     .byte $05,$40 ; Y_TILE_ROUTINE #$05, screen #$05, scroll #$40
     .byte $04,$c0 ; Y_TILE_ROUTINE #$06, screen #$04, scroll #$c0
@@ -3301,55 +3304,62 @@ level_4_run_y_tile_routine:
     jsr run_routine_from_tbl_below
 
 level_4_y_tile_routine_ptr_tbl:
-    .addr level_4_y_tile_routine_00
-    .addr level_4_y_tile_routine_01
-    .addr level_4_y_tile_routine_02
-    .addr level_4_y_tile_routine_03
-    .addr level_4_y_tile_routine_04
-    .addr level_4_y_tile_routine_03
-    .addr level_4_y_tile_routine_06
-    .addr level_4_y_tile_routine_07
-    .addr level_4_y_tile_routine_04
-    .addr level_4_y_tile_routine_08
+    .addr level_4_y_tile_routine_00 ; swap out 1/4 of sprite tiles for the elevator portion of level, advance routine
+    .addr level_4_y_tile_routine_01 ; set Y auto scroll stop position to reveal ceiling tiles (barrels), advance routine
+    .addr level_4_y_tile_routine_02 ; set Y auto-scroll stop position, advance routine
+    .addr level_4_y_tile_routine_03 ; enable elevator with Y velocity of -1.00, advance routine
+    .addr level_4_y_tile_routine_04 ; set Y auto-scroll stop position, disable elevator, advance routine
+    .addr level_4_y_tile_routine_03 ; enable elevator with Y velocity of -1.00, advance routine
+    .addr level_4_y_tile_routine_06 ; set elevator checkpoint to #$01, advance routine
+    .addr level_4_y_tile_routine_07 ; set elevator checkpoint to #$00, advance routine
+    .addr level_4_y_tile_routine_04 ; set Y auto-scroll stop position, disable elevator, advance routine
+    .addr level_4_y_tile_routine_08 ; no op
 
+; swap out 1/4 of sprite tiles for the elevator portion of level
 level_4_y_tile_routine_00:
-    lda #$1b
+    lda #$1b                       ; replacing sniper and grenade thrower sprites with hawkman and turret sprites
     sta RIGHT_FOURTH_QTR_CHR_BANK  ; set bank number of PPU $1c00-$1fff (last quarter of right pattern table)
     bne level_4_adv_y_tile_routine
 
+; set Y auto scroll stop position to reveal ceiling tiles (barrels), advance routine
 level_4_y_tile_routine_01:
     lda #$ee
-    sta Y_AUTOSCROLL_STOP_POS
+    sta Y_AUTOSCROLL_STOP_POS      ; set Y auto scroll stop position to reveal ceiling tiles (barrels)
     bne level_4_adv_y_tile_routine
 
+; set Y auto-scroll stop position, advance routine
 level_4_y_tile_routine_02:
     lda #$00
-    sta Y_AUTOSCROLL_STOP_POS
+    sta Y_AUTOSCROLL_STOP_POS      ; stop when revealed next nametable (elevator)
     lda #$c0
-    sta Y_SCROLL_FLAGS
-    sta LEVEL_Y_SCROLL_FLAGS
+    sta Y_SCROLL_FLAGS             ; prevent player from causing screen scroll
+    sta LEVEL_Y_SCROLL_FLAGS       ; prevent player from causing screen scroll
     bne level_4_adv_y_tile_routine
 
+; enable elevator with Y velocity of -1.00
 level_4_y_tile_routine_03:
     lda #$80
     sta ELEVATOR_ENABLED           ; enable elevator
     lda #$00
     sta ELEVATOR_FRACT_VEL
     lda #$ff
-    sta INTRO_ANIM_INDEX
+    sta ELEVATOR_FAST_VEL
     bne level_4_adv_y_tile_routine
 
+; set Y auto-scroll stop position, disable elevator
 level_4_y_tile_routine_04:
     lda #$c0
-    sta LEVEL_Y_SCROLL_FLAGS
+    sta LEVEL_Y_SCROLL_FLAGS       ; set Y auto scroll stop Y position
     lda #$00
     sta ELEVATOR_ENABLED           ; disable elevator
     beq level_4_adv_y_tile_routine
 
+; set elevator checkpoint to #$01, advance routine
 level_4_y_tile_routine_06:
     lda #$01
-    bne level_4_set_elevator_checkpoint
+    bne level_4_set_elevator_checkpoint ; always branch
 
+; set elevator checkpoint to #$00, advance routine
 level_4_y_tile_routine_07:
     lda #$00
 
@@ -3360,6 +3370,7 @@ level_4_adv_y_tile_routine:
     inc Y_TILE_ROUTINE
     rts
 
+; no op
 level_4_y_tile_routine_08:
     rts
 

@@ -980,6 +980,8 @@ There are no attributes for this enemy type.
 
 ### 2d - Falling Ceiling Tile
 
+Other Names: Barrel
+
 Ceiling tile on level 4 that falls after being shot at.  Created by
 [Collapsible Ceiling](#2c---collapsible-ceiling).
 
@@ -991,7 +993,7 @@ There are no attributes for this enemy type.
 
 ### 2e - Overhead Tank Soldier
 
-Other Names: Tucker
+Other Names: Tucker, Overhead Tank
 
 Blue soldiers that appear 3 times on the Level 2 (base area 2) on stationary
 tanks.  Note that these soldiers are not part of [Tank Boss](#69---tank-boss).
@@ -1006,20 +1008,23 @@ is a [Tank Boss](#69---tank-boss).
 
 #### Variables
 
-* `ENEMY_ANIMATION_DELAY` -
+* `ENEMY_ANIMATION_DELAY` - delay for targeting player
 * `ENEMY_VAR_3` - targeted player index (0 = p1, 1 = p2)
-* `ENEMY_FIRING_DELAY` -
-* `ENEMY_VAR_1` -
+* `ENEMY_FIRING_DELAY` - firing delay
+* `ENEMY_VAR_1` - tank aim direction #$00-#$0c inclusively
+  * #$00 = 3 o'clock
+  * #$04 = 4:30 o'clock
+  * #$06 = 6 o'clock
+  * #$08 = 7:30 o'clock
+  * #$0c = 9 o'clock
 * `ENEMY_VAR_5` - timer for recoil effect
-* `ENEMY_VAR_2` - tank aim direction (see `overhead_tank_soldier_sprite_tbl`)
+* `ENEMY_VAR_2` - tank aim sprite index (see `overhead_tank_soldier_sprite_tbl`)
+  Can be thought of as the overhead aim direction
   * 0 = 3 o'clock
   * 1 = 5 o'clock
   * 2 = 6 o'clock
   * 3 = 7 o'clock
   * 4 = 9 o'clock
-  * 5 = 9 o'clock
-  * 6 = 9 o'clock
-  * 7 = 3 o'clock
 * `ENEMY_VAR_4` - once destroyed, counts the number of remaining explosions for
   the destruction animation
 

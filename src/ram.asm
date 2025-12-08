@@ -733,12 +733,12 @@ Y_SCROLL_FLAGS:
 ELEVATOR_ENABLED:
     .res 1
 
-; $7f - elevator scroll fractional Y speed
+; $7f - elevator scroll fractional Y speed. Scrolls Y when elevator enabled
 ; combined with ELEVATOR_FAST_VEL, used to set the elevator speed to -0.25
 ELEVATOR_FRACT_VEL:
     .res 1
 
-; $80 - elevator scroll fast Y speed
+; $80 - elevator scroll fast Y speed. Scrolls Y when elevator enabled
 ; combined with ELEVATOR_FRACT_VEL, used to set the elevator speed to -0.25
 ELEVATOR_FAST_VEL:
 
@@ -789,14 +789,14 @@ INTRO_ANIM_X_SCROLL:
 Y_AUTOSCROLL:
     .res 1
 
+; $85 - intro animation PPUCTRL for use in flashing SUPER while scrolling
+INTRO_ANIM_PPUCTRL:
+
 ; $85 - used to correctly animate the stomping ceiling on level 8
 ; prevents pre-irq X scroll and nametable change to show correct bg tiles
 ;  * #$00 - allow X scroll and allow moving to next horizontal nametable
 ;  * #$01 - prevent scrolling into next nametable
 ;  * #$80 - prevent X scroll
-INTRO_ANIM_PPUCTRL:
-
-; $85 - intro animation PPUCTRL for use in flashing SUPER while scrolling
 STOMP_CEILING_X_SCROLL_CTRL:
     .res 1
 
@@ -2110,7 +2110,7 @@ PLAYER_BULLET_Y_VEL_FAST:
 
 ; $0668 - index to routine number for enemy
 ; subtract 1 to get real routine, since all offsets are off by 1
-; (...routine_ptr_tbl -2)
+; (...routine_ptr_tbl - 2)
 ; ex: for flying capsule, setting ENEMY_ROUTINE to #$01 causes
 ; flying_capsule_routine_00 to run the next frame
 ENEMY_ROUTINE:
