@@ -257,35 +257,6 @@ effect sound commands are only used for pulse and noise channels.  However, it
 does appear that the game has some support the triangle channel in sound effects
 commands.
 
-* BYTE 0
-  * when non-zero
-    * >= #$fb call sound_cmd_routine_03
-    * {else} < #$fb
-      * high nibble is zero (initialize channel, set SOUND_LENGTH_MULTIPLIER,x)
-        * low nibble -> SOUND_LENGTH_MULTIPLIER,x
-        * strip bits 1 and 2 of SOUND_FLAGS,x
-        * when x is slot 2 (triangle)
-          * BYTE 1 -> APU_TRIANGLE_CONFIG 
-          * LOOP TO PROCESS NEXT SOUND EFFECT COMMAND
-        * when x is slot 5 (noise) BYTE 1 is ignored and instead hard-coded to #$30
-          then put into -> SOUND_CFG_HIGH_A,x (infinite length, constant volume)
-          then LOOP TO PROCESS NEXT SOUND EFFECT COMMAND
-        * else
-          * BYTE 1 -> SOUND_CFG_HIGH_A,x (set length halt flag and constant volume flag)
-          * if BYTE 2 is #$88 then disable sweep
-          * else set bit 7 of SOUND_FLAGS,x
-      * {else} (sound_effect_set_vol_pitch)
-        * if not noise channel and BYTE 0 equals #$10, use BYTE 1 for next steps
-        * transfer SOUND_LENGTH_MULTIPLIER,x to SOUND_CMD_LENGTH,x
-        * if not triangle set SOUND_EFFECT_VOLUME,x to high nibble
-        * if pulse set with constant volume or noise, set volume to high nibble (moved to low nibble)
-        * low nibble -> CUR_SOUND_LEN_TIMER_HIGH
-        * load next byte and -> CUR_SOUND_LEN_TIMER_HIGH
-
-### High Sound Command
-
-When byte 0 is >= #$10 - high sound command
-
 # Sound Banks
 
 Almost all sound data is in bank c and bank d.  However, for `sound_32` and

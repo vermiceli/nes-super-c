@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 1 continues from bank 0 with automated player movement data for the demo
 ; (attract) levels.  Bank 1 then contains automated player movement logic for
@@ -284,9 +284,14 @@ init_end_level_anim_01:
 ; level 3 Jungle
 ; level 7 Headquarters
 init_end_level_anim_02:
-    lda #$90
-    sta AUTO_MOVE_DELAY_TIMER
-    rts
+    .ifdef Probotector
+        lda #$48                          ; delay for AUTO_MOVE_DELAY_TIMER per active player
+        bne init_end_level_set_move_delay ; always branch
+    .else
+        lda #$90
+        sta AUTO_MOVE_DELAY_TIMER
+        rts
+    .endif
 
 ; level 6 Entry to HQ
 init_end_level_anim_05:
@@ -301,9 +306,38 @@ init_end_level_anim_05:
 
 ; level 8 The Final Stage
 init_end_level_anim_07:
-    lda #$c0
-    sta AUTO_MOVE_DELAY_TIMER
-    rts
+    .ifdef Probotector
+        lda #$60       ; delay for AUTO_MOVE_DELAY_TIMER per active player
+
+    ; calculate and set AUTO_MOVE_DELAY_TIMER based on players' game over status
+    ; input
+    ;  * a - amount to add to AUTO_MOVE_DELAY_TIMER for each non game over player
+    init_end_level_set_move_delay:
+        sta $00                     ; set initial auto-move delay
+                                    ; doubled for 2 player when both not in game over
+        lda #$00
+        sta AUTO_MOVE_DELAY_TIMER   ; clear auto-move delay timer
+        lda PLAYER_GAME_OVER_STATUS ; load p1 game over status (0 = not game over, 1 = game over)
+        bne @add_p2_delay           ; branch if p1 game over to set delay based on p2 game over status
+        jsr @add_delay              ; p1 not in game over, add $00 to delay auto-move delay timer
+
+    @add_p2_delay:
+        lda PLAYER_GAME_OVER_STATUS+1
+        bne @exit                     ; exit if p2 game over
+
+    @add_delay:
+        lda $00
+        clc
+        adc AUTO_MOVE_DELAY_TIMER
+        sta AUTO_MOVE_DELAY_TIMER
+
+    @exit:
+        rts
+    .else
+        lda #$c0
+        sta AUTO_MOVE_DELAY_TIMER
+        rts
+    .endif
 
 ; runs end level auto move logic
 end_level_anim_routine_01:
@@ -395,7 +429,14 @@ end_level_auto_move_lvl_03_07:
     lda AUTO_MOVE_DELAY_TIMER
     beq @continue             ; branch if delay timer elapsed
                               ; to walk off screen to the right
+    .ifdef Probotector
+        lda FRAME_COUNTER
+        lsr
+        bcs @exit             ; decrement every other frame
+    .endif
     dec AUTO_MOVE_DELAY_TIMER ; delay not elapsed
+
+@exit:
     rts
 
 @continue:
@@ -423,8 +464,13 @@ end_level_auto_move_lvl_08:
     lda #$00
     sta CONTROLLER_STATE,x    ; clear controller input
     lda FRAME_COUNTER         ; load frame counter
-    lsr
-    bcs @exit                 ; exit if odd frame
+    .ifdef Probotector
+        and #$03
+        bne @exit             ; exit every 3 out of 4 frames
+    .else
+        lsr
+        bcs @exit             ; exit if odd frame
+    .endif
     lda AUTO_MOVE_DELAY_TIMER ; even frame, decrement auto-move delay timer
     beq @exit
     dec AUTO_MOVE_DELAY_TIMER ; decrement auto-move delay timer
@@ -634,7 +680,11 @@ intro_animation_01:
     sta X_SCROLL                   ; set PPU horizontal scroll
     bne intro_animation_exit
     jsr set_intro_screen_bg_sprite ; set the large sprite for the intro screen
-    lda #$40
+    .ifdef Probotector
+        lda #$38
+    .else
+        lda #$40
+    .endif
 
 intro_animation_set_delay_adv_routine:
     sta INTRO_ANIM_DELAY
@@ -663,9 +713,15 @@ intro_animation_02:
 
 @palette_loop:
     lda intro_palette_tbl,y
-    sta PALETTE_CPU_BUFFER+13,x
-    lda intro_palette_tbl2,y
-    sta PALETTE_CPU_BUFFER+17,x
+    .ifdef Probotector
+        sta PALETTE_CPU_BUFFER+1,x
+        lda intro_palette_tbl2,y
+        sta PALETTE_CPU_BUFFER+29,x
+    .else
+        sta PALETTE_CPU_BUFFER+13,x
+        lda intro_palette_tbl2,y
+        sta PALETTE_CPU_BUFFER+17,x
+    .endif
     iny
     inx
     cpx #$03
@@ -675,18 +731,34 @@ intro_animation_02:
     lda INTRO_SCREEN_PALETTE
     cmp #$03
     bcc intro_animation_exit
-    lda #$70                                  ; finished animating appearing of logo
+    .ifdef Probotector
+        lda #$60                              ; finished animating appearing of logo
+    .else
+        lda #$70                              ; finished animating appearing of logo
+    .endif
     jmp intro_animation_set_delay_adv_routine
 
 intro_palette_tbl:
-    .byte COLOR_DARK_ORANGE_07,COLOR_DARK_RED_06,COLOR_DARK_RED_06
-    .byte COLOR_MED_ORANGE_17, COLOR_MED_RED_16, COLOR_DARK_RED_06
-    .byte COLOR_LT_ORANGE_27,  COLOR_MED_RED_16, COLOR_DARK_RED_06
+    .ifdef Probotector
+        .byte COLOR_DARK_GRAY_00,COLOR_LT_GRAY_10,COLOR_BLACK_0f
+        .byte COLOR_LT_GRAY_10,  COLOR_WHITE_20,  COLOR_DARK_RED_06
+        .byte COLOR_WHITE_20,    COLOR_WHITE_30,  COLOR_DARK_RED_06
+    .else
+        .byte COLOR_DARK_ORANGE_07,COLOR_DARK_RED_06,COLOR_DARK_RED_06
+        .byte COLOR_MED_ORANGE_17, COLOR_MED_RED_16, COLOR_DARK_RED_06
+        .byte COLOR_LT_ORANGE_27,  COLOR_MED_RED_16, COLOR_DARK_RED_06
+    .endif
 
 intro_palette_tbl2:
-    .byte COLOR_DARK_RED_06,COLOR_DARK_RED_06,COLOR_BLACK_0f
-    .byte COLOR_MED_RED_16, COLOR_DARK_RED_06,COLOR_BLACK_0f
-    .byte COLOR_MED_RED_16, COLOR_DARK_RED_06,COLOR_BLACK_0f
+    .ifdef Probotector
+        .byte COLOR_BLACK_0f,COLOR_BLACK_0f,COLOR_BLACK_0f
+        .byte COLOR_BLACK_0f,COLOR_BLACK_0f,COLOR_DARK_RED_06
+        .byte COLOR_BLACK_0f,COLOR_BLACK_0f,COLOR_DARK_RED_06
+    .else
+        .byte COLOR_DARK_RED_06,COLOR_DARK_RED_06,COLOR_BLACK_0f
+        .byte COLOR_MED_RED_16, COLOR_DARK_RED_06,COLOR_BLACK_0f
+        .byte COLOR_MED_RED_16, COLOR_DARK_RED_06,COLOR_BLACK_0f
+    .endif
 
 ; wait for delay and then reveal text, e.g. PLAY SELECT, copyright, etc.
 ; when done set carry indicating intro animation is complete
@@ -728,7 +800,11 @@ scroll_credits_routine_00:
     jsr end_credits_set_irq_scroll
     lda #$01
     sta NT_MIRRORING               ; set horizontal nametable mirroring
-    lda #$02                       ; set delay before advancing routine
+    .ifdef Probotector
+        lda #$01                   ; set delay before advancing routine
+    .else
+        lda #$02                   ; set delay before advancing routine
+    .endif
 
 scroll_credits_set_delay_adv:
     sta CREDITS_ROUTINE_DELAY
@@ -852,10 +928,22 @@ credits_scroll_scenery:
     rts
 
 end_credits_draw_line:
-    lda FRAME_COUNTER       ; load frame counter
-    and #$03
-    beq @irq_y_scroll       ; continue every 4 frames
-    jmp credits_scroll_exit ; exit if not 4th frame
+    .ifdef Probotector
+        inc X_SCROLL_TILE_UPDATE
+        lda X_SCROLL_TILE_UPDATE
+        cmp #$03
+        bcs @reset
+        jmp credits_scroll_exit
+
+    @reset:
+        lda #$00
+        sta X_SCROLL_TILE_UPDATE
+    .else
+        lda FRAME_COUNTER        ; load frame counter
+        and #$03
+        beq @irq_y_scroll        ; continue every 4 frames
+        jmp credits_scroll_exit  ; exit if not 4th frame
+    .endif
 
 @irq_y_scroll:
     lda IRQ_Y_SCROLL
@@ -972,40 +1060,102 @@ credits_set_konami_palette:
 ;          when negative, draw konami logo
 ; byte 2 - length of text
 end_credits_text_tbl:
-    .byte $02,$05,$05
-    .byte $1d,$1e,$0b,$10,$10                                             ; STAFF
-    .byte $0a,$03,$0a
-    .byte $1a,$1c,$19,$11,$1c,$0b,$17,$17,$0f,$1c                         ; PROGRAMMER
-    .byte $0e,$03,$09
-    .byte $1d,$26,$1f,$17,$0f,$24,$0b,$15,$13                             ; S.UMEZAKI
-    .byte $16,$01,$0e
-    .byte $11,$1c,$0b,$1a,$12,$13,$0d,$00,$0e,$0f,$1d,$13,$11,$18         ; GRAPHIC DESIGN
-    .byte $1a,$04,$08
-    .byte $1d,$26,$17,$1f,$1c,$0b,$15,$13                                 ; S.MURAKI
-    .byte $22,$02,$0c
-    .byte $1d,$19,$1f,$18,$0e,$00,$0e,$0f,$1d,$13,$11,$18                 ; SOUND DESIGN
-    .byte $26,$03,$09
-    .byte $12,$26,$17,$0b,$0f,$24,$0b,$21,$0b                             ; H.MAEZAWA
-    .byte $2e,$01,$0e
-    .byte $1d,$1a,$0f,$0d,$13,$0b,$16,$00,$1e,$12,$0b,$18,$15,$1d         ; SPECIAL THANKS
-    .byte $32,$03,$0a
-    .byte $15,$26,$1d,$12,$13,$17,$19,$13,$0e,$0f                         ; K.SHIMOIDE
-    .byte $35,$02,$0c
-    .byte $1d,$1f,$1a,$0f,$1c,$00,$0d,$00,$1e,$0f,$0b,$17                 ; SUPER C TEAM
-    .byte $3d,$02,$0b
-    .byte $0e,$13,$1c,$0f,$0d,$1e,$0f,$0e,$00,$0c,$23                     ; DIRECTED BY
-    .byte $41,$02,$0c
-    .byte $1f,$17,$0f,$0d,$12,$0b,$18,$00,$1e,$0f,$0b,$17                 ; UMECHAN TEAM
-    .byte $50,$fe,$51
-    .byte $03,$0b,$2e,$2f,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d,$52,$02,$0c ; konami logo
-    .byte $30,$31,$32,$3e,$3f,$40,$41,$42,$43,$44,$45,$46,$53,$02,$02,$33
-    .byte $34,$59,$ff
+    .ifdef Probotector
+        .byte $04,$05,$05
+    .else
+        .byte $02,$05,$05
+    .endif
+        .byte $1d,$1e,$0b,$10,$10                                             ; STAFF
+    .ifdef Probotector
+        .byte $0f,$03,$0a
+    .else
+        .byte $0a,$03,$0a
+    .endif
+    .byte $1a,$1c,$19,$11,$1c,$0b,$17,$17,$0f,$1c                             ; PROGRAMMER
+    .ifdef Probotector
+        .byte $13,$03,$09
+    .else
+        .byte $0e,$03,$09
+    .endif
+    .byte $1d,$26,$1f,$17,$0f,$24,$0b,$15,$13                                 ; S.UMEZAKI
+    .ifdef Probotector
+        .byte $1e,$01,$0e
+    .else
+        .byte $16,$01,$0e
+    .endif
+    .byte $11,$1c,$0b,$1a,$12,$13,$0d,$00,$0e,$0f,$1d,$13,$11,$18             ; GRAPHIC DESIGN
+    .ifdef Probotector
+        .byte $22,$04,$08
+    .else
+        .byte $1a,$04,$08
+    .endif
+    .byte $1d,$26,$17,$1f,$1c,$0b,$15,$13                                     ; S.MURAKI
+    .ifdef Probotector
+        .byte $2d,$02,$0c
+    .else
+        .byte $22,$02,$0c
+    .endif
+    .byte $1d,$19,$1f,$18,$0e,$00,$0e,$0f,$1d,$13,$11,$18                     ; SOUND DESIGN
+    .ifdef Probotector
+        .byte $31,$03,$09
+    .else
+        .byte $26,$03,$09
+    .endif
+    .byte $12,$26,$17,$0b,$0f,$24,$0b,$21,$0b                                 ; H.MAEZAWA
+    ; !(OBS) Y.SAKAKURA is only credited in Probotector release
+    .ifdef Probotector
+        .byte $33,$03,$0a
+        .byte $23,$26,$1d,$0b,$15,$0b,$15,$1f,$1c,$0b                         ; Y.SAKAKURA
+        .byte $3e,$01,$0e
+    .else
+        .byte $2e,$01,$0e
+    .endif
+    .byte $1d,$1a,$0f,$0d,$13,$0b,$16,$00,$1e,$12,$0b,$18,$15,$1d             ; SPECIAL THANKS
+    .ifdef Probotector
+        .byte $42,$03,$0a
+    .else
+        .byte $32,$03,$0a
+    .endif
+    .byte $15,$26,$1d,$12,$13,$17,$19,$13,$0e,$0f                             ; K.SHIMOIDE
+    .ifdef Probotector
+        .byte $44,$02,$0c
+    .else
+        .byte $35,$02,$0c
+    .endif
+    .byte $1d,$1f,$1a,$0f,$1c,$00,$0d,$00,$1e,$0f,$0b,$17                     ; SUPER C TEAM
+    .ifdef Probotector
+        .byte $4f,$02,$0b
+    .else
+        .byte $3d,$02,$0b
+    .endif
+    .byte $0e,$13,$1c,$0f,$0d,$1e,$0f,$0e,$00,$0c,$23                         ; DIRECTED BY
+    .ifdef Probotector
+        .byte $53,$02,$0c
+    .else
+        .byte $41,$02,$0c
+    .endif
+    .byte $1f,$17,$0f,$0d,$12,$0b,$18,$00,$1e,$0f,$0b,$17                     ; UMECHAN TEAM
+    .ifdef Probotector
+        .byte $5f,$03,$0c
+        .byte $cb,$cc,$cd,$ce,$cf,$f6,$f7,$f8,$cf,$f9,$fa,$fb
+        .byte $60,$02,$0e
+        .byte $30,$db,$dc,$dd,$de,$df,$eb,$ec,$ed,$df,$ee,$ef,$fc,$79,$67,$ff
+    .else
+        .byte $50,$fe,$51
+        .byte $03,$0b,$2e,$2f,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d,$52,$02,$0c ; konami logo
+        .byte $30,$31,$32,$3e,$3f,$40,$41,$42,$43,$44,$45,$46,$53,$02,$02,$33
+        .byte $34,$59,$ff
+    .endif
 
 ; called from various scroll credits routines
 end_credits_set_irq_scroll:
     lda #$00
     sta IRQ_X_SCROLL        ; initialize X_SCROLL used after the 1st IRQ, but before the 3rd IRQ
-    lda #$38
+    .ifdef Probotector
+        lda #$2b
+    .else
+        lda #$38
+    .endif
     sta SCANLINE_IRQ_1      ; set first scanline IRQ (irq_handler_03_00)
     lda IRQ_Y_SCROLL
     and #$07
@@ -1078,44 +1228,82 @@ sound_36_slot_03_4:
     .incbin "assets/audio_data/sound_36_slot_03_4.bin"
 
 level_2_screen_layout_tbl:
-    .byte $02     ; LEVEL_WIDTH
-    .byte $0d     ; LEVEL_HEIGHT
-    .byte $0d,$00
-    .byte $0c,$0e
-    .byte $0b,$00
-    .byte $0a,$00
-    .byte $09,$00
-    .byte $08,$00
-    .byte $07,$00
-    .byte $06,$00
-    .byte $05,$00
-    .byte $04,$00
-    .byte $03,$00
-    .byte $02,$00
-    .byte $01,$0f
+    .ifdef Probotector
+        .byte $04             ; LEVEL_WIDTH
+        .byte $0d             ; LEVEL_HEIGHT
+        .byte $0c,$0c,$0c,$0c
+        .byte $0f,$0f,$0b,$0d
+        .byte $0a,$0e,$0e,$0e
+        .byte $09,$09,$09,$09
+        .byte $08,$08,$08,$08
+        .byte $07,$07,$07,$07
+        .byte $06,$06,$06,$06
+        .byte $05,$05,$05,$05
+        .byte $04,$04,$04,$04
+        .byte $03,$03,$03,$03
+        .byte $02,$02,$02,$02
+        .byte $01,$01,$01,$01
+        .byte $00,$00,$00,$00
 
-level_2_supertiles_screen_ptr_table:
-    .addr level_2_supertiles_screen_00
-    .addr level_2_supertiles_screen_01
-    .addr level_2_supertiles_screen_02
-    .addr level_2_supertiles_screen_03
-    .addr level_2_supertiles_screen_04
-    .addr level_2_supertiles_screen_05
-    .addr level_2_supertiles_screen_06
-    .addr level_2_supertiles_screen_07
-    .addr level_2_supertiles_screen_08
-    .addr level_2_supertiles_screen_09
-    .addr level_2_supertiles_screen_0a
-    .addr level_2_supertiles_screen_0b
-    .addr level_2_supertiles_screen_0c
-    .addr level_2_supertiles_screen_0d
-    .addr level_2_supertiles_screen_0e
+    level_2_supertiles_screen_ptr_table:
+        .addr level_2_supertiles_screen_01
+        .addr level_2_supertiles_screen_02
+        .addr level_2_supertiles_screen_03
+        .addr level_2_supertiles_screen_04
+        .addr level_2_supertiles_screen_05
+        .addr level_2_supertiles_screen_06
+        .addr level_2_supertiles_screen_07
+        .addr level_2_supertiles_screen_08
+        .addr level_2_supertiles_screen_09
+        .addr level_2_supertiles_screen_0a
+        .addr level_2_supertiles_screen_0b
+        .addr level_2_supertiles_screen_0c
+        .addr level_2_supertiles_screen_0d
+        .addr level_2_supertiles_screen_0e
+        .addr level_2_supertiles_screen_0f
+        .addr level_2_supertiles_screen_10
+    .else
+        .byte $02                          ; LEVEL_WIDTH
+        .byte $0d                          ; LEVEL_HEIGHT
+        .byte $0d,$00
+        .byte $0c,$0e
+        .byte $0b,$00
+        .byte $0a,$00
+        .byte $09,$00
+        .byte $08,$00
+        .byte $07,$00
+        .byte $06,$00
+        .byte $05,$00
+        .byte $04,$00
+        .byte $03,$00
+        .byte $02,$00
+        .byte $01,$0f
+
+    level_2_supertiles_screen_ptr_table:
+        .addr level_2_supertiles_screen_00
+        .addr level_2_supertiles_screen_01
+        .addr level_2_supertiles_screen_02
+        .addr level_2_supertiles_screen_03
+        .addr level_2_supertiles_screen_04
+        .addr level_2_supertiles_screen_05
+        .addr level_2_supertiles_screen_06
+        .addr level_2_supertiles_screen_07
+        .addr level_2_supertiles_screen_08
+        .addr level_2_supertiles_screen_09
+        .addr level_2_supertiles_screen_0a
+        .addr level_2_supertiles_screen_0b
+        .addr level_2_supertiles_screen_0c
+        .addr level_2_supertiles_screen_0d
+        .addr level_2_supertiles_screen_0e
+    .endif
 
 level_2_supertiles_screen_00:
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    .ifdef Superc
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+    .endif
 
 level_2_supertiles_screen_01:
     .byte $01,$01,$02,$1f,$10,$11,$12,$12,$02,$01,$01,$1f,$14,$15,$16,$0b
@@ -1200,6 +1388,20 @@ level_2_supertiles_screen_0e:
     .byte $d0,$d0,$e4,$e5,$e6,$e7,$d0,$d0,$d0,$d0,$e8,$e9,$ea,$eb,$d0,$d0
     .byte $d0,$d0,$ec,$ed,$ee,$ef,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0
     .byte $d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0
+
+    .ifdef Probotector
+        level_2_supertiles_screen_0f:
+            .byte $86,$87,$88,$c3,$c4,$ad,$ae,$86,$8a,$8b,$8c,$6d,$c6,$b0,$b1,$b2
+            .byte $8e,$8f,$a0,$6c,$c5,$b3,$b4,$b5,$8e,$a1,$a2,$64,$64,$b6,$b7,$ae
+            .byte $a3,$a1,$a2,$64,$40,$b8,$b9,$ba,$a5,$a6,$a2,$64,$40,$b8,$bb,$bc
+            .byte $a7,$a7,$a8,$64,$40,$bd,$be,$bf,$a9,$a9,$aa,$64,$40,$c0,$a9,$a9
+
+        level_2_supertiles_screen_10:
+            .byte $d2,$d2,$d3,$40,$40,$d1,$d2,$d2,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0
+            .byte $d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0
+            .byte $d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0,$d0
+            .byte $ca,$c8,$d5,$ce,$ce,$ce,$c9,$ca,$86,$cc,$cb,$64,$64,$cf,$cd,$86
+    .endif
 
 level_2_supertile_data:
     .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00

@@ -1,3 +1,5 @@
+; NES Super C Disassembly - v1.01
+; https://github.com/vermiceli/nes-super-c/
 ; Bank 8 contains Level 5 (The Cliff) and Level 6 (Entry to HQ) enemies.
 ; Then, Bank 8 contains Level 5 screen layout and the start of the table of
 ; supertiles per screen for Level 5.  That data is continued in Bank 9.
@@ -149,7 +151,11 @@ falling_rock_routine_00:
     ldy #$06                       ; set enemy_hp_adjust_tbl offset to #$06
     jsr set_enemy_hp_from_a_and_y  ; set ENEMY_HP calculated using medium HP difficulty (adjusted by ENEMY_DIFFICULTY)
                                    ; sets enemy HP = #$05, #$09, or #$0d
-    lda #$03
+    .ifdef Probotector
+        lda #$00
+    .else
+        lda #$03
+    .endif
     sta ENEMY_SPRITE_ATTR,x        ; set sprite palette
     jsr update_enemy_pos           ; adjust position based on scroll (does not apply velocity)
     ldy #$08                       ; animation index for falling rock
@@ -472,9 +478,15 @@ jet_pack_soldier_set_sprite:
     sta ENEMY_VAR_1,x              ; set to player index to target
     lda ENEMY_X_POS,x              ; load enemy's X position
     cmp PLAYER_SPRITE_X_POS,y
-    lda #$41                       ; assume player to left of enemy and flip sprite horizontally
-    bcc @continue                  ; branch if player to left of enemy
-    lda #$01                       ; player to right of enemy, do not flip sprite horizontally
+    .ifdef Probotector
+        lda #$43                   ; assume player to left of enemy and flip sprite horizontally
+        bcc @continue              ; branch if player to left of enemy
+        lda #$03                   ; player to right of enemy, do not flip sprite horizontally
+    .else
+        lda #$41                   ; assume player to left of enemy and flip sprite horizontally
+        bcc @continue              ; branch if player to left of enemy
+        lda #$01                   ; player to right of enemy, do not flip sprite horizontally
+    .endif
 
 @continue:
     sta ENEMY_SPRITE_ATTR,x ; set sprite attribute, including facing direction
@@ -880,7 +892,11 @@ krypto_crustacean_routine_03:
     lda #$0b
     sta IRQ_TYPE                         ; set irq routine type to irq_handler_0b_ptr_tbl
                                          ; level 5 cliff boss (krypto-crustacean)
-    lda #$c1
+    .ifdef Probotector
+        lda #$b4
+    .else
+        lda #$c1
+    .endif
     sta SCANLINE_IRQ_1                   ; set where irq_handler_0b_00 will run
                                          ; this is where the PPU address and left pattern table tiles are updated
     lda #$00
@@ -2962,7 +2978,11 @@ boss_baby_alien_ladybug_routine_ptr_tbl:
 boss_baby_alien_ladybug_routine_00:
     lda #$06
     sta ENEMY_VAR_1,x
-    lda #$01
+    .ifdef Probotector
+        lda #$00
+    .else
+        lda #$01
+    .endif
     sta ENEMY_SPRITE_ATTR,x
     lda #$01
     jmp set_delay_adv_enemy_routine ; set delay to #$01 and set routine to boss_baby_alien_ladybug_routine_01
@@ -3155,7 +3175,11 @@ area_6_irq_type_tbl:
 
 ; initial scanline irq
 area_6_scanline_irq_tbl:
-    .byte $06,$08
+    .ifdef Probotector
+        .byte $09,$0b
+    .else
+        .byte $06,$08
+    .endif
 
 ; enemy destroyed routine, update scanline based on vertical scroll, remove once scrolled away
 area_6_chr_swap_routine_01:
@@ -3165,14 +3189,22 @@ area_6_chr_swap_routine_01:
 ; input
 ;  * a - current location for scanline irq
 area_6_set_scanline_irq:
-    sec                      ; set carry flag in preparation for subtraction
-    sbc Y_SCROLL_SPEED       ; subtract any vertical scroll for this frame from the enemy fast velocity
-    sta SCANLINE_IRQ_1       ; update scanline irq line
-    cmp #$f0                 ; see if irq is at bottom of screen
-    bcs @remove_enemy        ; branch if irq line is almost scrolled off screen to remove
+    sec                         ; set carry flag in preparation for subtraction
+    sbc Y_SCROLL_SPEED          ; subtract any vertical scroll for this frame from the enemy fast velocity
+    sta SCANLINE_IRQ_1          ; update scanline irq line
+    .ifdef Probotector
+        cmp #$dd
+        bcs @remove_enemy
+        lda #$db
+        sbc SCANLINE_IRQ_1
+        sta SCANLINE_IRQ_2_DIFF
+    .else
+        cmp #$f0                ; see if irq is at bottom of screen
+        bcs @remove_enemy       ; branch if irq line is almost scrolled off screen to remove
+    .endif
     lda LEVEL_Y_SCROLL_FLAGS
-    bmi @exit                ; exit if cannot scroll up
-    jmp init_irq_scroll      ; set post-irq scroll to current scroll
+    bmi @exit                   ; exit if cannot scroll up
+    jmp init_irq_scroll         ; set post-irq scroll to current scroll
 
 @remove_enemy:
     jsr remove_enemy

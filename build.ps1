@@ -3,7 +3,7 @@
 # batch file from the windows command prompt.
 
 # Super C = [Default] US NES version
-# Probotector = European NES version (not supported)
+# Probotector = European NES version
 param([String]$Game='Superc')
 $global:SOURCE_ROM = $null
 $GAME_HASH = "A3E9BACB35DC038186D7F59112E8A2E081F9D0E343608003B44EE76BC25526552BF4C4EAA44531B75B5626B51DBCE8C055F6B7DE87FB426C474A8F1463686841"
@@ -12,13 +12,14 @@ $DBG_NAME = "superc.dbg"
 $ASSETS_NAME = "assets.txt"
 $ASSET_GAME_TYPE = "src\assets\asset-game-type.txt"
 
-IF ($Game -ceq "Probotector") {
-    # $ROM_NAME = "probotector.nes"
-    # $DBG_NAME = "probotector.dbg"
-    # $GAME_HASH = "4302BF3FDAF704F11FCD60C83BF475D11C8EBC772A31B45318C1ABBF5EA011992D9E8714268B2B7CE938D2426599794D0277868A98C6162BCC5A10AE851C8EB5"
-    # $ASSETS_NAME = "probotector-assets.txt"
-    Write-Warning "Probotector not supported."
-    return
+IF ($Game -eq "Probotector") {
+    $ROM_NAME = "probotector.nes"
+    $DBG_NAME = "probotector.dbg"
+    $GAME_HASH = "4302BF3FDAF704F11FCD60C83BF475D11C8EBC772A31B45318C1ABBF5EA011992D9E8714268B2B7CE938D2426599794D0277868A98C6162BCC5A10AE851C8EB5"
+    $ASSETS_NAME = "probotector-assets.txt"
+    $Game = "Probotector"
+} ELSE {
+    $Game = "Superc"
 }
 
 <#

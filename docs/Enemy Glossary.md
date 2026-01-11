@@ -219,12 +219,13 @@ them.
 ```
  7  bit  0
  7654 3210
- |  | ||||
- |  | |||+- 0 = walking left, 1 = walking right
- |  | ||+-- 1 = fire, 0 = do not fire
- |  + +---- soldier palette override (see soldier_sprite_attr_tbl)
- |          when zero, use palette as defined by level
- |          when non-zero soldier will fire
+ || | ||||
+ || | |||+- 0 = walking left, 1 = walking right
+ || | ||+-- 1 = fire, 0 = do not fire
+ || + +---- soldier palette override (see soldier_sprite_attr_tbl)
+ ||         when zero, use palette as defined by level
+ ||         when non-zero soldier will fire
+ |+-------- in probotector, set for Level 7 soldier
  +--------- set to be orian (alien), clear for regular soldier
 ```
 

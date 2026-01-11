@@ -25,6 +25,14 @@ For the disassembly of _Contra_ see https://github.com/vermiceli/nes-contra-us/
 
 # Building
 
+In addition to _Super C_ (US), this repo can also build the _Probotector II:
+Return of the Evil Forces_ (PAL) rom.  To keep instructions simple, the section
+below only contains instructions for building _Super C_ (US).
+
+If you are interested in building a _Probotector_ rom file, first read this
+section to understand what is needed, then follow the instructions in the
+section titled _Probotector_.
+
 ## Prerequisites
 
 * This repo does not include the assets (graphics data and audio data) necessary
@@ -89,3 +97,38 @@ the code.  Below are some of the more important documents.
 
 All sprites were captured and labeled for easy reference in
 [docs/sprite_library/README.md](./docs/sprite_library/README.md)
+
+# Probotector
+This repo can also produce a _Probotector II: Return of the Evil Forces_ rom
+file.  _Probotector_ is the PAL-specific variation of the _Super C_ (US) game.
+It is mostly identical except for different graphics.  For a full list of
+differences, see the document `docs/Probotector.md`.
+
+## Building
+
+First read the section above for building _Contra_ (US) in general.  The process
+is very similar.  Place a _Probotector_ rom in the root folder with the name
+`baserom.nes`.  The MD5 hash of `baserom.nes` ROM should be one of the
+following.  The difference in ROM hashes come from the fact that there is a
+single ignored bit in the iNES header that can be either set or not set and does
+not impact the game.
+  * `917166C2ED0E3316255A57C81DC38ABC`
+  * `E56233E54F4C497B0D03AFB36D544414`
+
+Then, depending on your environment, run one of the following commands.
+
+| Environment             | Command                         |
+|-------------------------|---------------------------------|
+| Windows                 | `.\build.ps1 -Game Probotector` |
+| Windows (no PowerShell) | `.\build.bat Probotector`       |
+| Mac/Unix/Linux          | `./build.sh Probotector`        |
+
+Notes of caution, especially for people building both _Super C_ (US) and
+_Probotector_.
+
+1.  Be sure you have the correct `baserom.nes` for the game you are building.
+Otherwise, the generated rom will be incorrect.
+2.  If you have _Contra_ (US) assets in the `/src/assets/` folder and are
+building _Probotector_, or vice versa, the build scripts will delete the graphic
+asset data and re-extract it from the `baserom.nes`. This prevents accidentally
+using the wrong game's assets in the result rom.

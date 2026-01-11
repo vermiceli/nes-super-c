@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 4 contains Level 7 (Headquarters) and Level 8 (The Final Stage) enemies.
 ; Then the bank contains the logic that assigns enemies to specific locations on
@@ -620,7 +620,11 @@ stomping_ceiling_routine_01:
     lda #$06
     sta IRQ_TYPE                    ; set irq routine type to irq_handler_06_ptr_tbl
                                     ; level 8 stomping ceiling
-    lda #$b9
+    .ifdef Probotector
+        lda #$ac
+    .else
+        lda #$b9
+    .endif
     sta SCANLINE_IRQ_1              ; set IRQ interrupt to happen at ~72% of the screen
     lda #$e0
     sta IRQ_PPUADDR                 ; PPU address for post-irq (floor) $22e0 or $2ee0
@@ -1485,16 +1489,31 @@ final_boss_set_scroll_nt_irq_data:
 ; set scanline IRQ data, an in particular the size of the region for the boss
 ; which gets larger as boss rises
 final_boss_set_irq_data:
+    .ifdef Probotector
+        lda #$dc
+        ldy IRQ_TYPE
+        beq @continue
+    .endif
     lda #$f0
-    sec                     ; set carry flag in preparation for subtraction
-    sbc IRQ_Y_SCROLL        ; subtract vertical scroll for use after 1st IRQ
-    clc                     ; clear carry in preparation for addition
-    adc #$31
+    sec                ; set carry flag in preparation for subtraction
+    sbc IRQ_Y_SCROLL   ; subtract vertical scroll for use after 1st IRQ
+    clc                ; clear carry in preparation for addition
+    .ifdef Probotector
+        adc #$24
+    .else
+        adc #$31
+    .endif
+
+@continue:
     sta SCANLINE_IRQ_1      ; set number of scanlines until first interrupt
     lda #$05
     sta SCANLINE_IRQ_2_DIFF ; set the number of scanlines after SCANLINE_IRQ_1 to run the next scanline IRQ
                             ; this creates a small black region above the final boss #$05 scanlines tall
-    lda #$ba
+    .ifdef Probotector
+        lda #$ad
+    .else
+        lda #$ba
+    .endif
     sec                     ; set carry flag in preparation for subtraction
     sbc SCANLINE_IRQ_1
     sta SCANLINE_IRQ_3_DIFF ; set size of region showing boss bg
@@ -2643,7 +2662,11 @@ temple_of_terror_skull_routine_01:
     lda #$0a
     sta IRQ_TYPE                    ; set irq routine type to irq_handler_09_ptr_tbl
                                     ; level 7 headquarters boss (temple of terror)
-    lda #$52
+    .ifdef Probotector
+        lda #$46
+    .else
+        lda #$52
+    .endif
     sta SCANLINE_IRQ_1              ; set where irq_handler_09_00 will run
                                     ; this is where the left pattern table top half tiles are updated from #$2c to #$30
     lda #$e0
@@ -3275,34 +3298,93 @@ level_1_enemy_screen_30:
     .byte $ff,$ff,$ff,$ff,$ff,$ff,$ff,$ff
 
 level_2_enemy_screen_ptr_tbl:
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_02
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_04
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_06
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_08
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_0a
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_0c
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_0e
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_10
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_12
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_14
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_16
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_18
-    .addr level_2_enemy_screen_no_enemies
-    .addr level_2_enemy_screen_1a
-    .addr level_2_enemy_screen_no_enemies
+    .ifdef Probotector
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_02
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_02
+        .addr level_2_enemy_screen_02
+        .addr level_2_enemy_screen_04
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_04
+        .addr level_2_enemy_screen_04
+        .addr level_2_enemy_screen_06
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_06
+        .addr level_2_enemy_screen_06
+        .addr level_2_enemy_screen_08
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_08
+        .addr level_2_enemy_screen_08
+        .addr level_2_enemy_screen_0a
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_0c
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_0e
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_10
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_12
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_14
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_16
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_18
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_1a
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+    .else
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_02
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_04
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_06
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_08
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_0a
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_0c
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_0e
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_10
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_12
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_14
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_16
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_18
+        .addr level_2_enemy_screen_no_enemies
+        .addr level_2_enemy_screen_1a
+        .addr level_2_enemy_screen_no_enemies
+    .endif
 
 level_2_enemy_screen_no_enemies:
     .byte $ff
@@ -4293,10 +4375,14 @@ level_6_enemy_screen_no_enemies:
     .byte $ff
 
 level_6_enemy_screen_02:
-    .byte $10,$c0,$64 ; enemy type #$64 (suspicious face), attrs: #$40, pos: (#$08,#$18), can overwrite bullet, can overwrite slot 0
-    .byte $5d,$80,$70 ; enemy type #$70 (suspicious face arm), attrs: #$00, pos: (#$d8,#$58), can overwrite bullet
-    .byte $52,$81,$70 ; enemy type #$70 (suspicious face arm), attrs: #$01, pos: (#$28,#$58), can overwrite bullet
-    .byte $71,$81,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$01, pos: (#$18,#$78), can overwrite bullet
+    .byte $10,$c0,$64     ; enemy type #$64 (suspicious face), attrs: #$40, pos: (#$08,#$18), can overwrite bullet, can overwrite slot 0
+    .byte $5d,$80,$70     ; enemy type #$70 (suspicious face arm), attrs: #$00, pos: (#$d8,#$58), can overwrite bullet
+    .byte $52,$81,$70     ; enemy type #$70 (suspicious face arm), attrs: #$01, pos: (#$28,#$58), can overwrite bullet
+    .ifdef Probotector
+        .byte $61,$81,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$01, pos: (#$18,#$68), can overwrite bullet
+    .else
+        .byte $71,$81,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$01, pos: (#$18,#$78), can overwrite bullet
+    .endif
     .byte $ff
 
 level_6_enemy_screen_04:
@@ -4304,8 +4390,13 @@ level_6_enemy_screen_04:
     .byte $ff
 
 level_6_enemy_screen_06:
-    .byte $e1,$c0,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$40, pos: (#$18,#$e8)
-                      ; can overwrite bullet, can overwrite slot 0
+    .ifdef Probotector
+        .byte $d1,$c0,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$40, pos: (#$18,#$d8)
+                          ; can overwrite bullet, can overwrite slot 0
+    .else
+        .byte $e1,$c0,$71 ; enemy type #$71 (area 6 tile swapper), attrs: #$40, pos: (#$18,#$e8)
+                          ; can overwrite bullet, can overwrite slot 0
+    .endif
     .byte $ff
 
 level_6_enemy_screen_08:
@@ -4834,7 +4925,11 @@ sound_menu_routine_03:
     asl
     asl
     asl
-    adc #$a7
+    .ifdef Probotector
+        adc #$9f
+    .else
+        adc #$a7
+    .endif
     sta SPRITE_Y_POS                  ; set cursor position
     rts
 
@@ -4934,9 +5029,13 @@ change_sound_selection:
 
 sound_menu_draw_names:
     lda #$22
-    sta $01
-    lda #$a8
-    sta $00
+    sta $01                    ; set PPU address high byte
+    .ifdef Probotector
+        lda #$88
+    .else
+        lda #$a8
+    .endif
+    sta $00                    ; set PPU address low byte
     lda #$00
     sta $09
     lda SOUND_MENU_SCROLL
@@ -5119,20 +5218,28 @@ sound_names_00:
     .byte $17,$0f,$0e,$19,$16,$0f,$23,$00 ; MEDOLEY (see sound_medley_00)
 
 sound_menu_ui_elements_tbl:
-    .addr sound_menu_ui_elements_00 ; sound menu palette (attribute table data)
-    .addr sound_menu_ui_elements_01 ; sound mode box top line
-    .addr sound_menu_ui_elements_02 ; |SOUND MODE|
-    .addr sound_menu_ui_elements_03 ; sound mode box bottom line
-    .addr sound_menu_ui_elements_04
-    .addr sound_menu_ui_elements_05 ; sound menu box top line
-    .addr sound_menu_ui_elements_06 ; |                   |
-    .addr sound_menu_ui_elements_07 ; |          B...SOUND|
-    .addr sound_menu_ui_elements_08 ; |              START|
-    .addr sound_menu_ui_elements_09 ; |                   |
-    .addr sound_menu_ui_elements_0a ; |          A...SOUND|
-    .addr sound_menu_ui_elements_0b ; |               OFF |
-    .addr sound_menu_ui_elements_0c ; |                   |
-    .addr sound_menu_ui_elements_0d ; sound menu box bottom line
+    .addr sound_menu_ui_elements_00     ; sound menu palette (attribute table data)
+    .addr sound_menu_ui_elements_01     ; sound mode box top line
+    .addr sound_menu_ui_elements_02     ; |SOUND MODE|
+    .addr sound_menu_ui_elements_03     ; sound mode box bottom line
+    .ifdef Superc
+        .addr sound_menu_ui_elements_04
+    .endif
+    .addr sound_menu_ui_elements_05     ; sound menu box top line
+    .addr sound_menu_ui_elements_06     ; |                   |
+    .addr sound_menu_ui_elements_07     ; |          B...SOUND|
+    .addr sound_menu_ui_elements_08     ; |              START|
+    .addr sound_menu_ui_elements_09     ; |                   |
+    .addr sound_menu_ui_elements_0a     ; |          A...SOUND|
+    .addr sound_menu_ui_elements_0b     ; |               OFF |
+    .addr sound_menu_ui_elements_0c     ; |                   |
+    .ifdef Probotector
+        .byte $29,$9f
+    .endif
+    .addr sound_menu_ui_elements_0d     ; sound menu box bottom line
+    .ifdef Probotector
+        .byte $29,$9f
+    .endif
 
 ; sound menu palette (attribute table data)
 sound_menu_ui_elements_00:
@@ -5164,14 +5271,20 @@ sound_menu_ui_elements_03:
     .byte $ff                                             ; end
 
 sound_menu_ui_elements_04:
-    .byte $22,$6a ; PPU address
-    .byte $01     ; length of tiles is #$01
-    .byte $00
-    .byte $ff     ; end
+    .ifdef Superc
+        .byte $22,$6a ; PPU address
+        .byte $01     ; length of tiles is #$01
+        .byte $00
+        .byte $ff     ; end
+    .endif
 
 ; sound menu box top line
 sound_menu_ui_elements_05:
+.ifdef Probotector
+    .byte $22,$65                                                         ; PPU address
+.else
     .byte $22,$85                                                         ; PPU address
+.endif
     .byte $16                                                             ; length of tiles is #$16
     .byte $28,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c
     .byte $2c,$2c,$2c,$2c,$2c,$29
@@ -5179,77 +5292,137 @@ sound_menu_ui_elements_05:
 
 ; |                   |
 sound_menu_ui_elements_06:
-    .byte $22,$a5 ; PPU address
-    .byte $01     ; length of tiles is 1
-    .byte $2d     ; |
-    .byte $22,$ba ; PPU address
-    .byte $01     ; length of tiles is 1
-    .byte $2d     ; |
-    .byte $ff     ; end
+    .ifdef Probotector
+        .byte $22,$85  ; PPU address
+    .else
+        .byte $22,$a5  ; PPU address
+    .endif
+    .byte $01          ; length of tiles is 1
+    .byte $2d          ; |
+    .ifdef Probotector
+        .byte $22,$9a  ; PPU address
+    .else
+        .byte $22,$ba  ; PPU address
+    .endif
+    .byte $01          ; length of tiles is 1
+    .byte $2d          ; |
+    .byte $ff          ; end
 
 ; |          B...SOUND|
 sound_menu_ui_elements_07:
-    .byte $22,$c5                                 ; PPU address
+    .ifdef Probotector
+        .byte $22,$a5                             ; PPU address
+    .else
+        .byte $22,$c5                             ; PPU address
+    .endif
     .byte $01                                     ; length of tiles
     .byte $2d                                     ; |
-    .byte $22,$d1                                 ; PPU address
+    .ifdef Probotector
+        .byte $22,$b1                             ; PPU address
+    .else
+        .byte $22,$d1                             ; PPU address
+    .endif
     .byte $0a                                     ; length of tiles
     .byte $0c,$25,$25,$25,$1d,$19,$1f,$18,$0e,$2d ; B...SOUND|
     .byte $ff                                     ; end
 
 ; |              START|
 sound_menu_ui_elements_08:
-    .byte $22,$e5                 ; PPU address
+    .ifdef Probotector
+        .byte $22,$c5             ; PPU address
+    .else
+        .byte $22,$e5             ; PPU address
+    .endif
     .byte $01                     ; length of tiles
     .byte $2d                     ; |
-    .byte $22,$f5                 ; PPU address
+    .ifdef Probotector
+        .byte $22,$d5             ; PPU address
+    .else
+        .byte $22,$f5             ; PPU address
+    .endif
     .byte $06                     ; length of tiles
     .byte $1d,$1e,$0b,$1c,$1e,$2d ; START|
     .byte $ff
 
 ; |                   |
 sound_menu_ui_elements_09:
-    .byte $23,$05 ; PPU address
-    .byte $01     ; length of tiles
-    .byte $2d     ; |
-    .byte $23,$1a ; PPU address
-    .byte $01     ; length of tiles
-    .byte $2d     ; |
+    .ifdef Probotector
+        .byte $22,$e5  ; PPU address
+    .else
+        .byte $23,$05  ; PPU address
+    .endif
+    .byte $01          ; length of tiles
+    .byte $2d          ; |
+    .ifdef Probotector
+        .byte $22,$fa  ; PPU address
+    .else
+        .byte $23,$1a  ; PPU address
+    .endif
+    .byte $01          ; length of tiles
+    .byte $2d          ; |
     .byte $ff
 
 ; |          A...SOUND|
 sound_menu_ui_elements_0a:
-    .byte $23,$25                                 ; PPU address
+    .ifdef Probotector
+        .byte $23,$05                             ; PPU address
+    .else
+        .byte $23,$25                             ; PPU address
+    .endif
     .byte $01                                     ; length of tiles
     .byte $2d                                     ; |
-    .byte $23,$31                                 ; PPU address
+    .ifdef Probotector
+        .byte $23,$11                             ; PPU address
+    .else
+        .byte $23,$31                             ; PPU address
+    .endif
     .byte $0a                                     ; length of tiles
     .byte $0b,$25,$25,$25,$1d,$19,$1f,$18,$0e,$2d ; A...SOUND|
     .byte $ff
 
 ; |               OFF |
 sound_menu_ui_elements_0b:
-    .byte $23,$45             ; PPU address
+    .ifdef Probotector
+        .byte $23,$25         ; PPU address
+    .else
+        .byte $23,$45         ; PPU address
+    .endif
     .byte $01                 ; length of tiles
     .byte $2d                 ; |
-    .byte $23,$56             ; PPU address
+    .ifdef Probotector
+        .byte $23,$36         ; PPU address
+    .else
+        .byte $23,$56         ; PPU address
+    .endif
     .byte $05                 ; length of tiles
     .byte $19,$10,$10,$00,$2d ; OFF |
     .byte $ff
 
 ; |                   |
 sound_menu_ui_elements_0c:
-    .byte $23,$65 ; PPU address
-    .byte $01     ; length of tiles
-    .byte $2d     ; |
-    .byte $23,$7a ; PPU address
-    .byte $01     ; length of tiles
-    .byte $2d     ; |
+    .ifdef Probotector
+        .byte $23,$45  ; PPU address
+    .else
+        .byte $23,$65  ; PPU address
+    .endif
+    .byte $01          ; length of tiles
+    .byte $2d          ; |
+    .ifdef Probotector
+        .byte $23,$5a  ; PPU address
+    .else
+        .byte $23,$7a  ; PPU address
+    .endif
+    .byte $01          ; length of tiles
+    .byte $2d          ; |
     .byte $ff
 
 ; sound menu box bottom line
 sound_menu_ui_elements_0d:
-    .byte $23,$85
+    .ifdef Probotector
+        .byte $23,$65                                         ; PPU address
+    .else
+        .byte $23,$85                                         ; PPU address
+    .endif
     .byte $16
     .byte $2a,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c
     .byte $2c,$2c,$2c,$2c,$2c,$2c,$2c,$2c,$2b,$ff

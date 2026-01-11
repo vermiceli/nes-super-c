@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank D contains the rest of the non-DPCM encoded sound data.
 

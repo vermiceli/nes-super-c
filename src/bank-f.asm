@@ -1,3 +1,5 @@
+; NES Super C Disassembly - v1.01
+; https://github.com/vermiceli/nes-super-c/
 ; Bank F is the core of the game's programming. Reset, NMI, and IRQ vectors are
 ; in this bank and is the entry point to the game.  Bank F is always loaded in
 ; memory unlike other banks, which are memory-mapped and can be swapped out.
@@ -321,74 +323,174 @@ irq_handler_ptr_tbl:
     .addr irq_handler_0f_ptr_tbl ; level 6 miniboss (suspicious face) and boss (jagger froid)
 
 irq_handler_00_ptr_tbl:
-    .addr remove_registers_from_stack_and_rti
+    .ifdef Probotector
+        .addr irq_handler_shared_00               ; scanline #$0c - set character banks and advance routine
+        .addr irq_handler_shared_01               ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .else
+        .addr remove_registers_from_stack_and_rti
+    .endif
 
 ; level 1 fort firestorm boss screen, switches from helicopter view to ground view
 irq_handler_01_ptr_tbl:
-    .addr irq_handler_01_00 ; sets scroll and tiles so the ground is at the top of the view
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_01_00         ; sets scroll and tiles so the ground is at the top of the view
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 4 elevator
 irq_handler_02_ptr_tbl:
-    .addr irq_handler_02_00 ; top of elevator floor
-    .addr irq_handler_02_01 ; bottom of elevator floor
-    .addr irq_handler_02_02 ; bottom of black bar under elevator floor
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_02_00         ; top of elevator floor
+    .addr irq_handler_02_01         ; bottom of elevator floor
+    .addr irq_handler_02_02         ; bottom of black bar under elevator floor
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; end credits
 irq_handler_03_ptr_tbl:
-    .addr irq_handler_03_00 ; scanline #$38 - set next scanline irq, horizontally scroll clouds
-    .addr irq_handler_03_01 ; scanline #$59 - horizontally scroll mountains (parallax effect)
-    .addr irq_handler_03_02 ; scanline #$7d - clear left pattern table, set PPU address and scroll, set vertical mirroring
-    .addr irq_handler_03_03 ; scanline #$85 - restore left pattern table tiles (contains text tiles)
-    .addr irq_handler_03_04 ; scanline #$c6 - set left pattern table to all black
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_03_00         ; scanline #$38 - set next scanline irq, horizontally scroll clouds
+    .addr irq_handler_03_01         ; scanline #$59 - horizontally scroll mountains (parallax effect)
+    .addr irq_handler_03_02         ; scanline #$7d - clear left pattern table, set PPU address and scroll, set vertical mirroring
+    .addr irq_handler_03_03         ; scanline #$85 - restore left pattern table tiles (contains text tiles)
+    .addr irq_handler_03_04         ; scanline #$c6 - set left pattern table to all black
 
 ; level 4 laser chandelier
 irq_handler_04_ptr_tbl:
-    .addr irq_handler_04_00 ; scanline #$18 - set next irq, base nametable, X scroll, pattern table tiles, and advance routine
-    .addr irq_handler_04_01 ; scanline #$1a - set next irq to #$a8 scanlines later
-    .addr irq_handler_04_02 ; scanline #$c6 - set base nametable $2400, clear X scroll, set pattern table tiles, acknowledge interrupt
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_04_00         ; scanline #$18 - set next irq, base nametable, X scroll, pattern table tiles, and advance routine
+    .addr irq_handler_04_01         ; scanline #$1a - set next irq to #$a8 scanlines later
+    .addr irq_handler_04_02         ; scanline #$c6 - set base nametable $2400, clear X scroll, set pattern table tiles, acknowledge interrupt
 
 ; level 8 stomping ceiling
 irq_handler_06_ptr_tbl:
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
     .addr irq_handler_06_00
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 3 jungle boss screen (fortress wall)
 irq_handler_07_ptr_tbl:
-    .addr irq_handler_07_00 ; update horizontal scroll for earthquake effect, and swap background tiles
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_07_00         ; update horizontal scroll for earthquake effect, and swap background tiles
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 7 headquarters boss (temple of terror)
 irq_handler_09_ptr_tbl:
-    .addr irq_handler_09_00 ; change left top pattern table tiles from #$2c to #$30
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_09_00         ; change left top pattern table tiles from #$2c to #$30
 
 ; level 5 cliff boss (krypto-crustacean)
 irq_handler_0b_ptr_tbl:
-    .addr irq_handler_0b_00 ; sets PPU address with scroll to be at $26e0 to show ground, updates left pattern table tiles
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_0b_00         ; sets PPU address with scroll to be at $26e0 to show ground, updates left pattern table tiles
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 2 boss screen
 irq_handler_0c_ptr_tbl:
-    .addr irq_handler_0c_00 ; sets next scanline interrupt between #$01 and #$08 for fine-grain Y scroll
-    .addr irq_handler_0c_01 ; main tank boss region
-    .addr irq_handler_0c_02 ; set PPU address to render bottom of screen with alley and 2 walls
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_0c_00         ; sets next scanline interrupt between #$01 and #$08 for fine-grain Y scroll
+    .addr irq_handler_0c_01         ; main tank boss region
+    .addr irq_handler_0c_02         ; set PPU address to render bottom of screen with alley and 2 walls
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 8 final boss
 irq_handler_0d_ptr_tbl:
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
     .addr irq_handler_0d_00
     .addr irq_handler_0d_01
     .addr irq_handler_0d_02
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 6 before first door
 irq_handler_0e_ptr_tbl:
-    .addr irq_handler_0e_00 ; set left pattern table banks to #$4c and #$52
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_0e_00         ; set left pattern table banks to #$4c and #$52
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
 
 ; level 6 miniboss (suspicious face) and boss (jagger froid)
 irq_handler_0f_ptr_tbl:
-    .addr irq_handler_0f_00 ; sets left pattern table banks to #$50 and #$52
+    .ifdef Probotector
+        .addr irq_handler_shared_00 ; scanline #$0c - set character banks and advance routine
+    .endif
+    .addr irq_handler_0f_00         ; sets left pattern table banks to #$50 and #$52
+    .ifdef Probotector
+        .addr irq_handler_shared_01 ; scanline #$e8 - set pattern tables to black tiles, acknowledge irq, then rti
+    .endif
+
+.ifdef Probotector
+    ; interrupt on every level at the top of the visible screen
+    ; scanline #$0c - sets character banks and advance routine
+    irq_handler_shared_00:
+        lda SPLIT_SCANLINE_IRQ_1
+        sta $c000                ; set number of scanlines until trigger scanline IRQ
+        ldy #$04
+
+    @delay_loop:
+        dey
+        bne @delay_loop
+        jsr set_chr_banks
+        jmp adv_irq_routine_rti
+
+    ; interrupt on every level at the bottom of the visible screen
+    ; scanline #$e8 - sets pattern tables to black tiles, acknowledge irq, then rti
+    irq_handler_shared_01:
+        ldy #$06
+
+    @delay_loop:
+        dey
+        bne @delay_loop
+        jsr clear_pattern_tbls
+        jmp acknowledge_irq_rti
+.endif
 
 ; level 1 fort firestorm boss screen
 ; sets scroll and tiles so the ground is at the top of the view
 ; ground tiles are in center of nametable, helicopter tiles are at bottom and
 ; wrap around to top
 irq_handler_01_00:
-    ldy #$01
+    .ifdef Probotector
+        lda #$47
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$06
+    .else
+        ldy #$01
+    .endif
 
 @delay_loop:
     dey
@@ -408,7 +510,11 @@ irq_handler_01_00:
     lda #$38                       ; left top half pattern table bank (level 1 ground tiles)
     ldx #$3a                       ; left bottom half pattern table bank (level 1 ground tiles)
     jsr set_left_pattern_tbl_banks ; set the left ($0000-$0fff) pattern table tile banks
-    jmp acknowledge_irq_rti        ; acknowledge the interrupt, restore registers, and rti
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti    ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; top of elevator floor - first scanline interrupt at top of elevator floor
 ; where player stands on.
@@ -424,7 +530,11 @@ irq_handler_02_00:
                              ; creates a varying height of elevator floor from #$18 to #$1f
                              ; for smooth Y scrolling between nametable rows
     sta $c000                ; set number of scanlines until trigger scanline IRQ
-    ldy #$1e
+    .ifdef Probotector
+        ldy #$06
+    .else
+        ldy #$1e
+    .endif
 
 @delay_loop:
     dey
@@ -456,12 +566,25 @@ irq_handler_02_00:
 ; bottom of elevator floor
 irq_handler_02_01:
     lda SPLIT_SCANLINE_IRQ_3 ; load next scanline interrupt
-    sta $c000                ; set number of scanlines until trigger scanline IRQ
-    ldy #$14
+    .ifdef Probotector
+        bne @write_scanline
+        lda #$27
 
-@delay_loop:
-    dey
-    bne @delay_loop
+    @write_scanline:
+        sta $c000 ; set number of scanlines until trigger scanline IRQ
+        ldy #$03
+
+    @write_loop:
+        dey
+        bne @write_loop
+    .else
+        sta $c000       ; set number of scanlines until trigger scanline IRQ
+        ldy #$14
+
+    @delay_loop:
+        dey
+        bne @delay_loop
+    .endif
     jsr clear_left_pattern_tbl              ; set left pattern table to all black tiles
     lda PPUSTATUS
     ldy #$00
@@ -482,7 +605,13 @@ irq_handler_02_01:
 
 ; bottom of black bar under elevator floor
 irq_handler_02_02:
-    ldy #$0f
+    .ifdef Probotector
+        lda #$26
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$02
+    .else
+        ldy #$0f
+    .endif
 
 @delay_loop:
     dey
@@ -498,6 +627,9 @@ irq_handler_02_restore_tiles:
     lda LEFT_TOP_HALF_CHR_BANK     ; left top half pattern table bank
     ldx LEFT_BOTTOM_CHR_HALF_BANK  ; left bottom half pattern table bank
     jsr set_left_pattern_tbl_banks ; set the left ($0000-$0fff) pattern table tile banks
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .endif
     jmp acknowledge_irq_rti        ; acknowledge the interrupt, restore registers, and rti
 
 ; end credits - scanline #$38 - set next scanline irq, horizontally scroll clouds
@@ -593,7 +725,11 @@ irq_handler_03_04:
 irq_handler_04_00:
     lda SPLIT_SCANLINE_IRQ_2 ; load number of scanlines until next IRQ (always #$01)
     sta $c000                ; set number of scanlines until trigger scanline IRQ
-    ldy #$09
+    .ifdef Probotector
+        ldy #$02
+    .else
+        ldy #$09
+    .endif
 
 @delay_loop:
     dey
@@ -626,7 +762,11 @@ irq_handler_04_01:
 ; level 4 laser chandelier - set PPU to draw floor bg tiles
 ; set base nametable $2400, clear X scroll, set pattern table tiles, acknowledge interrupt
 irq_handler_04_02:
-    ldy #$09
+    .ifdef Probotector
+        ldy #$04
+    .else
+        ldy #$09
+    .endif
 
 @delay_loop:
     dey
@@ -653,55 +793,75 @@ acknowledge_irq_rti:
 ; renders after stomping ceiling has rendered triggered at ~72% of screen
 ; always sets PPUADDR to same position plus horizontal scroll to show ground
 irq_handler_06_00:
-    ldy #$09
+    .ifdef Probotector
+        lda #$2f
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$08
+    .else
+        ldy #$09
+    .endif
 
 @delay_loop:
     dey
     bne @delay_loop
-    lda PPUSTATUS             ; prepare PPU registers for writing PPUADDR (clear w latch)
-    ldx IRQ_HANDLER_PPUADDR+1 ; split values loaded from init_scanline_irq
-    lda IRQ_HANDLER_PPUADDR   ; from IRQ_* variables
-    ldy SPLIT_X_SCROLL        ; which were set in stomping_ceiling_routine_01
+    lda PPUSTATUS               ; prepare PPU registers for writing PPUADDR (clear w latch)
+    ldx IRQ_HANDLER_PPUADDR+1   ; split values loaded from init_scanline_irq
+    lda IRQ_HANDLER_PPUADDR     ; from IRQ_* variables
+    ldy SPLIT_X_SCROLL          ; which were set in stomping_ceiling_routine_01
     stx PPUADDR
-    sta PPUADDR               ; either $22e0 or $2ee0
+    sta PPUADDR                 ; either $22e0 or $2ee0
     sty PPUSCROLL
-    sty PPUSCROLL             ; updating scroll during rendering does not update vertical scroll
-                              ; because changes to PPU t register will be ignored at the end of the line
-                              ; however, the second write does clear the write toggle
-                              ; for more information, see split horizontal scroll
-                              ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
-    jmp acknowledge_irq_rti   ; acknowledge the interrupt, restore registers, and rti
+    sty PPUSCROLL               ; updating scroll during rendering does not update vertical scroll
+                                ; because changes to PPU t register will be ignored at the end of the line
+                                ; however, the second write does clear the write toggle
+                                ; for more information, see split horizontal scroll
+                                ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; level 3 jungle boss screen (fortress wall) - updates horizontal scroll for earthquake effect, and swaps background tiles
 irq_handler_07_00:
-    ldy #$04
+    .ifdef Probotector
+        lda SCANLINE_IRQ_2_DIFF
+        sta $c000               ; set number of scanlines until trigger scanline IRQ
+        ldy #$01
+    .else
+        ldy #$04
+    .endif
 
 @delay_loop:
     dey
     bne @delay_loop
-    lda PPUSTATUS           ; prepare PPU registers for writing PPUADDR (clear w latch)
+    lda PPUSTATUS               ; prepare PPU registers for writing PPUADDR (clear w latch)
     ldx #$22
     lda #$80
     ldy SPLIT_X_SCROLL
     stx PPUADDR
     sta PPUADDR
-    sty PPUSCROLL           ; update horizontal scroll to match pre irq scroll (for earthquake effect)
-    sty PPUSCROLL           ; updating scroll during rendering does not update vertical scroll
-                            ; because changes to PPU t register will be ignored at the end of the line
-                            ; however, the second write does clear the write toggle
-                            ; for more information, see split horizontal scroll
-                            ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
+    sty PPUSCROLL               ; update horizontal scroll to match pre irq scroll (for earthquake effect)
+    sty PPUSCROLL               ; updating scroll during rendering does not update vertical scroll
+                                ; because changes to PPU t register will be ignored at the end of the line
+                                ; however, the second write does clear the write toggle
+                                ; for more information, see split horizontal scroll
+                                ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
     ldy #$00
     lda #$12
     ldx #$10
-    sty $8000               ; R0: Select 2 KiB CHR bank at PPU $0000-$07FF (left top half chr bank)
-    sta $8001               ; set left top half character bank to bank #$12
+    sty $8000                   ; R0: Select 2 KiB CHR bank at PPU $0000-$07FF (left top half chr bank)
+    sta $8001                   ; set left top half character bank to bank #$12
     iny
-    sty $8000               ; R1: Select 2 KiB CHR bank at PPU $0800-$0FFF (left bottom half chr bank)
-    stx $8001               ; set left bottom half character bank to bank #$10
-    lda BANK_SELECT         ; load last backed-up bank select command
-    sta $8000               ; set bank select command
-    jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    sty $8000                   ; R1: Select 2 KiB CHR bank at PPU $0800-$0FFF (left bottom half chr bank)
+    stx $8001                   ; set left bottom half character bank to bank #$10
+    lda BANK_SELECT             ; load last backed-up bank select command
+    sta $8000                   ; set bank select command
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; change left top pattern table tiles from #$2c to #$30
 ; bottom left tiles are always #$2e
@@ -719,7 +879,13 @@ irq_handler_09_00:
 
 ; sets PPU address with scroll to be at $26e0 to show ground, updates left pattern table tiles
 irq_handler_0b_00:
-    ldy #$07
+    .ifdef Probotector
+        lda #$27
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$06
+    .else
+        ldy #$07
+    .endif
 
 @delay_loop:
     dey
@@ -739,7 +905,11 @@ irq_handler_0b_00:
     lda #$20                       ; left top half pattern table bank
     ldx #$22                       ; left bottom half pattern table bank
     jsr set_left_pattern_tbl_banks ; set the left ($0000-$0fff) pattern table tile banks
-    jmp acknowledge_irq_rti        ; acknowledge the interrupt, restore registers, and rti
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti    ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; level 2 boss screen - first scanline interrupt after top of screen has been
 ; rendered.  The top of the screen is the exit alley and the two walls.
@@ -754,7 +924,11 @@ irq_handler_0c_00:
                              ; creates a varying height from #$08 to #$01
                              ; for smooth Y scrolling between nametable rows
     sta $c000                ; set number of scanlines until trigger scanline IRQ
-    ldy #$06
+    .ifdef Probotector
+        ldy #$05
+    .else
+        ldy #$06
+    .endif
 
 @delay_loop:
     dey
@@ -791,7 +965,13 @@ irq_handler_0c_01:
 ; level 2 boss screen
 ; set PPU address to render bottom of screen with alley and 2 walls
 irq_handler_0c_02:
-    ldy #$08
+    .ifdef Probotector
+        lda #$27
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$07
+    .else
+        ldy #$08
+    .endif
 
 @delay_loop:
     dey
@@ -800,14 +980,18 @@ irq_handler_0c_02:
     ldx #$23
     lda #$00
     stx PPUADDR
-    sta PPUADDR             ; set PPU address to $2300
-    sta PPUSCROLL           ; clears any horizontal scroll
-    sta PPUSCROLL           ; updating scroll during rendering does not update vertical scroll
-                            ; because changes to PPU t register will be ignored at the end of the line
-                            ; however, the second write does clear the write toggle
-                            ; for more information, see split horizontal scroll
-                            ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
-    jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    sta PPUADDR                 ; set PPU address to $2300
+    sta PPUSCROLL               ; clears any horizontal scroll
+    sta PPUSCROLL               ; updating scroll during rendering does not update vertical scroll
+                                ; because changes to PPU t register will be ignored at the end of the line
+                                ; however, the second write does clear the write toggle
+                                ; for more information, see split horizontal scroll
+                                ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; final boss - first scanline interrupt after stalactites have been rendered
 ; area gets smaller as boss rises up
@@ -852,7 +1036,13 @@ irq_handler_0d_01:
 ; final boss - interrupt handler after boss is shown, always scanline #$c1.
 ; Show the ground
 irq_handler_0d_02:
-    ldy #$07
+    .ifdef Probotector
+        lda #$27
+        sta $c000      ; set number of scanlines until trigger scanline IRQ
+        ldy #$04
+    .else
+        ldy #$07
+    .endif
 
 @delay_loop:
     dey
@@ -860,7 +1050,11 @@ irq_handler_0d_02:
     lda LEFT_TOP_HALF_CHR_BANK     ; left top half pattern table bank
     ldx LEFT_BOTTOM_CHR_HALF_BANK  ; left bottom half pattern table bank
     jsr set_left_pattern_tbl_banks ; set the left ($0000-$0fff) pattern table tile banks
-    ldy #$0e
+    .ifdef Probotector
+        ldy #$0c
+    .else
+        ldy #$0e
+    .endif
 
 @delay_loop2:
     dey
@@ -868,16 +1062,20 @@ irq_handler_0d_02:
     lda PPUSTATUS
     ldx #$23
     lda #$00
-    ldy X_SCROLL            ; load PPU horizontal scroll
+    ldy X_SCROLL                ; load PPU horizontal scroll
     stx PPUADDR
-    sta PPUADDR             ; set PPU address to $2300
+    sta PPUADDR                 ; set PPU address to $2300
     sty PPUSCROLL
-    sty PPUSCROLL           ; updating scroll during rendering does not update vertical scroll
-                            ; because changes to PPU t register will be ignored at the end of the line
-                            ; however, the second write does clear the write toggle
-                            ; for more information, see split horizontal scroll
-                            ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
-    jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    sty PPUSCROLL               ; updating scroll during rendering does not update vertical scroll
+                                ; because changes to PPU t register will be ignored at the end of the line
+                                ; however, the second write does clear the write toggle
+                                ; for more information, see split horizontal scroll
+                                ; https://www.nesdev.org/wiki/PPU_scrolling#Split_X_scroll
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 ; sets left pattern table banks to #$4c and #$52
 ; allows the area above the scanline to have the tiles for showing the gray
@@ -900,13 +1098,23 @@ irq_handler_0f_00:
 ;  * a - 2 KiB left top half character bank
 ;  * x - 2 KiB left bottom half character bank
 set_left_chr_tbl_rti:
-    ldy #$05
+    .ifdef Probotector
+        ldy SPLIT_SCANLINE_IRQ_2
+        sty $c000
+        ldy #$04
+    .else
+        ldy #$05
+    .endif
 
 @delay_loop:
     dey
     bne @delay_loop
     jsr set_left_pattern_tbl_banks ; set the left ($0000-$0fff) pattern table tile banks
-    jmp acknowledge_irq_rti        ; acknowledge the interrupt, restore registers, and rti
+    .ifdef Probotector
+        jmp adv_irq_routine_rti
+    .else
+        jmp acknowledge_irq_rti    ; acknowledge the interrupt, restore registers, and rti
+    .endif
 
 exe_game_routine:
     inc FRAME_COUNTER      ; increment frame counter
@@ -999,7 +1207,11 @@ show_intro_handle_state:
     and #$c0                    ; strip to just A and B inputs
     cmp #$c0                    ; see if A and B button are both pressed
     beq show_sound_menu         ; start button, A, and B are pressed, show sound menu
-    lda #$80                    ; start button pressed by itself, starting a game
+    .ifdef Probotector
+        lda #$6c
+    .else
+        lda #$80                ; start button pressed by itself, starting a game
+    .endif
     sta DELAY_TIME_LOW_BYTE
     inc INTRO_SCREEN_STATE      ; move INTRO_SCREEN_STATE to #$03 (made intro player selection)
                                 ; 01=scrolling or in demo, 02=showing player select, 03=made intro player selection
@@ -1013,15 +1225,24 @@ show_sound_menu:
 
 flash_player_select_check_delay:
     lda DELAY_TIME_LOW_BYTE
-    and #$08                          ; keep bit 3, used to flash every #$08 frames
-    asl
-    asl
-    asl
-    asl                               ; pushing bit 3 to bit 7
+    .ifdef Probotector
+        ror
+        ror
+        ror
+        ror
+        and #$80
+        ora PLAYER_MODE
+    .else
+        and #$08                      ; keep bit 3, used to flash every #$08 frames
+        asl
+        asl
+        asl
+        asl                           ; pushing bit 3 to bit 7
                                       ; when set signifies write blank/space instead of text character
                                       ; used for flashing effect every #$08 frames
-    adc PLAYER_MODE                   ; add 1 if 2 player game
+        adc PLAYER_MODE               ; add 1 if 2 player game
                                       ; text index for "1 PLAYER" or "2 PLAYERS"
+    .endif
     jsr load_bank_0_write_text_to_mem ; store "1 PLAYER" or "2 PLAYERS" in CPU_GRAPHICS_BUFFER
     dec DELAY_TIME_LOW_BYTE
     bne intro_input_exit
@@ -1211,14 +1432,21 @@ show_intro_screen:
 
 ; sets the large sprite for the intro screen
 set_intro_screen_bg_sprite:
-    lda #$b8           ; sprite_b8
-    sta SPRITES+1      ; set super c intro screen background sprite
+    lda #$b8               ; sprite_b8
+    sta SPRITES+1          ; set super c intro screen background sprite
     lda #$00
-    sta SPRITE_ATTR+1  ; set sprite attribute for background tile
-    lda #$47
-    sta SPRITE_Y_POS+1 ; set Y position of sprite
-    lda #$88
-    sta SPRITE_X_POS+1 ; set X position of sprite
+    sta SPRITE_ATTR+1      ; set sprite attribute for background tile
+    .ifdef Probotector
+        lda #$3f
+        sta SPRITE_Y_POS+1 ; set Y position of sprite
+        lda #$80
+        sta SPRITE_X_POS+1 ; set X position of sprite
+    .else
+        lda #$47
+        sta SPRITE_Y_POS+1 ; set Y position of sprite
+        lda #$88
+        sta SPRITE_X_POS+1 ; set X position of sprite
+    .endif
     rts
 
 zero_out_nametables:
@@ -1276,7 +1504,11 @@ init_player_vars:
     lda #$02                           ; default to 3 lives
     ldy CHEAT_CODE_STATUS              ; check if 10 lives cheat entered
     beq @continue                      ; branch if not entered
-    lda #$09                           ; 10 lives cheat entered, set number of lives to 10
+    .ifdef Probotector
+        lda #$1d                       ; unlike Super C, Probotector gives 30 lives when cheat code entered
+    .else
+        lda #$09                       ; 10 lives cheat entered, set number of lives to 10
+    .endif
 
 ; sets initial score to get an extra life and clears both player scores
 @continue:
@@ -1366,6 +1598,17 @@ clear_sprites:
     sta SPRITES,y
     bne @loop
     rts
+
+.ifdef Probotector
+    clear_collision_data:
+        lda #$00
+        tay
+    @loop:
+        sta BG_COLLISION_DATA,y
+        iny
+        bne @loop
+        rts
+.endif
 
 ; execute the code at offset A from the pointer table underneath the jsr opcode that called this method
 ; this is done by reading with offset from the value of the stack before this call and adding 1
@@ -1868,7 +2111,11 @@ level_routine_00:
     jsr draw_title_level             ; draw the level title screen's "AREA" and level number, e.g. "AREA 2"
     jsr draw_scores_num_lives        ; draw the level title card screen with the player scores and num lives
     jsr set_menu_pattern_tiles       ; set the tiles used between levels to show high score, level name, etc
-    lda #$80
+    .ifdef Probotector
+        lda #$68
+    .else
+        lda #$80
+    .endif
 
 @continue4:
     jmp set_delay_adv_level_routine ; set level 1 routine delay, advance level routine
@@ -1877,14 +2124,22 @@ level_routine_00:
 ; controls delay before player drops from helicopter to slide down rope
 ; used so p2 comes out after p1
 player_state_timer_tbl:
-    .byte $60 ; player 1
-    .byte $78 ; player 2
+    .ifdef Probotector
+        .byte $50      ; player 1
+        .byte $68      ; player 2
+    .else
+        .byte $60      ; player 1
+        .byte $78      ; player 2
+    .endif
 
 ; draw level title card with player scores, number of lives, hi score, and level number, advance routine
 level_routine_01:
     dec LEVEL_ROUTINE_DELAY                      ; decrement level routine delay
     bne level_routine_exit                       ; exit if delay hasn't elapsed
     jsr zero_out_nametables                      ; clear all nametables (set pattern tile to #$00)
+    .ifdef Probotector
+        jsr clear_collision_data
+    .endif
     jsr load_level_pattern_tiles                 ; load the initial #$06 pattern table tile banks for the level
     jsr load_banks_set_palette_for_current_level ; load the palette colors for intro screen
     jsr write_palette_to_graphics_buffer         ; write bg and sprite palette colors from palette buffer to graphics buffer
@@ -2037,7 +2292,11 @@ end_level_routine_ptr_tbl:
 end_level_routine_00:
     jsr load_banks_level_run_tile_routines ; load appropriate tiles, pallettes, auto-scroll for position in level
     jsr run_level_logic
-    lda #$5e
+    .ifdef Probotector
+        lda #$66
+    .else
+        lda #$5e
+    .endif
     bne end_level_set_delay_adv_routine    ; always branch to set delay to #$5e and move to next level routine
 
 ; level cleared, wait for delay, play level clear music
@@ -2084,18 +2343,23 @@ end_level_routine_02:
     dec LEVEL_ROUTINE_DELAY                   ; decrement delay every 3 frames
 
 @continue:
-    beq @set_delay_adv_routine  ; branch if delay elapsed
+    beq @set_delay_adv_routine      ; branch if delay elapsed
+    .ifdef Probotector
+        lda CURRENT_LEVEL
+        cmp #$07
+        beq end_level_routine_exit2
+    .endif
     lda LEVEL_ROUTINE_DELAY
     cmp #$30
-    bcs end_level_routine_exit2 ; exit if delay is greater than or equal to #$30
-    ldy #$00                    ; delay not elapsed and less than #$30
-                                ; initialize advance level routine flag (0 = advance level routine, non-zero = stay on current routine)
-    lda PLAYER_GAME_OVER_STATUS ; load p1 game over status (0 = not game over, 1 = game over)
-    bne @check_p2               ; move to p2 if p1 in game over state
+    bcs end_level_routine_exit2     ; exit if delay is greater than or equal to #$30
+    ldy #$00                        ; delay not elapsed and less than #$30
+                                    ; initialize advance level routine flag (0 = advance level routine, non-zero = stay on current routine)
+    lda PLAYER_GAME_OVER_STATUS     ; load p1 game over status (0 = not game over, 1 = game over)
+    bne @check_p2                   ; move to p2 if p1 in game over state
     lda PLAYER_STATE
     cmp #$08
-    beq @check_p2               ; move to p2 if p1 is in end-of-level auto movement, don't advance routine
-    iny                         ; p1 not yet in auto-movement, do not advance level routine
+    beq @check_p2                   ; move to p2 if p1 is in end-of-level auto movement, don't advance routine
+    iny                             ; p1 not yet in auto-movement, do not advance level routine
 
 @check_p2:
     lda PLAYER_GAME_OVER_STATUS+1 ; load p2 game over status (0 = not game over, 1 = game over/1 player game)
@@ -2287,7 +2551,9 @@ check_for_pause:
     sta PAUSE_STATE             ; #$01 for paused, #$00 for not paused
     lda #$27                    ; a = #$27 (27 = game pausing jingle sound)
     jmp play_sound              ; play sound_27 - pause jingle sound
-    rts                         ; unused/unreachable
+    .ifdef Superc
+        rts                     ; unused/unreachable
+    .endif
 
 ; handle game paused state
 ; un-pauses if necessary
@@ -3315,59 +3581,61 @@ y_scroll_draw_write_attribute:
     lsr
     lsr
     tay
-    iny                                 ; set graphics buffer block size to [(y - 1) / 4] + 1
-    lda $13                             ; load PPU address high byte
-    sta CPU_GRAPHICS_BUFFER,x           ; set PPU address high byte
-    inx                                 ; increment graphics buffer write offset
-    lda $12                             ; load PPU address low byte
-    sta CPU_GRAPHICS_BUFFER,x           ; set PPU address low byte
-    inx                                 ; increment graphics buffer write offset
-    sty $05                             ; set to block size
-    tya                                 ; transfer block size to a
-    sta CPU_GRAPHICS_BUFFER,x           ; write block size (number of bytes to write to buffer)
-    inx                                 ; increment graphics buffer write offset
-    ldy $11                             ; load level_x_screen_layout_tbl offset
-    lda (LEVEL_SCREEN_LAYOUT),y         ; load pointer to supertiles for specified screen y
-    asl                                 ; double since byte is an offset into level_x_supertiles_screen_ptr_table
-                                        ; and each entry in that is a #$02 byte memory address
-    tay                                 ; transfer to offset register
-    lda (LEVEL_SCREEN_SUPERTILES_PTR),y ; grab low-byte to specific level_x_supertiles_screen_xx
+    iny                                  ; set graphics buffer block size to [(y - 1) / 4] + 1
+    lda $13                              ; load PPU address high byte
+    sta CPU_GRAPHICS_BUFFER,x            ; set PPU address high byte
+    inx                                  ; increment graphics buffer write offset
+    lda $12                              ; load PPU address low byte
+    sta CPU_GRAPHICS_BUFFER,x            ; set PPU address low byte
+    inx                                  ; increment graphics buffer write offset
+    sty $05                              ; set to block size
+    tya                                  ; transfer block size to a
+    sta CPU_GRAPHICS_BUFFER,x            ; write block size (number of bytes to write to buffer)
+    inx                                  ; increment graphics buffer write offset
+    ldy $11                              ; load level_x_screen_layout_tbl offset
+    lda (LEVEL_SCREEN_LAYOUT),y          ; load pointer to supertiles for specified screen y
+    asl                                  ; double since byte is an offset into level_x_supertiles_screen_ptr_table
+                                         ; and each entry in that is a #$02 byte memory address
+    tay                                  ; transfer to offset register
+    lda (LEVEL_SCREEN_SUPERTILES_PTR),y  ; grab low-byte to specific level_x_supertiles_screen_xx
     sta $0a
-    iny                                 ; increment LEVEL_SCREEN_SUPERTILES_PTR read offset
-    lda (LEVEL_SCREEN_SUPERTILES_PTR),y ; grab high-byte to specific level_x_supertiles_screen_xx
-    sta $0b                             ; ($0a) now stores address to specific level_x_supertiles_screen_xx
-                                        ; this is the list of all supertiles for the screen
-    lda $11                             ; load level_x_screen_layout_tbl offset
-    clc                                 ; clear carry in preparation for addition
-    adc $14                             ; add level_x_screen_layout_tbl offset for next screen
-    tay                                 ; transfer to offset register
-    lda (LEVEL_SCREEN_LAYOUT),y         ; load pointer to supertiles for specified screen y
-    asl                                 ; double since byte is an offset into level_x_supertiles_screen_ptr_table
-                                        ; and each entry in that is a #$02 byte memory address
-    tay                                 ; transfer to offset register
-    lda (LEVEL_SCREEN_SUPERTILES_PTR),y ; grab low-byte to specific level_x_supertiles_screen_xx
+    iny                                  ; increment LEVEL_SCREEN_SUPERTILES_PTR read offset
+    lda (LEVEL_SCREEN_SUPERTILES_PTR),y  ; grab high-byte to specific level_x_supertiles_screen_xx
+    sta $0b                              ; ($0a) now stores address to specific level_x_supertiles_screen_xx
+                                         ; this is the list of all supertiles for the screen
+    lda $11                              ; load level_x_screen_layout_tbl offset
+    clc                                  ; clear carry in preparation for addition
+    adc $14                              ; add level_x_screen_layout_tbl offset for next screen
+    tay                                  ; transfer to offset register
+    lda (LEVEL_SCREEN_LAYOUT),y          ; load pointer to supertiles for specified screen y
+    asl                                  ; double since byte is an offset into level_x_supertiles_screen_ptr_table
+                                         ; and each entry in that is a #$02 byte memory address
+    tay                                  ; transfer to offset register
+    lda (LEVEL_SCREEN_SUPERTILES_PTR),y  ; grab low-byte to specific level_x_supertiles_screen_xx
     sta $15
-    iny                                 ; increment LEVEL_SCREEN_SUPERTILES_PTR read offset
-    lda (LEVEL_SCREEN_SUPERTILES_PTR),y ; grab high-byte to specific level_x_supertiles_screen_xx
-    sta $16                             ; ($15) now stores address to specific level_x_supertiles_screen_xx
-                                        ; this is the list of all supertiles for the screen
-    lda $17                             ; calculating level_x_supertiles_screen_xx offset
+    iny                                  ; increment LEVEL_SCREEN_SUPERTILES_PTR read offset
+    lda (LEVEL_SCREEN_SUPERTILES_PTR),y  ; grab high-byte to specific level_x_supertiles_screen_xx
+    sta $16                              ; ($15) now stores address to specific level_x_supertiles_screen_xx
+                                         ; this is the list of all supertiles for the screen
+    lda $17                              ; calculating level_x_supertiles_screen_xx offset
     lsr
     lsr
     lsr
     lsr
-    lsr                                 ; divide by #$20
+    lsr                                  ; divide by #$20
     sta $0f
     lda NT_ROW_SCROLL
     and #$fc
     asl
-    clc                                 ; clear carry in preparation for addition
-    adc $0f                             ; add NT_ROW_SCROLL
-    sta $0f                             ; set new screen supertile index
-    lda SUPERTILE_ATTRIBUTE_OVERRIDE    ; see if level had a door that was destroyed
-                                        ; only level 2 has additional palette data to load
-                                        ; after a door is destroyed
-    bne @palette_override
+    clc                                  ; clear carry in preparation for addition
+    adc $0f                              ; add NT_ROW_SCROLL
+    sta $0f                              ; set new screen supertile index
+    .ifdef Superc
+        lda SUPERTILE_ATTRIBUTE_OVERRIDE ; see if level had a door that was destroyed
+                                         ; only level 2 has additional palette data to load
+                                         ; after a door is destroyed
+        bne @palette_override
+    .endif
 
 @write_palette_loop:
     ldy $0f                              ; load screen supertile index
@@ -3395,69 +3663,71 @@ y_scroll_draw_write_attribute:
     stx GRAPHICS_BUFFER_OFFSET ; set current graphics buffer write offset
     rts
 
-; runs after a door (enemy type #$0d) is destroyed and palette data is loaded
-; only ever run for level 2 after boss defeat scroll
-; almost identical to @write_palette_loop, but with a call to possibly override
-; for both attribute nibbles
-@palette_override:
-    ldy $0f                              ; load screen supertile index
-    lda ($0a),y                          ; load supertile index byte (level_x_supertiles_screen_xx offset)
-    tay                                  ; transfer supertile index to offset register
-    lda (LEVEL_SUPERTILE_PALETTE_DATA),y ; load palette for supertile index (level_x_palette_data offset)
-    jsr overwrite_attribute_byte         ; override if necessary
-    and $0c                              ; strip to high or low nibble
-    sta $0e                              ; store temporarily in $0e
-    ldy $0f                              ; load screen supertile index
-    lda ($15),y                          ; load supertile index byte (level_x_supertiles_screen_xx offset)
-    tay                                  ; transfer supertile index to offset register
-    lda (LEVEL_SUPERTILE_PALETTE_DATA),y ; load palette for supertile index (level_x_palette_data offset)
-    jsr overwrite_attribute_byte         ; override if necessary
-    and $0d                              ; strip to high or low nibble
-    ora $0e                              ; merge with other attribute nibble
-    sta CPU_GRAPHICS_BUFFER,x            ; write attribute byte (palette)
-    inx                                  ; increment graphics buffer write offset
-    inc $0f                              ; increment level screen supertiles index read offset
-    dec $05                              ; decrement number of graphics bytes to write (block size)
-    bne @palette_override                ; branch if more palette bytes to write
-    beq @mark_end                        ; always branch
+.ifdef Superc
+    ; runs after a door (enemy type #$0d) is destroyed and palette data is loaded
+    ; only ever run for level 2 after boss defeat scroll
+    ; almost identical to @write_palette_loop, but with a call to possibly override
+    ; for both attribute nibbles
+    @palette_override:
+        ldy $0f                              ; load screen supertile index
+        lda ($0a),y                          ; load supertile index byte (level_x_supertiles_screen_xx offset)
+        tay                                  ; transfer supertile index to offset register
+        lda (LEVEL_SUPERTILE_PALETTE_DATA),y ; load palette for supertile index (level_x_palette_data offset)
+        jsr overwrite_attribute_byte         ; override if necessary
+        and $0c                              ; strip to high or low nibble
+        sta $0e                              ; store temporarily in $0e
+        ldy $0f                              ; load screen supertile index
+        lda ($15),y                          ; load supertile index byte (level_x_supertiles_screen_xx offset)
+        tay                                  ; transfer supertile index to offset register
+        lda (LEVEL_SUPERTILE_PALETTE_DATA),y ; load palette for supertile index (level_x_palette_data offset)
+        jsr overwrite_attribute_byte         ; override if necessary
+        and $0d                              ; strip to high or low nibble
+        ora $0e                              ; merge with other attribute nibble
+        sta CPU_GRAPHICS_BUFFER,x            ; write attribute byte (palette)
+        inx                                  ; increment graphics buffer write offset
+        inc $0f                              ; increment level screen supertiles index read offset
+        dec $05                              ; decrement number of graphics bytes to write (block size)
+        bne @palette_override                ; branch if more palette bytes to write
+        beq @mark_end                        ; always branch
 
-; if a value from the ATTRIBUTE_OVERRIDES byte array is populated with non-zero
-; attribute bytes, then the supertile indexes matching the index in
-; attribute_overrides_tbl will be overwritten
-; e.g., if ATTRIBUTE_OVERRIDES+3 is $aa, then supertile index #$af's attribute
-; byte will be replaced with $aa since attribute_overrides_tbl+3 is #$af
-; input
-;  * a - palette for supertile index (level_x_palette_data offset)
-;  * y - supertile index byte (level_x_supertiles_screen_xx offset)
-; output
-;  * a - palette byte data nibble
-overwrite_attribute_byte:
-    sty $00  ; store supertile index (level_x_supertiles_screen_xx offset)
-    sta $01  ; store original supertile attribute byte
-    tya      ; transfer supertile index to a
-    ldy #$09 ; start at end of table
+    ; if a value from the ATTRIBUTE_OVERRIDES byte array is populated with non-zero
+    ; attribute bytes, then the supertile indexes matching the index in
+    ; attribute_overrides_tbl will be overwritten
+    ; e.g., if ATTRIBUTE_OVERRIDES+3 is $aa, then supertile index #$af's attribute
+    ; byte will be replaced with $aa since attribute_overrides_tbl+3 is #$af
+    ; input
+    ;  * a - palette for supertile index (level_x_palette_data offset)
+    ;  * y - supertile index byte (level_x_supertiles_screen_xx offset)
+    ; output
+    ;  * a - palette byte data nibble
+    overwrite_attribute_byte:
+        sty $00  ; store supertile index (level_x_supertiles_screen_xx offset)
+        sta $01  ; store original supertile attribute byte
+        tya      ; transfer supertile index to a
+        ldy #$09 ; start at end of table
 
-@loop:
-    cmp attribute_overrides_tbl,y ; compare supertile index to replace list
-    beq @continue                 ; branch if found palette byte that matches a
-                                  ; which means that it can be be overwritten
-    dey                           ; look at next palette offset
-    bpl @loop
-    bmi @exit_not_found
+    @loop:
+        cmp attribute_overrides_tbl,y ; compare supertile index to replace list
+        beq @continue                 ; branch if found palette byte that matches a
+                                      ; which means that it can be be overwritten
+        dey                           ; look at next palette offset
+        bpl @loop
+        bmi @exit_not_found
 
-@continue:
-    lda ATTRIBUTE_OVERRIDES,y ; see if palette byte has an override
-    bne @exit                 ; exit if found palette override byte
+    @continue:
+        lda ATTRIBUTE_OVERRIDES,y ; see if palette byte has an override
+        bne @exit                 ; exit if found palette override byte
 
-@exit_not_found:
-    lda $01 ; unable to find restore original palette byte data
+    @exit_not_found:
+        lda $01 ; unable to find restore original palette byte data
 
-@exit:
-    rts
+    @exit:
+        rts
 
-; a table of supertile indexes that can be overwritten
-attribute_overrides_tbl:
-    .byte $89,$8d,$ac,$af,$c1,$c2,$ec,$ed,$ee,$ef
+    ; a table of supertile indexes that can be overwritten
+    attribute_overrides_tbl:
+        .byte $89,$8d,$ac,$af,$c1,$c2,$ec,$ed,$ee,$ef
+.endif
 
 bg_collision_helper_tbl:
     .byte $0f,$f0
@@ -4741,19 +5011,23 @@ find_alive_player_pos:
     sta $0b
     rts
 
-; !(HUH)
 ; plays player death sound and updates player state
-; input
 ;  * x - player index (0 = p1, 1 = p2)
 kill_player_x:
-    nop
+    .ifdef Probotector
+        lda $07ff            ; load player invincible flag
+                             ; !(OBS) - $07ff probably set by developers for testing
+                             ; $07ff is never set anywhere in the game
+        bmi kill_player_exit ; exit without killing player if flag set
+    .endif
+    nop                      ; !(HUH)
 
 ; plays player death sound and updates player state
 ; input
 ;  * x - player index (0 = p1, 1 = p2)
 kill_player:
     lda BOSS_DEFEATED_FLAGS
-    bne @exit                          ; don't play player death sound boss defeated
+    bne kill_player_exit               ; don't play player death sound boss defeated
     lda #$25                           ; player death sound
     jsr play_sound                     ; play sound_25 (P OUT) - player death
     lda #$00
@@ -4765,7 +5039,7 @@ kill_player:
     lda #$03
     sta PLAYER_STATE,x                 ; set sp
 
-@exit:
+kill_player_exit:
     rts
 
 ; !(UNUSED)
@@ -5115,16 +5389,27 @@ set_y_autoscroll_stop:
 ;  * SCANLINE_IRQ_3_DIFF
 set_irq_scanlines:
     lda #$ff
-    sta SCANLINE_IRQ_2      ; initialize 2nd scanline to #$ff (no irq)
-    sta SCANLINE_IRQ_3      ; initialize 3rd scanline to #$ff (no irq)
-    lda SCANLINE_IRQ_1      ; load scanline where the 1st interrupt will occur (#$ff for no irq)
-    clc                     ; clear carry in preparation for addition
-    adc SCANLINE_IRQ_2_DIFF ; add the number of scanlines after the 1st irq before the next irq
-    bcs @exit               ; exit if either no irqs or only a single irq
-    sta SCANLINE_IRQ_2      ; set the actual scanline where the 2nd irq occurs
-    adc SCANLINE_IRQ_3_DIFF ; add the number of scanlines after the 2nd irq before the next irq
-    bcs @exit               ; exit if no 3rd irq
-    sta SCANLINE_IRQ_3      ; set the actual scanline where the 3rd irq occurs
+    .ifdef Probotector
+        sta SCANLINE_IRQ_3      ; initialize 3rd scanline to #$ff (no irq)
+        lda SCANLINE_IRQ_1      ; load scanline where the 1st interrupt will occur (#$ff for no irq)
+        clc                     ; clear carry in preparation for addition
+        adc #$0c
+        sta SCANLINE_IRQ_2      ; set the actual scanline where the 2nd irq occurs
+        adc SCANLINE_IRQ_2_DIFF ; add the number of scanlines after the 2nd irq before the next irq
+        bcs @exit               ; exit if no 3rd irq
+        adc SCANLINE_IRQ_3_DIFF
+    .else
+        sta SCANLINE_IRQ_2      ; initialize 2nd scanline to #$ff (no irq)
+        sta SCANLINE_IRQ_3      ; initialize 3rd scanline to #$ff (no irq)
+        lda SCANLINE_IRQ_1      ; load scanline where the 1st interrupt will occur (#$ff for no irq)
+        clc                     ; clear carry in preparation for addition
+        adc SCANLINE_IRQ_2_DIFF ; add the number of scanlines after the 1st irq before the next irq
+        bcs @exit               ; exit if either no irqs or only a single irq
+        sta SCANLINE_IRQ_2      ; set the actual scanline where the 2nd irq occurs
+        adc SCANLINE_IRQ_3_DIFF ; add the number of scanlines after the 2nd irq before the next irq
+    .endif
+    bcs @exit                   ; exit if no 3rd irq
+    sta SCANLINE_IRQ_3          ; set the actual scanline where the 3rd irq occurs
 
 @exit:
     rts
@@ -5344,11 +5629,19 @@ set_palette_exit:
 alternate_palettes_tbl:
     ; #$00 - background palette 2
     .byte $09
-    .byte COLOR_WHITE_20,COLOR_MED_OLIVE_18,COLOR_DARK_OLIVE_08
+    .ifdef Probotector
+        .byte COLOR_PALE_TEAL_3c,COLOR_MED_VIOLET_12,COLOR_MED_TEAL_1c
+    .else
+        .byte COLOR_WHITE_20,COLOR_MED_OLIVE_18,COLOR_DARK_OLIVE_08
+    .endif
 
     ; #$04 - background palette 3
     .byte $0d
-    .byte COLOR_DARK_GREEN_0a,COLOR_MED_OLIVE_18,COLOR_DARK_OLIVE_08
+    .ifdef Probotector
+        .byte COLOR_DARK_TEAL_0c,COLOR_LT_TEAL_2c,COLOR_MED_TEAL_1c
+    .else
+        .byte COLOR_DARK_GREEN_0a,COLOR_MED_OLIVE_18,COLOR_DARK_OLIVE_08
+    .endif
 
     ; #$08 - background palette 2
     .byte $09
@@ -5684,10 +5977,13 @@ reset_vector:
     dex
     bne @write_ppuaddr
     lda #$00
-    sta $a000          ; vertical mirroring (horizontal arrangement)
-                       ; A B
-                       ; A B
-    cli                ; enable IRQ processing
+    sta $a000                ; vertical mirroring (horizontal arrangement)
+                             ; A B
+                             ; A B
+    .ifdef Probotector
+        jsr set_nmi_noop_irq
+    .endif
+    cli                      ; enable IRQ processing
 
 ; run between NMI interrupts after nmi_start code finishes
 ; loop forever updating RANDOM_NUM before NMI
@@ -5735,10 +6031,17 @@ nmi_start:
 
 @continue:
     sta PPUMASK
-    jsr init_scanline_irq ; initializes scanline IRQ variables before the first scanline interrupt
-                          ; when IRQ_TYPE non-zero, enables scanline interrupts and sets first interrupt
-    jsr set_chr_banks
-    lda NOOP_IRQ_FLAG     ; load whether or not to set IRQ to do nothing
+    .ifdef Probotector
+        jsr init_scanline_irq
+        lda NT_MIRRORING
+        sta $a000
+        jsr clear_pattern_tbls
+    .else
+        jsr init_scanline_irq  ; initializes scanline IRQ variables before the first scanline interrupt
+                               ; when IRQ_TYPE non-zero, enables scanline interrupts and sets first interrupt
+        jsr set_chr_banks
+    .endif
+    lda NOOP_IRQ_FLAG          ; load whether or not to set IRQ to do nothing
     beq @exe_game_routine
     jsr set_noop_irq
 
@@ -5766,7 +6069,9 @@ remove_registers_from_stack_and_rti:
 
 ; nmi interrupted previous frame's game loop, just continue with music
 handle_sounds_set_ppu_scroll_rti:
-    jsr set_chr_banks    ; set pattern table tiles and nametable mirroring
+    .ifdef Superc
+        jsr set_chr_banks ; set pattern table tiles and nametable mirroring
+    .endif
     lda PPUMASK_SETTINGS
     ldx PPU_READY
     beq @continue
@@ -5776,6 +6081,11 @@ handle_sounds_set_ppu_scroll_rti:
     sta PPUMASK
     jsr init_scanline_irq            ; initializes scanline IRQ variables before the first scanline interrupt
                                      ; when IRQ_TYPE non-zero, enables scanline interrupts and sets first interrupt
+    .ifdef Probotector
+        lda NT_MIRRORING
+        sta $a000
+        jsr clear_pattern_tbls
+    .endif
     lda NMI_CHECK
     bmi @set_top_chr_banks           ; branch if frame was interrupted when setting sound variables
                                      ; to skip playing any sound
@@ -5813,8 +6123,8 @@ init_scanline_irq:
     sty PPUSCROLL
     lda PPUSTATUS
     ldx #$ff
-    stx $c000     ; set number of scanlines until trigger scanline IRQ
-    stx $c001     ; reload countdown timer
+    stx $c000         ; set number of scanlines until trigger scanline IRQ
+    stx $c001         ; reload countdown timer
     lda #$10
     sty PPUADDR
     sty PPUADDR
@@ -5826,12 +6136,18 @@ init_scanline_irq:
     sta PPUADDR
     sty PPUADDR
     sty PPUADDR
-    ldx IRQ_TYPE  ; load which IRQ function handler to call, indexes into irq_handler_ptr_tbl
-    beq @continue ; branch if irq_handler_00_ptr_tbl (noop handler) to disable IRQ
-    ldx #$01      ; non noop IRQ handler, enable IRQ
+    .ifdef Superc
+        ldx IRQ_TYPE  ; load which IRQ function handler to call, indexes into irq_handler_ptr_tbl
+        beq @continue ; branch if irq_handler_00_ptr_tbl (noop handler) to disable IRQ
+    .endif
+    ldx #$01          ; non noop IRQ handler, enable IRQ
 
 @continue:
-    lda SCANLINE_IRQ_1                   ; load scanline where fist interrupt will occur
+    .ifdef Probotector
+        lda #$0c                         ; probotector always has an initial scanline interrupt at scanline #$0c
+    .else
+        lda SCANLINE_IRQ_1               ; load scanline where fist interrupt will occur
+    .endif
     sta $c000                            ; set number of scanlines until trigger scanline IRQ
     sta $c001                            ; reload countdown timer
     sta $e000,x                          ; disable/enable the IRQ
@@ -5850,6 +6166,10 @@ init_scanline_irq:
     sta SPLIT_X_SCROLL                   ; set horizontal scroll to use after first interrupt
     lda IRQ_PPUCTRL_SETTINGS
     sta SPLIT_PPUCTRL                    ; set PPU control available to use after first interrupt (e.g. used in irq_handler_04_00)
+    .ifdef Probotector
+        lda SCANLINE_IRQ_1
+        sta SPLIT_SCANLINE_IRQ_1
+    .endif
     lda SCANLINE_IRQ_2_DIFF              ; load the number of scanlines after SCANLINE_IRQ_1 to run a 2nd scanline irq
     sta SPLIT_SCANLINE_IRQ_2             ; set the number of scanlines after first IRQ
     lda SCANLINE_IRQ_3_DIFF              ; load the number of scanlines after SCANLINE_IRQ_2 to run a 3rd scanline irq
@@ -5878,7 +6198,11 @@ set_nmi_noop_irq:
 
 ; sets the irq variables to only run remove_registers_from_stack_and_rti
 set_noop_irq:
-    lda #$ff
+    .ifdef Probotector
+        lda #$dc            ; set last scanline interrupt at bottom of visible screen
+    .else
+        lda #$ff
+    .endif
     sta SCANLINE_IRQ_1      ; set scanline irq to be bottom of screen
     sta SCANLINE_IRQ_2_DIFF ; set next scanline irq to be bottom of screen
     sta SCANLINE_IRQ_3_DIFF ; set next next scanline irq to be bottom of screen
@@ -6038,6 +6362,8 @@ load_sound_banks:
     sty LOW_PRG_BANK
     ldy $bfff
     sty HIGH_PRG_BANK
+
+probotector_load_sound_banks:
     lda #$3c
 
 ; swaps out PRG ROM at $8000-$9fff and $a000-$bfff based on a register
@@ -6398,8 +6724,10 @@ level_graphic_bank_tbl:
 ;  * RIGHT_THIRD_QTR_CHR_BANK - bank number for third quarter of the right pattern table
 ;  * RIGHT_FOURTH_QTR_CHR_BANK - bank number for fourth quarter of the right pattern table
 set_chr_banks:
-    lda NT_MIRRORING              ; load nametable mirror setting
-    sta $a000                     ; set nametable mirroring (0: vertical; 1: horizontal)
+    .ifdef Superc
+        lda NT_MIRRORING          ; load nametable mirror setting
+        sta $a000                 ; set nametable mirroring (0: vertical; 1: horizontal)
+    .endif
     ldy #$00
     sty $8000                     ; R0: Select 2 KiB CHR bank at PPU $0000-$07FF
     lda LEFT_TOP_HALF_CHR_BANK    ; load bank number of PPU $0000-$07ff (top half of left pattern table)
@@ -6424,7 +6752,36 @@ set_chr_banks:
     sty $8000                     ; R5: Select 1 KiB CHR bank at PPU $1C00-$1FFF
     lda RIGHT_FOURTH_QTR_CHR_BANK ; load bank number of PPU $1c00-$1fff (last quarter of right pattern table)
     sta $8001
+    .ifdef Probotector
+        lda BANK_SELECT
+        sta $8000
+    .endif
     rts
+
+.ifdef Probotector
+    ; set all the pattern tables memory to black tiles
+    clear_pattern_tbls:
+        lda #$42
+        ldy #$00
+        sty $8000  ; R0: Select 2 KiB CHR bank at PPU $0000-$07FF
+        sta $8001
+        iny
+        sty $8000  ; R1: Select 2 KiB CHR bank at PPU $0800-$0FFF
+        sta $8001
+        iny
+        sty $8000  ; R2: Select 1 KiB CHR bank at PPU $1000-$13FF
+        sta $8001
+        iny
+        sty $8000  ; R3: Select 1 KiB CHR bank at PPU $1400-$17FF
+        sta $8001
+        iny
+        sty $8000  ; R4: Select 1 KiB CHR bank at PPU $1800-$1BFF
+        sta $8001
+        iny
+        sty $8000  ; R5: Select 1 KiB CHR bank at PPU $1C00-$1FFF
+        sta $8001
+        rts
+.endif
 
 ; unused #$9e bytes out of #$2,000 bytes total (98.07% full)
 ; unused 158 bytes out of 8,192 bytes total (98.07% full)
@@ -6433,9 +6790,15 @@ bank_f_unused_space:
 
 .segment "BANKF_ID"
 
-; presumed assembly date - November 29, 1989
+; presumed assembly date
 ; MAST is probably short for "master" as in it's the master version/copy
+.ifdef Probotector
+    ; March 31, 1992
+    .byte "MAST920331"
+.else
+    ; November 29, 1989
     .byte "MAST891129"
+.endif
 
 .segment "VECTORS"
 
@@ -6443,4 +6806,4 @@ bank_f_unused_space:
 ; stored in the .nes ROM as the last $06 bytes (CPU addresses $fffa-$ffff)
 ; these are stored at known locations so the NES can point the instruction
 ; pointer at known locations for triggering interrupts.
-    .addr nmi_start, reset_vector, irq
+.addr nmi_start, reset_vector, irq

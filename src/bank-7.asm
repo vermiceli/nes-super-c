@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 7 contains a continuation of Bank 6's Level 4 (Inner Base) supertile
 ; definitions.  Then, it contains Level 4's supertile palette definitions.  From
@@ -540,38 +540,64 @@ palette_indexes_level_1:
     .byte COLOR_WHITE_20,       COLOR_LT_GRAY_10,       COLOR_DARK_GRAY_00    ; background palette 1
     .byte COLOR_LT_ORANGE_27,   COLOR_MED_RED_16,       COLOR_DARK_MAGENTA_04 ; background palette 2
     .byte COLOR_MED_RED_16,     COLOR_DARK_RED_06,      COLOR_DARK_GRAY_00    ; background palette 3
-    .byte COLOR_PALE_ORANGE_37, COLOR_MED_TEAL_1c,      COLOR_BLACK_0f        ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37, COLOR_MED_RED_16,       COLOR_BLACK_0f        ; sprite palette 1
-    .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16      ; sprite palette 2
-    .byte COLOR_PALE_MAGENTA_34,COLOR_MED_BLUE_GREEN_1b,COLOR_BLACK_0f        ; sprite palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,       COLOR_MED_TEAL_1c,      COLOR_BLACK_0f    ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,  COLOR_MED_ORANGE_17,    COLOR_BLACK_0f    ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16  ; sprite palette 2
+        .byte COLOR_PALE_OLIVE_38,  COLOR_MED_GREEN_1a,     COLOR_BLACK_0f    ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_TEAL_1c,      COLOR_BLACK_0f    ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_RED_16,       COLOR_BLACK_0f    ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16  ; sprite palette 2
+        .byte COLOR_PALE_MAGENTA_34,COLOR_MED_BLUE_GREEN_1b,COLOR_BLACK_0f    ; sprite palette 3
+    .endif
 
 palette_indexes_level_2:
-    .byte COLOR_WHITE_20    ,   COLOR_LT_GRAY_10,       COLOR_DARK_GRAY_00   ; background palette 0
-    .byte COLOR_DARK_GRAY_00,   COLOR_LT_GRAY_10,       COLOR_DARK_TEAL_0c   ; background palette 1
-    .byte COLOR_WHITE_20,       COLOR_MED_TEAL_1c,      COLOR_DARK_TEAL_0c   ; background palette 2
-    .byte COLOR_DARK_RED_06,    COLOR_MED_TEAL_1c,      COLOR_DARK_TEAL_0c   ; background palette 3
-    .byte COLOR_PALE_ORANGE_37, COLOR_MED_BLUE_11,      COLOR_DARK_TEAL_0c   ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37, COLOR_MED_RED_16,       COLOR_DARK_ORANGE_07 ; sprite palette 1
-    .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16     ; sprite palette 2
-    .byte COLOR_PALE_MAGENTA_34,COLOR_MED_BLUE_GREEN_1b,COLOR_BLACK_0f       ; sprite palette 3
+    .byte COLOR_WHITE_20,       COLOR_LT_GRAY_10,       COLOR_DARK_GRAY_00       ; background palette 0
+    .byte COLOR_DARK_GRAY_00,   COLOR_LT_GRAY_10,       COLOR_DARK_TEAL_0c       ; background palette 1
+    .byte COLOR_WHITE_20,       COLOR_MED_TEAL_1c,      COLOR_DARK_TEAL_0c       ; background palette 2
+    .byte COLOR_DARK_RED_06,    COLOR_MED_TEAL_1c,      COLOR_DARK_TEAL_0c       ; background palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,       COLOR_MED_TEAL_1c,      COLOR_BLACK_0f       ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,  COLOR_MED_ORANGE_17,    COLOR_BLACK_0f       ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16     ; sprite palette 2
+        .byte COLOR_PALE_OLIVE_38,  COLOR_MED_GREEN_1a,     COLOR_BLACK_0f       ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_BLUE_11,      COLOR_DARK_TEAL_0c   ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_RED_16,       COLOR_DARK_ORANGE_07 ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,        COLOR_MED_RED_16     ; sprite palette 2
+        .byte COLOR_PALE_MAGENTA_34,COLOR_MED_BLUE_GREEN_1b,COLOR_BLACK_0f       ; sprite palette 3
+    .endif
 
 palette_indexes_level_3:
-    .byte COLOR_LT_GREEN_2a,       COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a ; background palette 0
-    .byte COLOR_LT_OLIVE_28,       COLOR_MED_OLIVE_18,  COLOR_DARK_OLIVE_08 ; background palette 1
-    .byte COLOR_LT_GRAY_10,        COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a ; background palette 2
-    .byte COLOR_WHITE_20,          COLOR_LT_GRAY_10,    COLOR_DARK_GRAY_00  ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_TEAL_1c,   COLOR_BLACK_0f      ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,    COLOR_BLACK_0f      ; sprite palette 1
-    .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16    ; sprite palette 2
-    .byte COLOR_PALE_BLUE_GREEN_3b,COLOR_MED_MAGENTA_14,COLOR_BLACK_0f      ; sprite palette 3
+    .byte COLOR_LT_GREEN_2a,       COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a  ; background palette 0
+    .byte COLOR_LT_OLIVE_28,       COLOR_MED_OLIVE_18,  COLOR_DARK_OLIVE_08  ; background palette 1
+    .byte COLOR_LT_GRAY_10,        COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a  ; background palette 2
+    .byte COLOR_WHITE_20,          COLOR_LT_GRAY_10,    COLOR_DARK_GRAY_00   ; background palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,          COLOR_MED_TEAL_1c,   COLOR_BLACK_0f   ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,     COLOR_MED_ORANGE_17, COLOR_BLACK_0f   ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16 ; sprite palette 2
+        .byte COLOR_PALE_MAGENTA_34,   COLOR_MED_MAGENTA_14,COLOR_BLACK_0f   ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_TEAL_1c,   COLOR_BLACK_0f   ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,    COLOR_BLACK_0f   ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16 ; sprite palette 2
+        .byte COLOR_PALE_BLUE_GREEN_3b,COLOR_MED_MAGENTA_14,COLOR_BLACK_0f   ; sprite palette 3
+    .endif
 
 palette_indexes_level_4:
     .byte COLOR_WHITE_20,      COLOR_MED_BLUE_GREEN_1b,COLOR_DARK_GREEN_0a ; background palette 0
     .byte COLOR_DARK_BLUE_01,  COLOR_DARK_GRAY_00,     COLOR_DARK_GREEN_0a ; background palette 1
     .byte COLOR_DARK_BLUE_01,  COLOR_MED_BLUE_GREEN_1b,COLOR_DARK_GREEN_0a ; background palette 2
     .byte COLOR_DARK_BLUE_01,  COLOR_DARK_GRAY_00,     COLOR_DARK_RED_06   ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,COLOR_MED_TEAL_1c,      COLOR_BLACK_0f      ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,COLOR_MED_RED_16,       COLOR_BLACK_0f      ; sprite palette 1
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,      COLOR_MED_TEAL_1c,      COLOR_BLACK_0f  ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38, COLOR_MED_ORANGE_17,    COLOR_BLACK_0f  ; sprite palette 1
+    .else
+        .byte COLOR_PALE_ORANGE_37,COLOR_MED_TEAL_1c,      COLOR_BLACK_0f  ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37,COLOR_MED_RED_16,       COLOR_BLACK_0f  ; sprite palette 1
+    .endif
     .byte COLOR_WHITE_20,      COLOR_LT_RED_26,        COLOR_MED_RED_16    ; sprite palette 2
     .byte COLOR_WHITE_20,      COLOR_MED_BLUE_GREEN_1b,COLOR_DARK_GREEN_0a ; sprite palette 3
 
@@ -580,62 +606,106 @@ palette_indexes_level_5:
     .byte COLOR_LT_GREEN_2a,       COLOR_MED_GREEN_1a,  COLOR_DARK_GRAY_00    ; background palette 1
     .byte COLOR_LT_TEAL_2c,        COLOR_MED_TEAL_1c,   COLOR_DARK_TEAL_0c    ; background palette 2
     .byte COLOR_WHITE_20,          COLOR_LT_GRAY_10,    COLOR_DARK_MAGENTA_04 ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_TEAL_1c,   COLOR_BLACK_0f        ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,    COLOR_BLACK_0f        ; sprite palette 1
-    .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16      ; sprite palette 2
-    .byte COLOR_PALE_BLUE_GREEN_3b,COLOR_MED_MAGENTA_14,COLOR_BLACK_0f        ; sprite palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,          COLOR_MED_TEAL_1c,   COLOR_BLACK_0f    ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,     COLOR_MED_ORANGE_17, COLOR_BLACK_0f    ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16  ; sprite palette 2
+        .byte COLOR_PALE_MAGENTA_34,   COLOR_MED_MAGENTA_14,COLOR_BLACK_0f    ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_TEAL_1c,   COLOR_BLACK_0f    ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,    COLOR_BLACK_0f    ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,     COLOR_MED_RED_16  ; sprite palette 2
+        .byte COLOR_PALE_BLUE_GREEN_3b,COLOR_MED_MAGENTA_14,COLOR_BLACK_0f    ; sprite palette 3
+    .endif
 
 palette_indexes_level_6:
     .byte COLOR_WHITE_20,          COLOR_LT_GRAY_10,         COLOR_DARK_GRAY_00         ; background palette 0
     .byte COLOR_LT_FOREST_GREEN_29,COLOR_MED_FOREST_GREEN_19,COLOR_DARK_FOREST_GREEN_09 ; background palette 1
     .byte COLOR_WHITE_20,          COLOR_LT_GRAY_10,         COLOR_DARK_RED_06          ; background palette 2
     .byte COLOR_LT_GRAY_10,        COLOR_DARK_GRAY_00,       COLOR_DARK_RED_06          ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_BLUE_11,        COLOR_DARK_TEAL_0c         ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,         COLOR_DARK_ORANGE_07       ; sprite palette 1
-    .byte COLOR_WHITE_20,          COLOR_LT_RED_26,          COLOR_MED_RED_16           ; sprite palette 2
-    .byte COLOR_LT_GRAY_10,        COLOR_MED_RED_16,         COLOR_BLACK_0f             ; sprite palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,          COLOR_MED_TEAL_1c,        COLOR_BLACK_0f         ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,     COLOR_MED_ORANGE_17,      COLOR_BLACK_0f         ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,          COLOR_MED_RED_16       ; sprite palette 2
+        .byte COLOR_WHITE_20,          COLOR_DARK_GRAY_00,         COLOR_DARK_RED_06    ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_BLUE_11,        COLOR_DARK_TEAL_0c     ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37,    COLOR_MED_RED_16,         COLOR_DARK_ORANGE_07   ; sprite palette 1
+        .byte COLOR_WHITE_20,          COLOR_LT_RED_26,          COLOR_MED_RED_16       ; sprite palette 2
+        .byte COLOR_LT_GRAY_10,        COLOR_MED_RED_16,         COLOR_BLACK_0f         ; sprite palette 3
+    .endif
 
 palette_indexes_level_7:
-    .byte COLOR_LT_TEAL_2c,    COLOR_MED_VIOLET_12, COLOR_DARK_VIOLET_02  ; background palette 0
-    .byte COLOR_LT_VIOLET_22,  COLOR_MED_VIOLET_12, COLOR_DARK_VIOLET_02  ; background palette 1
-    .byte COLOR_LT_ORANGE_27,  COLOR_MED_RED_16,    COLOR_DARK_RED_06     ; background palette 2
-    .byte COLOR_MED_TEAL_1c,   COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a   ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,COLOR_MED_TEAL_1c,   COLOR_BLACK_0f        ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,COLOR_MED_RED_16,    COLOR_BLACK_0f        ; sprite palette 1
-    .byte COLOR_WHITE_20,      COLOR_LT_RED_26,     COLOR_MED_RED_16      ; sprite palette 2
-    .byte COLOR_LT_MAGENTA_24, COLOR_MED_MAGENTA_14,COLOR_DARK_MAGENTA_04 ; sprite palette 3
+    .byte COLOR_LT_TEAL_2c,     COLOR_MED_VIOLET_12, COLOR_DARK_VIOLET_02      ; background palette 0
+    .byte COLOR_LT_VIOLET_22,   COLOR_MED_VIOLET_12, COLOR_DARK_VIOLET_02      ; background palette 1
+    .byte COLOR_LT_ORANGE_27,   COLOR_MED_RED_16,    COLOR_DARK_RED_06         ; background palette 2
+    .byte COLOR_MED_TEAL_1c,    COLOR_MED_GREEN_1a,  COLOR_DARK_GREEN_0a       ; background palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,       COLOR_MED_TEAL_1c,   COLOR_BLACK_0f        ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,  COLOR_MED_ORANGE_17, COLOR_BLACK_0f        ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,     COLOR_MED_RED_16      ; sprite palette 2
+        .byte COLOR_PALE_MAGENTA_34,COLOR_MED_MAGENTA_14,COLOR_DARK_MAGENTA_04 ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_TEAL_1c,   COLOR_BLACK_0f        ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37, COLOR_MED_RED_16,    COLOR_BLACK_0f        ; sprite palette 1
+        .byte COLOR_WHITE_20,       COLOR_LT_RED_26,     COLOR_MED_RED_16      ; sprite palette 2
+        .byte COLOR_LT_MAGENTA_24,  COLOR_MED_MAGENTA_14,COLOR_DARK_MAGENTA_04 ; sprite palette 3
+    .endif
 
 palette_indexes_level_8:
-    .byte COLOR_LT_MAGENTA_24,       COLOR_MED_MAGENTA_14,COLOR_DARK_MAGENTA_04 ; background palette 0
-    .byte COLOR_DARK_PURPLE_03,      COLOR_DARK_VIOLET_02,COLOR_DARK_TEAL_0c    ; background palette 1
-    .byte COLOR_WHITE_20,            COLOR_LT_GRAY_10,    COLOR_DARK_GRAY_00    ; background palette 2
-    .byte COLOR_DARK_FOREST_GREEN_09,COLOR_MED_OLIVE_18,  COLOR_DARK_OLIVE_08   ; background palette 3
-    .byte COLOR_PALE_ORANGE_37,      COLOR_MED_TEAL_1c,   COLOR_BLACK_0f        ; sprite palette 0
-    .byte COLOR_PALE_ORANGE_37,      COLOR_MED_RED_16,    COLOR_BLACK_0f        ; sprite palette 1
-    .byte COLOR_WHITE_20,            COLOR_LT_RED_26,     COLOR_MED_RED_16      ; sprite palette 2
-    .byte COLOR_WHITE_20,            COLOR_DARK_GRAY_00,  COLOR_DARK_TEAL_0c    ; sprite palette 3
+    .byte COLOR_LT_MAGENTA_24,       COLOR_MED_MAGENTA_14,COLOR_DARK_MAGENTA_04  ; background palette 0
+    .byte COLOR_DARK_PURPLE_03,      COLOR_DARK_VIOLET_02,COLOR_DARK_TEAL_0c     ; background palette 1
+    .byte COLOR_WHITE_20,            COLOR_LT_GRAY_10,    COLOR_DARK_GRAY_00     ; background palette 2
+    .byte COLOR_DARK_FOREST_GREEN_09,COLOR_MED_OLIVE_18,  COLOR_DARK_OLIVE_08    ; background palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,            COLOR_MED_TEAL_1c,   COLOR_BLACK_0f     ; sprite palette 0
+        .byte COLOR_PALE_OLIVE_38,       COLOR_MED_ORANGE_17, COLOR_BLACK_0f     ; sprite palette 1
+        .byte COLOR_WHITE_20,            COLOR_LT_RED_26,     COLOR_MED_RED_16   ; sprite palette 2
+        .byte COLOR_WHITE_20,            COLOR_DARK_GRAY_00,  COLOR_DARK_TEAL_0c ; sprite palette 3
+    .else
+        .byte COLOR_PALE_ORANGE_37,      COLOR_MED_TEAL_1c,   COLOR_BLACK_0f     ; sprite palette 0
+        .byte COLOR_PALE_ORANGE_37,      COLOR_MED_RED_16,    COLOR_BLACK_0f     ; sprite palette 1
+        .byte COLOR_WHITE_20,            COLOR_LT_RED_26,     COLOR_MED_RED_16   ; sprite palette 2
+        .byte COLOR_WHITE_20,            COLOR_DARK_GRAY_00,  COLOR_DARK_TEAL_0c ; sprite palette 3
+    .endif
 
 ; intro screen palette ram indexes
 palette_indexes_intro_00:
-    .byte COLOR_LT_GRAY_10,  COLOR_LT_ORANGE_27,COLOR_MED_RED_16     ; background palette 0
-    .byte COLOR_WHITE_20,    COLOR_LT_VIOLET_22,COLOR_DARK_VIOLET_02 ; background palette 1
-    .byte COLOR_WHITE_20,    COLOR_LT_GRAY_10,  COLOR_DARK_GRAY_00   ; background palette 2
-    .byte COLOR_LT_ORANGE_27,COLOR_MED_RED_16,  COLOR_DARK_RED_06    ; background palette 3
-    .byte COLOR_MED_RED_16,  COLOR_DARK_RED_06, COLOR_BLACK_0f       ; sprite palette 0
-    .byte COLOR_WHITE_20,    COLOR_MED_RED_16,  COLOR_MED_ORANGE_17  ; sprite palette 1
-    .byte COLOR_WHITE_20,    COLOR_LT_RED_26,   COLOR_MED_RED_16     ; sprite palette 2
-    .byte COLOR_WHITE_20,    COLOR_DARK_GRAY_00,COLOR_BLACK_0f       ; sprite palette 3
+    .ifdef Probotector
+        .byte COLOR_WHITE_20,    COLOR_WHITE_30,    COLOR_DARK_RED_06 ; background palette 0
+    .else
+        .byte COLOR_LT_GRAY_10,  COLOR_LT_ORANGE_27,COLOR_MED_RED_16  ; background palette 0
+    .endif
+    .byte COLOR_WHITE_20,    COLOR_LT_VIOLET_22,COLOR_DARK_VIOLET_02  ; background palette 1
+    .byte COLOR_WHITE_20,    COLOR_LT_GRAY_10,  COLOR_DARK_GRAY_00    ; background palette 2
+    .byte COLOR_LT_ORANGE_27,COLOR_MED_RED_16,  COLOR_DARK_RED_06     ; background palette 3
+    .byte COLOR_MED_RED_16,  COLOR_DARK_RED_06, COLOR_BLACK_0f        ; sprite palette 0
+    .byte COLOR_WHITE_20,    COLOR_MED_RED_16,  COLOR_MED_ORANGE_17   ; sprite palette 1
+    .ifdef Probotector
+        .byte COLOR_BLACK_0f,    COLOR_BLACK_0f,    COLOR_BLACK_0f    ; sprite palette 2
+        .byte COLOR_BLACK_0f,    COLOR_BLACK_0f,    COLOR_DARK_RED_06 ; sprite palette 3
+    .else
+        .byte COLOR_WHITE_20,    COLOR_LT_RED_26,   COLOR_MED_RED_16  ; sprite palette 2
+        .byte COLOR_WHITE_20,    COLOR_DARK_GRAY_00,COLOR_BLACK_0f    ; sprite palette 3
+    .endif
 
 ; flashing animation intro screen palette ram indexes
 palette_indexes_intro_01:
-    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f       ; background palette 0
-    .byte COLOR_WHITE_20,COLOR_LT_VIOLET_22,COLOR_DARK_VIOLET_02 ; background palette 1
-    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f       ; background palette 2
-    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f       ; background palette 3
-    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f       ; sprite palette 0
-    .byte COLOR_WHITE_20,COLOR_MED_RED_16,  COLOR_MED_ORANGE_17  ; sprite palette 1
-    .byte COLOR_WHITE_20,COLOR_LT_RED_26,   COLOR_MED_RED_16     ; sprite palette 2
-    .byte COLOR_WHITE_20,COLOR_DARK_GRAY_00,COLOR_BLACK_0f       ; sprite palette 3
+    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f          ; background palette 0
+    .byte COLOR_WHITE_20,COLOR_LT_VIOLET_22,COLOR_DARK_VIOLET_02    ; background palette 1
+    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f          ; background palette 2
+    .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f          ; background palette 3
+    .ifdef Probotector
+        .byte COLOR_MED_RED_16,  COLOR_DARK_RED_06,COLOR_BLACK_0f   ; sprite palette 0
+        .byte COLOR_BLACK_0f,    COLOR_BLACK_0f,   COLOR_BLACK_0f   ; sprite palette 1
+        .byte COLOR_BLACK_0f,    COLOR_BLACK_0f,   COLOR_BLACK_0f   ; sprite palette 2
+        .byte COLOR_BLACK_0f,    COLOR_BLACK_0f,   COLOR_BLACK_0f   ; sprite palette 3
+    .else
+        .byte COLOR_BLACK_0f,COLOR_BLACK_0f,    COLOR_BLACK_0f      ; sprite palette 0
+        .byte COLOR_WHITE_20,COLOR_MED_RED_16,  COLOR_MED_ORANGE_17 ; sprite palette 1
+        .byte COLOR_WHITE_20,COLOR_LT_RED_26,   COLOR_MED_RED_16    ; sprite palette 2
+        .byte COLOR_WHITE_20,COLOR_DARK_GRAY_00,COLOR_BLACK_0f      ; sprite palette 3
+    .endif
 
 palette_indexes_end_credits:
     .byte COLOR_WHITE_20,      COLOR_LT_ORANGE_27,COLOR_MED_RED_16      ; background palette 0
@@ -646,6 +716,15 @@ palette_indexes_end_credits:
     .byte COLOR_WHITE_20,      COLOR_MED_RED_16,  COLOR_MED_ORANGE_17   ; sprite palette 1
     .byte COLOR_WHITE_20,      COLOR_LT_RED_26,   COLOR_MED_RED_16      ; sprite palette 2
     .byte COLOR_PALE_ORANGE_37,COLOR_DARK_GRAY_00,COLOR_BLACK_0f        ; sprite palette 3
+
+.ifdef Probotector
+    ; !(UNUSED) duplicated bank f data
+    ; starting at alternate_palettes_tbl offset 97 ($fa1d)
+    ; until reset_vector offset 12 ($fb1c)
+    ; probably a leftover artifact of the build system
+    ; can be safely removed and used for other purposes
+    .incbin "assets/chr_rom/unused_remnant_03.bin"
+.endif
 
 ; unused #$62e bytes out of #$2,000 bytes total (80.69% full)
 ; unused 1,582 bytes out of 8,192 bytes total (80.69% full)

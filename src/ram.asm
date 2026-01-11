@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; ram.asm contains memory map of the game, specifying how the RAM is used
 
@@ -173,9 +173,15 @@
 .exportzp SOUND_VAR_1                     ; $e2
 .exportzp SOUND_VAR_2                     ; $e4
 .exportzp SOUND_VAR_3                     ; $e5
-.exportzp SOUND_PART_ADDR                 ; $e6
+.ifdef Superc
+    .exportzp SOUND_PART_ADDR             ; $e6
+.endif
 .exportzp SOUND_CODE_ADDR                 ; $e8
-.exportzp NUM_SOUND_PARTS                 ; $ea
+.ifdef Probotector
+    .exportzp SOUND_FLAGS                 ; $ea
+.else
+    .exportzp NUM_SOUND_PARTS             ; $ea
+.endif
 .exportzp CUR_SOUND_PERIOD_LOW            ; $ec
 .exportzp CUR_SOUND_LEN_TIMER_HIGH        ; $ed
 .exportzp DEMO_LEVEL                      ; $f0
@@ -1228,26 +1234,33 @@ SOUND_VAR_2:
 SOUND_VAR_3:
     .res 1
 
-; $e6 - 2-byte memory address to sound part, e.g. sound_xx_slot_xx
-SOUND_PART_ADDR:
-    .res 2
+.ifdef Superc
+    ; $e6 - 2-byte memory address to sound part, e.g. sound_xx_slot_xx
+    SOUND_PART_ADDR:
+        .res 2
+.endif
 
 ; $e8 - 2-byte memory address to start of sound code, e.g. sound_xx
+; $e6 for Probotector
 SOUND_CODE_ADDR:
     .res 2
 
-; $ea - 1 less than the number of sound parts in the sound code, i.e. how many
-; slots the sound code has
-NUM_SOUND_PARTS:
-    .res 1
+.ifdef Superc
+    ; $ea - 1 less than the number of sound parts in the sound code, i.e. how many
+    ; slots the sound code has
+    ; for Probotector this is located at $017c
+    NUM_SOUND_PARTS:
+        .res 1
 
-; $eb - !(UNUSED)
-.res 1
+    ; $eb - !(UNUSED)
+    .res 1
+.endif
 
 ; $ec - controls channel period/timer (pitch/frequency)
 ;  * pulse channel registers $4002 and $4006 - period/timer low bits
 ;  * triangle channel register $400a - period/timer low bits
 ;  * noise channel register $400e - noise period (noise mode bit 7 always 0)
+; $e8 in Probotector
 CUR_SOUND_PERIOD_LOW:
     .res 1
 
@@ -1256,11 +1269,22 @@ CUR_SOUND_PERIOD_LOW:
 ;    length counter load is always 1 (bit 3 set)
 ;  * triangle channel register $400a - period/timer low bits
 ;  * noise channel register $400e - noise period (noise mode bit 7 always 0)
+; $e9 in Probotector
 CUR_SOUND_LEN_TIMER_HIGH:
     .res 1
 
-; $ee - !(UNUSED)
-.res 2
+.ifdef Probotector
+    ; $ea - various flags encoded in the bits used when processing sound
+    ;  * bit 0
+    ;    * 1 - sound effect command
+    ;    * 0 - background music (bgm) command
+    ; #$06 bytes, one for each sound slot
+    SOUND_FLAGS:
+        .res 6
+.else
+    ; $ee - !(UNUSED)
+    .res 2
+.endif
 
 ; $f0 - the current level being demonstrated during the demo
 DEMO_LEVEL:
@@ -1347,7 +1371,11 @@ PPUCTRL_SETTINGS:
 .export SOUND_CMD_LENGTH                ; $0104
 .export SOUND_CODE                      ; $010a
 .export SOUND_LENGTH_MULTIPLIER         ; $0110
-.export SOUND_FLAGS                     ; $0116
+.ifdef Probotector
+    .export SOUND_FLAGS                 ; $0116
+.else
+    .export SOUND_FLAGS                 ; $0116
+.endif
 .export SOUND_CMD_REPEATS               ; $011c
 .export SOUND_CMD_ADDRS_LOW             ; $0128
 .export SOUND_CMD_ADDRS_HIGH            ; $012e
@@ -1370,6 +1398,9 @@ PPUCTRL_SETTINGS:
 .export SOUND_FRAME_SKIP                ; $0173
 .export VIBRATO_CTRL                    ; $0175
 .export SOUND_VAR_UNUSED                ; $0179
+.ifdef Probotector
+    .export NUM_SOUND_PARTS             ; $017c
+.endif
 .export SOUND_DPCM_SAMPLE               ; $0187
 .export SOUND_TIMER_ADJ                 ; $0189
 .export SOUND_OCTAVE_SHIFT              ; $018e
@@ -1399,6 +1430,9 @@ PPUCTRL_SETTINGS:
 .export SOUND_VOLUME_ADJ                ; $01c2
 .export SOUND_PERIOD_LOW                ; $01c4
 .export SOUND_LEN_TIMER_HIGH            ; $01cc
+.ifdef Probotector
+    .export SOUND_PROBO_2               ; $01ce
+.endif
 .export OAMDMA_CPU_BUFFER               ; $0200
 .export CPU_GRAPHICS_BUFFER             ; $0300
 .export GRAPHICS_BUFFER_TEMP            ; $03c0
@@ -1482,6 +1516,9 @@ PPUCTRL_SETTINGS:
 .export RIGHT_FOURTH_QTR_CHR_BANK       ; $07f5
 .export SPLIT_X_SCROLL                  ; $07f6
 .export SPLIT_PPUCTRL                   ; $07f7
+.ifdef Probotector
+    .export SPLIT_SCANLINE_IRQ_1        ; $07f8
+.endif
 .export SPLIT_SCANLINE_IRQ_2            ; $07f9
 .export SPLIT_SCANLINE_IRQ_3            ; $07fa
 .export IRQ_HANDLER_PPUADDR             ; $07fb
@@ -1509,29 +1546,35 @@ SOUND_CODE:
 SOUND_LENGTH_MULTIPLIER:
     .res 6
 
-; $0116 - various flags encoded in the bits used when processing sound
-;  * bit 0
-;    * 1 - sound effect command
-;    * 0 - background music (bgm) command
-; #$06 bytes, one for each sound slot
-SOUND_FLAGS:
-    .res 6
+.ifdef Superc
+    ; $0116 - various flags encoded in the bits used when processing sound
+    ;  * bit 0
+    ;    * 1 - sound effect command
+    ;    * 0 - background music (bgm) command
+    ; #$06 bytes, one for each sound slot
+    SOUND_FLAGS:
+        .res 6
+.endif
 
 ; $011c - the number of times to repeat the processing sound command
 ; #$06 bytes, one for each sound slot
+; $0116 in Probotector
 SOUND_CMD_REPEATS:
     .res 6
 
 ; $0122 - !(UNUSED)
-.res 6
+; $011c in Probotector
+    .res 6
 
 ; $0128 - low byte of address pointing to sound command
 ; #$06 bytes, one for each sound slot
+; $0122 in Probotector
 SOUND_CMD_ADDRS_LOW:
     .res 6
 
 ; $012e - high byte of address pointing to sound command
 ; #$06 bytes, one for each sound slot
+; $0128 in Probotector
 SOUND_CMD_ADDRS_HIGH:
     .res 6
 
@@ -1546,10 +1589,7 @@ PARENT_SOUND_ADDRS_HIGH:
     .res 6
 
 ; $0140 - !(UNUSED)
-.res 6
-
-; $0146 - !(UNUSED)
-.res 6
+.res 12
 
 ; $014c - parent sound command low byte
 ; #$06 bytes, one for each sound slot
@@ -1576,6 +1616,7 @@ SOUND_LEN_TIMERS_HIGH:
 ;  * #$03 = noise and dmc channel
 ;  * #$04 = pulse 1
 ;  * #$05 = noise channel
+; $0155 for Probotector
 SOUND_CURRENT_SLOT:
     .res 1
 
@@ -1619,15 +1660,18 @@ SOUND_EFFECT_VOLUME_CONTINUED:
 ; config register, compare to SOUND_CFG_HIGH_B
 ; which config is used is basd on VIBRATO_CTRL flag bit 5
 ; #$06 bytes, one for each sound slot
+; $0164 for Probotector
 SOUND_CFG_HIGH_A:
     .res 2
 
 ; $016c - whether or not the game is paused, used for sound logic
+; $0166 for Probotector
 PAUSE_STATE_01:
     .res 1
 
 ; $016d - specify number of frames before skipping processing sound for a single
 ; frame.  Used only by sound_32.  See SOUND_FRAME_SKIP
+; $0167 for Probotector
 SOUND_FRAME_SKIP_COUNT:
     .res 1
 
@@ -1635,6 +1679,7 @@ SOUND_FRAME_SKIP_COUNT:
 .res 2
 
 ; $0170 - used on pulse or triangle channel
+; $016a for Probotector
 SOUND_VOLUME_ADJ2:
     .res 3
 
@@ -1652,14 +1697,32 @@ SOUND_FRAME_SKIP:
 ;  * bit 4 - when non-zero uses SOUND_PITCH_ADJ_TIMER (see check_pitch_adjust)
 ;  * bit 5 - 0 = SOUND_CFG_HIGH_A, 1 = use SOUND_CFG_HIGH_B
 ;  * bit 7
+; $016f for Probotector
 VIBRATO_CTRL:
     .res 5
 
-; $017a - !(UNUSED) only ever written to for $017d (for slot 4) (e.g. sound_06)
-SOUND_VAR_UNUSED:
-    .res 13
+.ifdef Probotector
+    .res 6
+
+    ; $017a - !(UNUSED)
+    SOUND_VAR_UNUSED:
+        .res 2
+
+    ; $017c - 1 less than the number of sound parts in the sound code, i.e. how many
+    ; slots the sound code has
+    ; for Super C this is located at $ea
+    NUM_SOUND_PARTS:
+        .res 1
+
+    .res 4
+.else
+    ; $017a - !(UNUSED) only ever written to for $017d (for slot 4) (e.g. sound_06)
+    SOUND_VAR_UNUSED:
+        .res 13
+.endif
 
 ; $0187 - used to know which sound sample code to play
+; $0181 for Probotector
 SOUND_DPCM_SAMPLE:
     .res 1
 
@@ -1669,48 +1732,59 @@ SOUND_DPCM_SAMPLE:
 ; $0189 - used on pulse or triangle channel
 ;  * triangle linear counter reload value (fine grain duration before silencing)
 ;  * SOUND_TIMER_ADJ+3 is for noise channel (linear counter reload value)
+; $0183 in Probotector
 SOUND_TIMER_ADJ:
     .res 5
 
 ; $018e - how many octaves to shift the sound pitch
+; $0188 in Probotector
 SOUND_OCTAVE_SHIFT:
     .res 3
 
 ; $0191 - pulse 1, pulse 2, or triangle
+; $018b in Probotector
 SOUND_NOTE_PERIOD_OFFSET:
     .res 3
 
 ; $0194 - stores sound channel period byte
+; $018e in Probotector
 SOUND_PERIOD:
     .res 3
 
 ; $0197 - loaded into CUR_SOUND_LEN_TIMER_HIGH for the current slot
+; $0191 in Probotector
 SOUND_LEN:
     .res 3
 
 ; $019a - sound_envelope_ptr_tbl offset
+; $0194 in Probotector
 SOUND_CTRL_ENVELOPE_OFFSET:
     .res 2
 
 ; $019c - used to time pulse volume delay
+; $0196 in Probotector
 SOUND_VOLUME_CHANGE_DELAY:
     .res 2
 
 ; $019e - sound_envelope_xx read offset
+; $0198 in Probotector
 SOUND_ENVELOPE_READ_OFFSET:
     .res 2
 
 ; $01a0 - pulse length to restart envelope reading
 ; not effectively used with the audio in game
+; $019a in Probotector
 SOUND_ENVELOPE_READ_LEN:
     .res 2
 
 ; $01a2 - parent pulse envelope read offset
+; $019c in Probotector
 SOUND_ENVELOPE_BASE_READ_OFFSET:
     .res 2
 
 ; $01a4 - number of video frames before end of sound command in which the
 ; pulse decrescendo will resume
+; $019e in Probotector
 DECRESCENDO_END_PAUSE:
     .res 2
 
@@ -1723,19 +1797,23 @@ SOUND_DECRESCENDO_STEP_TIME:
     .res 2
 
 ; $01aa - when decremented to 0, @lower_volume is called
+; $01a4 in Probotector
 SOUND_VOLUME_ADJ_TIMER:
     .res 2
 
 ; $01ac - backup of CUR_SOUND_PERIOD_LOW stored between frames
 ; ultimately written to APU_PULSE_PERIOD_LOW
+; $01a6 in Probotector
 SOUND_PULSE_PERIOD_LOW:
     .res 2
 
 ; $01ae - used when setting SOUND_PITCH_ADJ_TIMER when VIBRATO_CTRL bit 4 set
+; $01a8 in Probotector
 SOUND_PITCH_ADJ_PERIOD:
     .res 2
 
 ; $01b0 - used for pulse 1 or pulse 2 for calculating pulse length and period
+; $01aa in Probotector
 SOUND_PITCH_ADJ_TIMER:
     .res 2
 
@@ -1762,6 +1840,7 @@ SOUND_PITCH_READ_LEN:
 ; $01bc - the value to merge with the high nibble before storing in APU channel
 ; config register, compare to SOUND_CFG_HIGH_A
 ; which config is used is basd on VIBRATO_CTRL flag bit 5
+; $01b6 in Probotector
 SOUND_CFG_HIGH_B:
     .res 2
 
@@ -1770,6 +1849,7 @@ SOUND_CFG_HIGH_B:
 ;  * bit 6 - whether or not to overwrite other channel's pitches
 ;    see overwrite_pitches
 ;  * bit 7
+; $01b8 in Probotector
 SOUND_PITCH_FLAGS:
     .res 2
 
@@ -1779,25 +1859,34 @@ PITCH_OVERWRITE:
     .res 2
 
 ; $01c2 - amount to lower volume by, maximum value of #$0f
+; $01bc in Probotector
 SOUND_VOLUME_ADJ:
     .res 2
 
 ; $01c4 - #$08 timer bytes (low bits), for use in changing pitch quickly
-; low 4 bytes are for pulse 1
-; high 4 bytes are for pulse 2
+;  * low 4 bytes are for pulse 1
+;  * high 4 bytes are for pulse 2
+; $01be in Probotector
 SOUND_PERIOD_LOW:
     .res 8
 
 ; $01cc - #$08 timer bytes (high bits), for use in changing pitch quickly
 ; low 4 bytes are for pulse 1
 ; high 4 bytes are for pulse 2
+; $01c6 in Probotector
 SOUND_LEN_TIMER_HIGH:
     .res 8
 
+.ifdef Probotector
+    ; $01ce - stores sound code, seems to not be used and always set to #$00
+    SOUND_PROBO_2:
+        .res 6
+.endif
+
 ; $01d4 - reserved for stack
-; technically stack is $0100 to $01ff but Super C assumes stack will never
+; technically stack is $01ff down to $0100 but Super C assumes stack will never
 ; underflow into the memory used for sound processing
-.res 44
+    .res 44
 
 ; $0200-$02ff OAMDMA (sprite) read data for direct memory access (DMA) writes to
 ; the PPU.  read once per frame.  Populated by load_sprites_to_oam_buffer
@@ -2332,8 +2421,10 @@ SPLIT_X_SCROLL:
 SPLIT_PPUCTRL:
     .res 1
 
-; $07f8 - !(UNUSED)
-.res 1
+; $07f8 - the number of scanlines until next IRQ
+; !(UNUSED) in Super C, used in Probotector
+SPLIT_SCANLINE_IRQ_1:
+    .res 1
 
 ; $07f9 - used after first scanline interrupt to set the 2nd scanline interrupt
 ; it is the number of scanlines until next IRQ

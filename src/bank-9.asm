@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 9 contains graphics data for Level 5 (The Cliff) and Level 6 (Entry to
 ; HQ).  The rest of the graphics for Level 5 and Level 6 is in bank 8.

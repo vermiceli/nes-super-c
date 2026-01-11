@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank C contains the sound engine and some of the encoded sound data.
 
@@ -100,6 +100,9 @@ init_pulse_and_noise_channels:
 ; write #$00 sound code to all sound slots
 @loop:
     sta SOUND_CODE,x
+    .ifdef Probotector
+        sta SOUND_PROBO_2,x
+    .endif
     inx
     cpx #$06
     bcc @loop
@@ -110,16 +113,26 @@ reset_channels:
     jsr init_triangle_channel
     lda #$30
     sta APU_PULSE_CONFIG
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     sta APU_PULSE2_CONFIG
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     sta APU_NOISE_CONFIG
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     lda #$7f
     sta APU_PULSE_SWEEP
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     sta APU_PULSE2_SWEEP
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     rts
 
 ; initializes various variables for the sound code slots.  Variables are later
@@ -178,11 +191,15 @@ init_sound_code_vars:
     iny                            ; increment sound code read offset
     lda (SOUND_CODE_ADDR),y        ; load sound code byte (sound part address low byte)
     sta SOUND_CMD_ADDRS_LOW,x      ; set low byte of sound part address (sound_xx_slot_xx)
-    sta SOUND_PART_ADDR            ; set low byte of sound part address (sound_xx_slot_xx)
+    .ifdef Superc
+        sta SOUND_PART_ADDR        ; set low byte of sound part address (sound_xx_slot_xx)
+    .endif
     iny                            ; increment sound read offset
     lda (SOUND_CODE_ADDR),y        ; load sound code byte (sound part address high byte)
     sta SOUND_CMD_ADDRS_HIGH,x     ; set high byte of sound part address (sound_xx_slot_xx)
-    sta SOUND_PART_ADDR+1          ; set high byte of sound part address (sound_xx_slot_xx)
+    .ifdef Superc
+        sta SOUND_PART_ADDR+1      ; set high byte of sound part address (sound_xx_slot_xx)
+    .endif
     lda #$00
     sta SOUND_CMD_REPEATS,x
     lda #$01
@@ -209,24 +226,38 @@ init_sound_code_vars:
     sta SOUND_PITCH_FLAGS,x
 
 @read_byte_0:
-    sty SOUND_VAR_1         ; store sound code read offset
-    ldy #$00
-    lda (SOUND_PART_ADDR),y ; read first byte of sound part, e.g. sound_xx_slot_xx
-                            ; specifies sound type, i.e. sound effect or background music (bgm)
-    iny                     ; initialize y to #$01
-    cmp #$10                ; compare byte 0 of sound part to #$10
-    bcc @set_sound_flags    ; branch if sound effect command (< #$10)
-    cpx #$04                ; see if sound slot 4 (pulse 1)
-    beq @set_sound_flags    ; branch if slot 4 (pulse 1) (sound effect command)
-    dey                     ; not slot 4 and y >= #$10, background music (bgm) command
+    .ifdef Probotector
+            lda INIT_SOUND_CODE      ; load current sound code
+            cmp #$28
+            bcc @sound_effect        ; branch if sound effect
+            lda #$00                 ; sound is background music (bgm)
+            beq @set_sound_part_next ; always branch since background music (bgm)
 
-@set_sound_flags:
-                        ; #$01 - byte 0 <= #$10 or slot 4 (read_sound_effect_cmd)
-    tya                 ; #$00 - otherwise (read_bgm_cmd)
-    sta SOUND_FLAGS,x   ; set sound command type (sound effect or background music)
-    ldy SOUND_VAR_1     ; re-load sound code read offset
-    lda INIT_SOUND_CODE ; load current sound code
-    sta SOUND_CODE,x    ; set sound code
+        @sound_effect:
+            lda #$01
+
+        @set_sound_part_next:
+            sta SOUND_FLAGS,x
+    .else
+            sty SOUND_VAR_1         ; store sound code read offset
+            ldy #$00
+            lda (SOUND_PART_ADDR),y ; read first byte of sound part, e.g. sound_xx_slot_xx
+                                    ; specifies sound type, i.e. sound effect or background music (bgm)
+            iny                     ; initialize y to #$01
+            cmp #$10                ; compare byte 0 of sound part to #$10
+            bcc @set_sound_flags    ; branch if sound effect command (< #$10)
+            cpx #$04                ; see if sound slot 4 (pulse 1)
+            beq @set_sound_flags    ; branch if slot 4 (pulse 1) (sound effect command)
+            dey                     ; not slot 4 and y >= #$10, background music (bgm) command
+
+        @set_sound_flags:
+                              ; #$01 - byte 0 <= #$10 or slot 4 (read_sound_effect_cmd)
+            tya               ; #$00 - otherwise (read_bgm_cmd)
+            sta SOUND_FLAGS,x ; set sound command type (sound effect or background music)
+            ldy SOUND_VAR_1   ; re-load sound code read offset
+    .endif
+    lda INIT_SOUND_CODE       ; load current sound code
+    sta SOUND_CODE,x          ; set sound code
 
 @next_sound_part:
     dec NUM_SOUND_PARTS       ; decrement sound part parsing index
@@ -267,7 +298,9 @@ check_pause_reset_channels:
 mute_pulse_channel:
     lda #$30                       ; a = #$30
     sta APU_PULSE_CONFIG,x         ; set volume to 0 and duty cycle to 25%
-    jsr wait                       ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                   ; execute #$0a nop instructions
+    .endif
     bne set_pulse_timer_and_length ; always branch to set pulse timer and length
 
 ; sets volume, timer (pitch), and length
@@ -287,21 +320,30 @@ set_pulse_channel_registers:
 set_pulse_timer_and_length:
     lda SOUND_PULSE_PERIOD_LOW,x   ; load in memory pulse period value
     sta APU_PULSE_PERIOD_LOW,y     ; set APU pulse period value
-    jsr wait                       ; execute #$0a nop instructions
-    lda SOUND_LEN_TIMERS_HIGH,x    ; load pulse timer high bits (H) (defines part of frequency)
-    ora #$08                       ; ensure length is at least 1
-    sta APU_PULSE_LEN_TIMER_HIGH,y ; set the APU pulse channel length and timer high portion
-    jmp wait                       ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                   ; execute #$0a nop instructions
+    .endif
+    lda SOUND_LEN_TIMERS_HIGH,x
+    ora #$08
+    sta APU_PULSE_LEN_TIMER_HIGH,y
+    .ifdef Probotector
+        rts
+    .else
+        jmp wait                   ; execute #$0a nop instructions
+    .endif
 
 handle_sound_slots:
-    lda SOUND_FRAME_SKIP_COUNT ; see if should skip sound for current frame
-    beq @continue              ; branch to continue if this sound doesn't skip any frames
-    inc SOUND_FRAME_SKIP       ; not running sound routine this frame, used only for sound_32
+    .ifdef Probotector
+        jsr probotector_mark_bgm
+    .endif
+    lda SOUND_FRAME_SKIP_COUNT   ; see if should skip sound for current frame
+    beq @continue                ; branch to continue if this sound doesn't skip any frames
+    inc SOUND_FRAME_SKIP         ; not running sound routine this frame, used only for sound_32
     lda SOUND_FRAME_SKIP
     cmp SOUND_FRAME_SKIP_COUNT
-    bne @continue              ; branch to play sounds this frame
-    lda #$00                   ; counted up to SOUND_FRAME_SKIP_COUNT, skip playing sound this frame
-    sta SOUND_FRAME_SKIP       ; and reset skip counter
+    bne @continue                ; branch to play sounds this frame
+    lda #$00                     ; counted up to SOUND_FRAME_SKIP_COUNT, skip playing sound this frame
+    sta SOUND_FRAME_SKIP         ; and reset skip counter
     rts
 
 @continue:
@@ -345,21 +387,94 @@ sound_channel_reg_tbl:
     .byte $00 ; sound slot #$04 (pulse 1 channel) --> $4000
     .byte $0c ; sound slot #$05 (noise channel) --> $400c
 
+    .ifdef Probotector
+        probotector_mark_bgm:
+            lda PAUSE_STATE
+            bne @exit
+            inc SOUND_VOLUME_ADJ2+2
+            lda SOUND_VOLUME_ADJ2+2
+            cmp #$06
+            bne @exit
+            lda #$00
+            sta SOUND_VOLUME_ADJ2+2
+            tax
+
+        @mark_bgm_slots:
+            cpx #$04
+            beq @exit
+            lda SOUND_CODE,x
+            beq @next_slot
+            lda SOUND_FLAGS,x
+            lsr
+            bcs @next_slot          ; branch if sound effect to skip
+            dec SOUND_CMD_LENGTH,x  ; background music (bgm)
+            beq @mark_bgm_playing
+            jsr @existing_sound_cmd
+            inx
+            jmp @mark_bgm_slots
+
+        @mark_bgm_playing:
+            inc SOUND_CMD_LENGTH,x ; set length back
+            lda #$01
+            sta $01ce,x            ; mark background music playing
+
+        @next_slot:
+            inx
+            jmp @mark_bgm_slots
+
+        @existing_sound_cmd:
+            cpx #$02
+            bcs @exit
+            lda SOUND_PITCH_FLAGS,x
+            bmi @exit
+            lda SOUND_LENGTH_MULTIPLIER,x
+            sta SOUND_VAR_1
+            lda SOUND_PITCH_FLAGS,x
+            and #$10
+            beq @continue
+            lda SOUND_VAR_1
+            asl a
+            sta SOUND_VAR_1
+
+        @continue:
+            lda SOUND_CMD_LENGTH,x
+
+        @loop:
+            sec
+            sbc SOUND_VAR_1
+            beq @handle_end_bgm_cmd
+            bcs @loop
+
+        @exit:
+            rts
+
+        @handle_end_bgm_cmd:
+            lda SOUND_PERIOD,x
+            sta CUR_SOUND_PERIOD_LOW
+            lda SOUND_LEN,x
+            sta CUR_SOUND_LEN_TIMER_HIGH
+            jmp overwrite_pitches
+    .endif
+
 ; read and interpret loaded sound code in slot x
 ; output
 ;  * x - sound slot with the sound code to handle
 handle_sound_code:
-    jsr load_high_prg_sound_bank ; set high PRG bank ($a000-$bfff) for sounds >= sound_29
-    lda PAUSE_STATE_01           ; load current game pause state (0 = unpaused, 1 = paused)
-    beq @check_sound_command     ; branch if game not paused
-    lda SOUND_CODE,x             ; game paused, load sound code for current slot
-    cmp #$27                     ; see if sound code is the pause jingle (sound_27)
-    bne sound_music_entry_exit   ; exit if not the game pausing jingle sound
+    jsr load_high_prg_sound_bank    ; set high PRG bank ($a000-$bfff) for sounds >= sound_29
+    lda PAUSE_STATE_01              ; load current game pause state (0 = unpaused, 1 = paused)
+    beq @check_sound_command        ; branch if game not paused
+    lda SOUND_CODE,x                ; game paused, load sound code for current slot
+    cmp #$27                        ; see if sound code is the pause jingle (sound_27)
+    .ifdef Probotector
+        bne sound_music_entry_exit2 ; exit if not the game pausing jingle sound
+    .else
+        bne sound_music_entry_exit  ; exit if not the game pausing jingle sound
+    .endif
 
 @check_sound_command:
     dec SOUND_CMD_LENGTH,x     ; decrement the remaining number of video frames sound should play for
                                ; before continuing to the next sound command
-    bne @existing_sound_cmd    ; branch if sound command hasn't finished executing
+    bne existing_sound_cmd     ; branch if sound command hasn't finished executing
     ldy #$00                   ; previous sound slot command finished, move to next sound slot command
     lda SOUND_CMD_ADDRS_LOW,x  ; load low byte of sound part address (sound_xx_slot_xx) for the sound slot
     sta CUR_SOUND_ADDR         ; set low byte of current slot's sound part address (sound_xx_slot_xx)
@@ -368,13 +483,26 @@ handle_sound_code:
     lda SOUND_FLAGS,x
     jmp read_sound_cmd
 
-@existing_sound_cmd:
-    cpx #$02                      ; compare sound slot to #$02 (triangle channel)
+.ifdef Probotector
+    sound_music_entry_exit2:
+        rts
+.endif
+
+existing_sound_cmd:
+    cpx #$02                        ; compare sound slot to #$02 (triangle channel)
     beq triangle_adj
-    bcs sound_music_entry_exit    ; exit if sound slot #$03 (noise and dmc), #$04 (pulse 1), or #$05 (noise)
-    lda SOUND_FLAGS,x             ; sound slot #$00 (pulse 1), or #$01 (pulse 2)
+    .ifdef Probotector
+        bcs sound_music_entry_exit2 ; exit if sound slot #$03 (noise and dmc), #$04 (pulse 1), or #$05 (noise)
+    .else
+        bcs sound_music_entry_exit  ; exit if sound slot #$03 (noise and dmc), #$04 (pulse 1), or #$05 (noise)
+    .endif
+    lda SOUND_FLAGS,x               ; sound slot #$00 (pulse 1), or #$01 (pulse 2)
     and #$41
-    bne sound_music_entry_exit
+    .ifdef Probotector
+        bne sound_music_entry_exit2
+    .else
+        bne sound_music_entry_exit
+    .endif
     lda SOUND_PITCH_FLAGS,x
     bmi check_pitch_adjust
     lda SOUND_LENGTH_MULTIPLIER,x
@@ -382,9 +510,9 @@ handle_sound_code:
     lda SOUND_PITCH_FLAGS,x
     and #$10
     beq @continue
-    lda SOUND_VAR_1               ; load sound length multiplier
+    lda SOUND_VAR_1                 ; load sound length multiplier
     asl
-    sta SOUND_VAR_1               ; double sound length multiplier
+    sta SOUND_VAR_1                 ; double sound length multiplier
 
 @continue:
     lda SOUND_CMD_LENGTH,x
@@ -416,7 +544,11 @@ check_pitch_adjust:
 ; set volume and run current bgm_cmd based on SOUND_FLAGS,x bits 1 and 2
 run_bgm_cmd:
     dec SOUND_VOLUME_CHANGE_DELAY,x
-    bne sound_music_entry_exit
+    .ifdef Probotector
+        bne sound_music_entry_exit2
+    .else
+        bne sound_music_entry_exit
+    .endif
     inc SOUND_VOLUME_CHANGE_DELAY,x ; restore volume
     jsr pulse_set_volume            ; set volume in APU based on many variables
     lda SOUND_FLAGS,x
@@ -460,7 +592,9 @@ triangle_adj:
     bcc @exit                         ; exit if SOUND_TIMER_ADJ+3 is less than #$40
     sta SOUND_TIMER_ADJ+3             ; set new linear counter reload value
     sta APU_TRIANGLE_CONFIG           ; set new linear counter reload value (fine grain duration)
-    jsr wait                          ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                      ; execute #$0a nop instructions
+    .endif
 
 @exit:
     rts
@@ -540,7 +674,9 @@ calc_and_set_pulse_config:
     jsr ldx_channel_register ; set x to apu channel register [#$00, #$04, #$08, #$c] for sound slot x
     bcs @restore_x_exit      ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_PULSE_CONFIG,x
-    jsr wait                 ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait             ; execute #$0a nop instructions
+    .endif
 
 @restore_x_exit:
     ldx SOUND_CURRENT_SLOT ; load current sound slot [#$00-#$05]
@@ -964,14 +1100,18 @@ play_percussive_sound:
     rts            ; exit if high nibble was #$0c
 
 @continue2:
-    tax                             ; transfer percussion_tbl offset to x
-    lda SOUND_FLAGS+3               ; load sound slot 3's flags
-    bmi calc_dpcm_play              ; branch if sweep flag enabled
-    lda percussion_tbl,x            ; load sound code based on high nibble from sound_xx
-    ldx SOUND_CURRENT_SLOT          ; restore sound slot offset, play percussion sound
-    cmp #$37                        ; see if dmc sample sound
-    bcs play_dpcm_sample            ; branch if dmc sample percussive sound, i.e. #$37, #$38, #$39, #$3a, or #$3b
-    jmp load_sound_banks_init_sound ; not a dmc sample, play sound (in practice this is always a noise channel sound)
+    tax                                 ; transfer percussion_tbl offset to x
+    lda SOUND_FLAGS+3                   ; load sound slot 3's flags
+    bmi calc_dpcm_play                  ; branch if sweep flag enabled
+    lda percussion_tbl,x                ; load sound code based on high nibble from sound_xx
+    ldx SOUND_CURRENT_SLOT              ; restore sound slot offset, play percussion sound
+    cmp #$37                            ; see if dmc sample sound
+    bcs play_dpcm_sample                ; branch if dmc sample percussive sound, i.e. #$37, #$38, #$39, #$3a, or #$3b
+    .ifdef Probotector
+        jmp init_sound_code_vars        ; not a dmc sample, play sound (in practice this is always a noise channel sound)
+    .else
+        jmp load_sound_banks_init_sound ; not a dmc sample, play sound (in practice this is always a noise channel sound)
+    .endif
 
 ; sound slot #$03 (percussion command) high nibble is #$e
 control_nibble_e:
@@ -1134,15 +1274,19 @@ read_sound_effect_cmd:
 ;  * a - APU_REGISTER_BASE+1,x
 ;  * x - sound slot
 @check_slot_pulse_set_sweep:
-    cpx #$04               ; see if sound slot 4 (pulse 1)
+    cpx #$04                   ; see if sound slot 4 (pulse 1)
     bne @pulse_set_sweep
-    sta SOUND_VAR_UNUSED+3 ; !(UNUSED) only ever written to
+    .ifdef Superc
+        sta SOUND_VAR_UNUSED+3 ; !(UNUSED) only ever written to
+    .endif
 
 @pulse_set_sweep:
     jsr ldx_channel_register       ; set x to apu channel register [#$00, #$04, #$08, #$c] for sound slot x
     bcs @restore_slot_adv_cmd_part ; branch if sound with higher priority than slot 0 playing in slot 4
     sta APU_REGISTER_BASE+1,x
-    jsr wait                       ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                   ; execute #$0a nop instructions
+    .endif
 
 @restore_slot_adv_cmd_part:
     ldx SOUND_CURRENT_SLOT ; load current sound slot [#$00-#$05]
@@ -1164,7 +1308,9 @@ read_sound_effect_cmd:
 ;  * y - sound_xx read offset
 @set_triangle_config:
     sta APU_TRIANGLE_CONFIG   ; set new linear counter reload value (fine grain duration)
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
     iny                       ; advance sound command part read offset
     jmp read_sound_effect_cmd
 
@@ -1222,7 +1368,9 @@ set_config:
     bcs sound_effect_read_pitch_adv ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_PULSE_CONFIG,x          ; set length halt, constant volume bit, and (if specified) constant volume
                                     ; duty is set elsewhere
-    jsr wait                        ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                    ; execute #$0a nop instructions
+    .endif
 
 sound_effect_read_pitch_adv:
     ldx SOUND_CURRENT_SLOT       ; restore current sound slot [#$00-#$05]
@@ -1237,13 +1385,68 @@ sound_effect_read_pitch_adv:
     lda (CUR_SOUND_ADDR),y
 
 @set_pitch_adv:
-    sta CUR_SOUND_PERIOD_LOW         ; set pulse channel period/timer, or triangle channel linear counter reload value
+    sta CUR_SOUND_PERIOD_LOW               ; set pulse channel period/timer, or triangle channel linear counter reload value
+    .ifdef Probotector
+        cpx #$05
+        beq @write_slot_len_period_adv_cmd
+        jsr probotector_calc_period_timer
+    .endif
+
+@write_slot_len_period_adv_cmd:
     jsr write_slot_len_period_to_apu
     jmp adv_sound_cmd_addr
 
 volume_envelope:
     lda SOUND_CFG_HIGH_A,x
     jmp set_config
+
+.ifdef Probotector
+    probotector_calc_period_timer:
+        lda #$00
+        sta SOUND_VAR_1
+        sta SOUND_VAR_3
+        lda CUR_SOUND_PERIOD_LOW
+        sta SOUND_VAR_1+1
+        sta SOUND_CODE_ADDR
+        lda CUR_SOUND_LEN_TIMER_HIGH
+        sta SOUND_VAR_2
+        sta SOUND_CODE_ADDR+1
+        ldx #$04
+        jsr @calc_period_timer
+        ldx #$04
+        jsr @calc_period_timer
+        ldx SOUND_CURRENT_SLOT
+        lda SOUND_VAR_3
+        clc
+        adc #$80
+        lda SOUND_CODE_ADDR
+        adc #$00
+        sta CUR_SOUND_PERIOD_LOW
+        lda SOUND_CODE_ADDR+1
+        adc #$00
+        sta CUR_SOUND_LEN_TIMER_HIGH
+        rts
+
+    @calc_period_timer:
+        lsr SOUND_VAR_2
+        ror SOUND_VAR_1+1
+        ror SOUND_VAR_1
+        dex
+        bne @calc_period_timer
+        lda SOUND_VAR_3
+        sec
+        sbc SOUND_VAR_1
+        sta SOUND_VAR_3
+        lda SOUND_CODE_ADDR
+        sbc #$00
+        sec
+        sbc SOUND_VAR_1+1
+        sta SOUND_CODE_ADDR
+        lda SOUND_CODE_ADDR+1
+        sbc SOUND_VAR_2
+        sta SOUND_CODE_ADDR+1
+        rts
+.endif
 
 triangle_set_ctrl_pitch:
     lda (CUR_SOUND_ADDR),y
@@ -1278,7 +1481,9 @@ triangle_set_ctrl_pitch:
 
 @set_triangle_cfg_pitch:
     sta APU_TRIANGLE_CONFIG            ; set new linear counter reload value (fine grain duration)
-    jsr wait                           ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                       ; execute #$0a nop instructions
+    .endif
     sta SOUND_TIMER_ADJ+3              ; set linear counter reload value
                                        ; (fine grain duration before silencing channel)
     ldx SOUND_CURRENT_SLOT             ; load current sound slot [#$00-#$05]
@@ -1491,7 +1696,9 @@ write_len_period_to_apu_a:
     jsr ldx_channel_register        ; set x to apu channel register [#$00, #$04, #$08, #$c] for sound slot x
     bcs set_low_period_write_to_apu ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_REGISTER_BASE+3,x       ; set length counter and timer high value [#$03, #$07, #$0b, #$0f]
-    jsr wait                        ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                    ; execute #$0a nop instructions
+    .endif
 
 set_low_period_write_to_apu:
     lda CUR_SOUND_PERIOD_LOW     ; load pulse channel period/timer, or triangle channel linear counter reload value
@@ -1505,7 +1712,9 @@ set_low_period_write_to_apu:
     jsr ldx_channel_register  ; set x to apu channel register [#$00, #$04, #$08, #$c] for sound slot x
     bcs @exit                 ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_REGISTER_BASE+2,x ; set the pulse, noise, or triangle timer/period
-    jsr wait                  ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait              ; execute #$0a nop instructions
+    .endif
 
 @exit:
     ldx SOUND_CURRENT_SLOT ; load current sound slot [#$00-#$05]
@@ -1621,7 +1830,34 @@ calc_cmd_delay:
     lda SOUND_LENGTH_MULTIPLIER,x ; load new loop counter, i.e. SOUND_LENGTH_MULTIPLIER,x * SOUND_VAR_1
 
 @loop_complete:
-    sta SOUND_CMD_LENGTH,x               ; set new SOUND_LENGTH_MULTIPLIER value in SOUND_CMD_LENGTH
+    sta SOUND_CMD_LENGTH,x        ; set new SOUND_LENGTH_MULTIPLIER value in SOUND_CMD_LENGTH
+    .ifdef Probotector
+        lda SOUND_PROBO_2,x
+        beq @adj_pitch
+        lda #$00
+        sta SOUND_PROBO_2,x
+        dec SOUND_CMD_LENGTH,x
+        bne @adj_pitch
+        cpx #$03
+        bne @restore_set_cmd_addr
+        jsr play_percussive_sound
+        jmp @set_cmd_addr
+
+    @restore_set_cmd_addr:
+        pla
+        pla
+
+    @set_cmd_addr:
+        jsr adv_sound_cmd_addr
+        ldy #$00
+        lda SOUND_CMD_ADDRS_LOW,x
+        sta CUR_SOUND_ADDR
+        lda SOUND_CMD_ADDRS_HIGH,x
+        sta CUR_SOUND_ADDR+1
+        jmp read_bgm_cmd
+    .endif
+
+@adj_pitch:
     cpx #$02                             ; compare to sound slot #$02 (triangle channel)
     bcs @continue                        ; branch if slot #$02 (triangle), #$03 (noise), #$04 (pulse 1), or #$05 (noise)
     lda VIBRATO_CTRL,x                   ; load whether or not to use vibrato (0 = yes, #$80 = no)
@@ -1734,7 +1970,9 @@ sound_cmd_routine_00:
     jsr ldx_channel_register     ; set x to apu channel register [#$00, #$04, #$08, #$c] for sound slot x
     bcs sound_envelope_read_addr ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_PULSE_CONFIG,x       ; set pulse 1, pulse 2, or triangle configuration
-    jsr wait                     ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                 ; execute #$0a nop instructions
+    .endif
 
 sound_envelope_read_addr:
     ldx SOUND_CURRENT_SLOT ; load current sound slot
@@ -2205,7 +2443,9 @@ mute_channel:
     jsr ldx_channel_register ; set x to apu channel register [0, 1, 4, 5, 8, #$c]
     bcs @continue            ; branch if there is already a sound playing slot 4, so can't play slot 0
     sta APU_PULSE_CONFIG,x   ; update pulse channel config (mute pulse channel 1 or 2 register)
-    jsr wait                 ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait             ; execute #$0a nop instructions
+    .endif
 
 @continue:
     ldx SOUND_CURRENT_SLOT ; load current sound slot [#$00-#$05]
@@ -2224,10 +2464,14 @@ init_pulse_channel:
     ldx SOUND_CHNL_REG_OFFSET       ; load pulse waive channel register offset, i.e. #$04 for second pulse channel #$00 for first
     lda #$30                        ; a = #$30
     sta APU_PULSE_CONFIG,x          ; mute the pulse channel 0 register
-    jsr wait                        ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                    ; execute #$0a nop instructions
+    .endif
     lda #$7f                        ; bit 7 set to 0 all other bits 1
     sta APU_PULSE_SWEEP,x           ; disable pulse 1 channel sweep
-    jsr wait                        ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait                    ; execute #$0a nop instructions
+    .endif
     lda SOUND_FLAGS+4
     and #$f9
     sta SOUND_FLAGS+4
@@ -2245,7 +2489,9 @@ init_pulse_channel:
 mute_noise_channel:
     lda #$30             ; a = #$30
     sta APU_NOISE_CONFIG ; initialize noise config with no volume
-    jsr wait             ; execute #$0a nop instructions
+    .ifdef Superc
+        jsr wait         ; execute #$0a nop instructions
+    .endif
     rts
 
 adv_sound_cmd_addr:
@@ -2288,66 +2534,111 @@ sound_cmd_ptr_tbl:
     .addr sound_cmd_routine_02
     .addr sound_cmd_routine_03
 
-; lower pitches
-note_period_tbl_2:
-    .byte $5c,$0d ; $0D5C - 3,420 - 32.70 Hz (c 1)
-    .byte $9c,$0c ; $0C9C - 3,228 - 34.64 Hz (c#/d flat 1)
-    .byte $e8,$0b ; $0BE8 - 3,048 - 36.69 Hz (d1)
-    .byte $3c,$0b ; $0B3C - 2,876 - 38.88 Hz (d#/e flat 1)
-    .byte $9c,$0a ; $0A9C - 2,716 - 41.17 Hz (e 1)
-    .byte $02,$0a ; $0A02 - 2,562 - 43.64 Hz (f 1)
-    .byte $72,$09 ; $0972 - 2,418 - 46.24 Hz (f#/g flat 1)
-    .byte $ec,$08 ; $08EC - 2,284 - 48.95 Hz (g1)
-    .byte $6c,$08 ; $086C - 2,156 - 51.86 Hz (g#/a flat 1)
-    .byte $f2,$07 ; $07F2 - 2,034 - 54.97 Hz (a1)
-    .byte $80,$07 ; $0780 - 1,920 - 58.23 Hz (a#/b flat 1)
-    .byte $14,$07 ; $0714 - 1,812 - 61.70 Hz (b1)
-
-; table for note period to use when writing notes to the APU (#$30 bytes)
+; tables for note period to use when writing notes to the APU (#$30 bytes)
 ; the frequency of the pulse channels is a division of the CPU Clock (1.789773MHz NTSC, 1.662607MHz PAL)
 ; the output frequency (f) of the generator can be determined by the 11-bit period value (f_pulse) written to $4002-$4003/$4006-$4007
 ; note that triangle channel is one octave lower
 ; frequency = cpu_speed / (#$0f * (f_pulse + 1))
 ; ex: 1789773 / (#$10 * (#$06ae + 1)) => 65.38 Hz
-note_period_tbl:
-    .byte $ae,$06 ; $06AE - 1,710 - 65.38 Hz (c 2/deep c)
-    .byte $4e,$06 ; $064E - 1,614 - 69.26 Hz (c#/d flat 2)
-    .byte $f4,$05 ; $05F4 - 1,524 - 73.35 Hz (d 2)
-    .byte $9e,$05 ; $059E - 1,438 - 77.74 Hz (d#/e flat 2)
-    .byte $4e,$05 ; $054E - 1,358 - 82.31 Hz (e 2)
-    .byte $01,$05 ; $0501 - 1,281 - 87.25 Hz (f 2)
-    .byte $b9,$04 ; $04B9 - 1,209 - 92.45 Hz (f#/g flat 2)
-    .byte $76,$04 ; $0476 - 1,142 - 97.87 Hz (g 2)
-    .byte $36,$04 ; $0436 - 1,078 - 103.67 Hz (g#/a flat 2)
-    .byte $f9,$03 ; $03F9 - 1,017 - 109.88 Hz (a 2)
-    .byte $c0,$03 ; $03C0 - 960 - 116.40 Hz (a#/b flat 2)
-    .byte $8a,$03 ; $038A - 906 - 123.33 Hz (b 2)
-    .byte $57,$03 ; $0357 - 855 - 130.68 Hz (c 3)
-    .byte $27,$03 ; $0327 - 807 - 138.44 Hz (c#/d flat 3)
-    .byte $fa,$02 ; $02FA - 762 - 146.61 Hz (d 3)
-    .byte $cf,$02 ; $02CF - 719 - 155.36 Hz (d#/e flat 3)
-    .byte $a7,$02 ; $02A7 - 679 - 164.50 Hz (e 3)
-    .byte $81,$02 ; $0281 - 641 - 174.24 Hz (f 3)
-    .byte $5d,$02 ; $025D - 605 - 184.59 Hz (f#/g flat 3)
-    .byte $3b,$02 ; $023B - 571 - 195.56 Hz (g 3)
-    .byte $1b,$02 ; $021B - 539 - 207.15 Hz (g#/a flat 3)
-    .byte $fd,$01 ; $01FD - 509 - 219.33 Hz (a 3)
-    .byte $e0,$01 ; $01E0 - 480 - 232.56 Hz (b 3)
-    .byte $c5,$01 ; $01C5 - 453 - 246.39 Hz (c 4/middle c)
+.ifdef Probotector
+    ; lower pitches
+    note_period_tbl_2:
+        .byte $69,$0c ; $0c69 - 3,177 - 32.70 (c 1)
+        .byte $b6,$0b ; $0bb6 - 2,998 - 34.65 (c#/d flat 1)
+        .byte $0f,$0b ; $0b0f - 2,831 - 36.69 (d1)
+        .byte $6f,$0a ; $0a6f - 2,671 - 38.89 (d#/e flat 1)
+        .byte $d9,$09 ; $09d9 - 2,521 - 41.20 (e 1)
+        .byte $4b,$09 ; $094b - 2,379 - 43.66 (f 1)
+        .byte $c6,$08 ; $08c6 - 2,246 - 46.25 (f#/g flat 1)
+        .byte $47,$08 ; $0847 - 2,119 - 49.02 (g1)
+        .byte $d0,$07 ; $07d0 - 2,000 - 51.93 (g#/a flat 1)
+        .byte $61,$07 ; $0761 - 1,889 - 54.98 (a1)
+        .byte $f7,$06 ; $06f7 - 1,783 - 58.25 (a#/b flat 1)
+        .byte $93,$06 ; $0693 - 1,683 - 61.71 (b1)
 
-; 10 nop instructions
-wait:
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    nop
-    rts
+    note_period_tbl:
+        .byte $34,$06 ; $0634 - 1,588 - 65.40 Hz (c 2/deep c)
+        .byte $db,$05 ; $05db - 1,499 - 69.28 Hz (c#/d flat 2)
+        .byte $87,$05 ; $0587 - 1,415 - 73.38 Hz (d 2)
+        .byte $37,$05 ; $0537 - 1,335 - 77.78 Hz (d#/e flat 2)
+        .byte $ec,$04 ; $04ec - 1,260 - 82.41 Hz (e 2)
+        .byte $a5,$04 ; $04a5 - 1,189 - 87.32 Hz (f 2)
+        .byte $63,$04 ; $0463 - 1,123 - 92.45 Hz (f#/g flat 2)
+        .byte $23,$04 ; $0423 - 1,059 - 98.03 Hz (g 2)
+        .byte $e8,$03 ; $03e8 - 1,000 - 103.81 Hz (g#/a flat 2)
+        .byte $b0,$03 ; $03b0 - 944 - 109.96 Hz (a 2)
+        .byte $7b,$03 ; $037b - 891 - 116.49 Hz (a#/b flat 2)
+        .byte $49,$03 ; $0349 - 841 - 123.41 Hz (b 2)
+        .byte $1a,$03 ; $031a - 794 - 130.71 Hz (c 3)
+        .byte $ed,$02 ; $02ed - 749 - 138.55 Hz (c#/d flat 3)
+        .byte $c3,$02 ; $02c3 - 707 - 146.77 Hz (d 3)
+        .byte $9b,$02 ; $029b - 667 - 155.56 Hz (d#/e flat 3)
+        .byte $76,$02 ; $0276 - 630 - 164.68 Hz (e 3)
+        .byte $53,$02 ; $0253 - 595 - 174.35 Hz (f 3)
+        .byte $32,$02 ; $0232 - 562 - 184.57 Hz (f#/g flat 3)
+        .byte $12,$02 ; $0212 - 530 - 195.69 Hz (g 3)
+        .byte $f4,$01 ; $01f4 - 500 - 207.41 Hz (g#/a flat 3)
+        .byte $d7,$01 ; $01d7 - 471 - 220.15 Hz (a 3)
+        .byte $bd,$01 ; $01bd - 445 - 232.99 Hz (b 3)
+        .byte $a4,$01 ; $01a4 - 420 - 246.82 Hz (c 4/middle c)
+.else
+    ; lower pitches
+    note_period_tbl_2:
+        .byte $5c,$0d ; $0d5c - 3,420 - 32.70 Hz (c 1)
+        .byte $9c,$0c ; $0c9c - 3,228 - 34.64 Hz (c#/d flat 1)
+        .byte $e8,$0b ; $0be8 - 3,048 - 36.69 Hz (d1)
+        .byte $3c,$0b ; $0b3c - 2,876 - 38.88 Hz (d#/e flat 1)
+        .byte $9c,$0a ; $0a9c - 2,716 - 41.17 Hz (e 1)
+        .byte $02,$0a ; $0a02 - 2,562 - 43.64 Hz (f 1)
+        .byte $72,$09 ; $0972 - 2,418 - 46.24 Hz (f#/g flat 1)
+        .byte $ec,$08 ; $08ec - 2,284 - 48.95 Hz (g1)
+        .byte $6c,$08 ; $086c - 2,156 - 51.86 Hz (g#/a flat 1)
+        .byte $f2,$07 ; $07f2 - 2,034 - 54.97 Hz (a1)
+        .byte $80,$07 ; $0780 - 1,920 - 58.23 Hz (a#/b flat 1)
+        .byte $14,$07 ; $0714 - 1,812 - 61.70 Hz (b1)
+
+    note_period_tbl:
+        .byte $ae,$06 ; $06ae - 1,710 - 65.38 Hz (c 2/deep c)
+        .byte $4e,$06 ; $064e - 1,614 - 69.26 Hz (c#/d flat 2)
+        .byte $f4,$05 ; $05f4 - 1,524 - 73.35 Hz (d 2)
+        .byte $9e,$05 ; $059e - 1,438 - 77.74 Hz (d#/e flat 2)
+        .byte $4e,$05 ; $054e - 1,358 - 82.31 Hz (e 2)
+        .byte $01,$05 ; $0501 - 1,281 - 87.25 Hz (f 2)
+        .byte $b9,$04 ; $04b9 - 1,209 - 92.45 Hz (f#/g flat 2)
+        .byte $76,$04 ; $0476 - 1,142 - 97.87 Hz (g 2)
+        .byte $36,$04 ; $0436 - 1,078 - 103.67 Hz (g#/a flat 2)
+        .byte $f9,$03 ; $03f9 - 1,017 - 109.88 Hz (a 2)
+        .byte $c0,$03 ; $03c0 - 960 - 116.40 Hz (a#/b flat 2)
+        .byte $8a,$03 ; $038a - 906 - 123.33 Hz (b 2)
+        .byte $57,$03 ; $0357 - 855 - 130.68 Hz (c 3)
+        .byte $27,$03 ; $0327 - 807 - 138.44 Hz (c#/d flat 3)
+        .byte $fa,$02 ; $02fa - 762 - 146.61 Hz (d 3)
+        .byte $cf,$02 ; $02cf - 719 - 155.36 Hz (d#/e flat 3)
+        .byte $a7,$02 ; $02a7 - 679 - 164.50 Hz (e 3)
+        .byte $81,$02 ; $0281 - 641 - 174.24 Hz (f 3)
+        .byte $5d,$02 ; $025d - 605 - 184.59 Hz (f#/g flat 3)
+        .byte $3b,$02 ; $023b - 571 - 195.56 Hz (g 3)
+        .byte $1b,$02 ; $021b - 539 - 207.15 Hz (g#/a flat 3)
+        .byte $fd,$01 ; $01fd - 509 - 219.33 Hz (a 3)
+        .byte $e0,$01 ; $01e0 - 480 - 232.56 Hz (b 3)
+        .byte $c5,$01 ; $01c5 - 453 - 246.39 Hz (c 4/middle c)
+.endif
+
+.ifdef Superc
+    ; 10 nop instructions
+    wait:
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        nop
+        rts
+.endif
 
 sound_code_tbl:
     .addr sound_01
@@ -2379,7 +2670,7 @@ sound_code_tbl:
     .addr sound_1b ; BAKUHA1
     .addr sound_1c ; BAKUHA2
     .addr sound_1d ; level 1 storm thunder
-    .addr sound_1e
+    .addr sound_1e ; silent
     .addr sound_1f ; ARUKU
     .addr sound_20 ; JIWARE
     .addr sound_21 ; SILEN - siren
@@ -2440,14 +2731,22 @@ sound_06:
 ; footstep
 sound_07:
     .byte $01,$04
-    .addr sound_07_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_07_slot_04
+    .endif
     .byte $05
     .addr sound_06_slot_05
 
 ; earthquake shake (jungle, jagger froid, final boss)
 sound_08:
     .byte $01,$04
-    .addr sound_08_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_08_slot_04
+    .endif
     .byte $05
     .addr sound_08_slot_05
 
@@ -2524,7 +2823,11 @@ sound_13:
     .byte $01,$04
     .addr sound_13_slot_04
     .byte $05
-    .addr sound_13_slot_05
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_13_slot_05
+    .endif
 
 ; Z OUT
 sound_14:
@@ -2550,7 +2853,11 @@ sound_16:
 ; mortar round (silent)
 sound_17:
     .byte $00,$04
-    .addr sound_17_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_17_slot_04
+    .endif
 
 ; APPEAR
 sound_18:
@@ -2581,7 +2888,11 @@ sound_1b:
 ; BAKUHA2
 sound_1c:
     .byte $01,$04
-    .addr sound_1c_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_1c_slot_04
+    .endif
     .byte $05
     .addr sound_1c_slot_05
 
@@ -2590,11 +2901,20 @@ sound_1d:
     .byte $00,$05
     .addr sound_1d_slot_05
 
+; silent
 sound_1e:
     .byte $01,$04
-    .addr sound_1e_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_1e_slot_04
+    .endif
     .byte $05
-    .addr sound_1e_slot_04
+    .ifdef Probotector
+        .addr sound_slot_empty
+    .else
+        .addr sound_1e_slot_04
+    .endif
 
 ; ARUKU
 sound_1f:
@@ -3465,6 +3785,11 @@ sound_26_slot_05:
 
 sound_27_slot_04:
     .incbin "assets/audio_data/sound_27_slot_04.bin"
+
+.ifdef Probotector
+    sound_slot_empty:
+        .byte $ff
+.endif
 
 sound_28_slot_00:
     .incbin "assets/audio_data/sound_28_slot_00_0.bin"

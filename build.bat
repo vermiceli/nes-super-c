@@ -15,9 +15,7 @@ IF %GAME% == "Probotector" (
     SET ROM_NAME="probotector.nes"
     SET DBG_NAME="probotector.dbg"
     SET ASSETS_NAME=probotector-assets.txt
-
-    echo "Probotector not supported."
-    EXIT
+    SET "GAME=Probotector"
 ) ELSE (
     SET "GAME=Superc"
 )

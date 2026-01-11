@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 6 contains the sprite logic and all of the sprite data, including player
 ; sprites.  Then bank 6 contains the 'tile routines'.  These are routines that
@@ -130,7 +130,7 @@ load_player_metasprite_to_oam_buffer:
     sta $09                       ; store high byte of meta-sprite address into $09
     ldy #$00                      ; initialize meta-sprite read offset
     lda ($08),y                   ; load first byte from meta-sprite
-    sta $03                       ; store number of bytes in meta-sprite into $03
+    sta $03                       ; store number of sprites in meta-sprite into $03
     iny                           ; increment player_sprite_xx read offset
 
 @handle_sprite:
@@ -455,262 +455,279 @@ load_enemy_metasprite_to_oam_buffer:
 sprite_ptr_tbl_0:
     .addr sprite_00
     .addr sprite_00
-    .addr sprite_02 ; sprite_02
-    .addr sprite_03 ; small ball explosion
-    .addr sprite_04 ; small open ball explosion
-    .addr sprite_05 ; red bullet
-    .addr sprite_06 ; metal bullet
-    .addr sprite_07 ; flying capsule
-    .addr sprite_08 ; M weapon
-    .addr sprite_09 ; S weapon
-    .addr sprite_0a ; L weapon
-    .addr sprite_0b ; F weapon
-    .addr sprite_0c ; R weapon
-    .addr sprite_0d ; B weapon
-    .addr sprite_0e ; falcon weapon
-    .addr sprite_0f ; spike explosion
-    .addr sprite_10 ; large explosion
-    .addr sprite_11 ; large explosion broken up
-    .addr sprite_12 ; large ball explosion
-    .addr sprite_13 ; large open ball explosion
-    .addr sprite_14 ; large open ball explosion decay
-    .addr sprite_15 ; vertical laser
-    .addr sprite_16 ; horizontal laser
-    .addr sprite_17 ; up-left, up-right laser
-    .addr sprite_18 ; down-left, down-right laser
-    .addr sprite_19 ; red bullet
-    .addr sprite_1a ; ball explosion
-    .addr sprite_1b ; soldier running
-    .addr sprite_1c ; soldier running
-    .addr sprite_1d ; soldier running
-    .addr sprite_1e ; soldier running
-    .addr sprite_1f ; soldier running
-    .addr sprite_20 ; soldier jumping
-    .addr sprite_21 ; soldier with weapon
-    .addr sprite_22 ; unused soldier prone
-    .addr sprite_23 ; soldier aiming angled up
-    .addr sprite_24 ; soldier with weapon
-    .addr sprite_25 ; soldier aiming angled down
-    .addr sprite_26 ; sandbag sniper
-    .addr sprite_27 ; grenade thrower
-    .addr sprite_28 ; grenade thrower
-    .addr sprite_29 ; grenade
-    .addr sprite_2a ; grenade
-    .addr sprite_2b ; grenade
-    .addr sprite_2c ; grenade
-    .addr sprite_2d ; grenade
-    .addr sprite_2e ; grenade
-    .addr sprite_2f ; grenade
-    .addr sprite_30 ; grenade
-    .addr sprite_31 ; orian
-    .addr sprite_32 ; orian
-    .addr sprite_33 ; orian
-    .addr sprite_34 ; orian
-    .addr sprite_35 ; orian
-    .addr sprite_36 ; orian
-    .addr sprite_37 ; soldier in water
-    .addr sprite_38 ; soldier in water
-    .addr sprite_39 ; soldier in water
-    .addr sprite_3a ; mortar round
-    .addr sprite_3b ; overhead soldier
-    .addr sprite_3b ; overhead soldier
-    .addr sprite_3d ; overhead soldier
-    .addr sprite_3e ; overhead soldier
-    .addr sprite_3f ; overhead soldier
-    .addr sprite_40 ; overhead soldier
-    .addr sprite_41 ; overhead soldier
-    .addr sprite_42 ; overhead soldier
-    .addr sprite_43 ; overhead soldier
-    .addr sprite_44 ; overhead soldier
-    .addr sprite_45 ; overhead soldier
-    .addr sprite_46 ; overhead soldier
-    .addr sprite_47 ; overhead soldier
-    .addr sprite_48 ; overhead soldier
-    .addr sprite_49 ; overhead soldier
-    .addr sprite_4a ; overhead soldier
-    .addr sprite_4b ; overhead tank soldier
-    .addr sprite_4c ; overhead tank soldier
-    .addr sprite_4d ; overhead tank soldier
-    .addr sprite_4e ; overhead tank soldier
-    .addr sprite_4f ; overhead tank soldier
-    .addr sprite_50 ; overhead tank soldier
-    .addr sprite_51 ; overhead tank soldier
-    .addr sprite_52 ; overhead tank soldier
-    .addr sprite_53 ; overhead tank soldier
-    .addr sprite_54 ; tank boss electrode
-    .addr sprite_55 ; tank boss electrode
-    .addr sprite_56 ; tank boss electrode
-    .addr sprite_57 ; tank boss electrode
-    .addr sprite_58 ; tank boss electrode
-    .addr sprite_59 ; crouching soldier
-    .addr sprite_5a ; crouching soldier
-    .addr sprite_5b ; crouching soldier
-    .addr sprite_5c ; spinning bubbles
-    .addr sprite_5d ; spinning bubbles
-    .addr sprite_5e ; spinning bubbles
-    .addr sprite_5f ; spinning bubbles
-    .addr sprite_60 ; spinning bubbles
-    .addr sprite_61 ; spinning bubbles
-    .addr sprite_62 ; falling ceiling tile
-    .addr sprite_63 ; chandelier laser
-    .addr sprite_64 ; rack turret
-    .addr sprite_65 ; rack turret
-    .addr sprite_66 ; winged soldier
-    .addr sprite_67 ; winged soldier
-    .addr sprite_68 ; winged soldier
-    .addr sprite_69 ; winged soldier
-    .addr sprite_6a ; winged soldier
-    .addr sprite_6b ; winged soldier
-    .addr sprite_6c ; winged soldier
-    .addr sprite_6d ; winged soldier
-    .addr sprite_6e ; winged soldier
-    .addr sprite_6f ; falling rock
-    .addr sprite_70 ; falling rock
-    .addr sprite_71 ; falling rock
-    .addr sprite_72 ; falling rock
-    .addr sprite_73 ; red blob
-    .addr sprite_74 ; red blob
-    .addr sprite_75 ; alien skull
-    .addr sprite_76 ; alien skull
-    .addr sprite_77 ; alien skull
-    .addr sprite_78 ; alien ladybug
-    .addr sprite_79 ; alien ladybug
-    .addr sprite_7a ; alien ladybug
-    .addr sprite_7b ; alien ladybug
-    .addr sprite_7c ; alien ladybug
-    .addr sprite_7d ; alien ladybug
-    .addr sprite_7e ; alien ladybug
-    .addr sprite_7f ; alien ladybug
+    .addr sprite_02     ; sprite_02
+    .addr sprite_03     ; small ball explosion
+    .addr sprite_04     ; small open ball explosion
+    .addr sprite_05     ; red bullet
+    .addr sprite_06     ; metal bullet
+    .addr sprite_07     ; flying capsule
+    .addr sprite_08     ; M weapon
+    .addr sprite_09     ; S weapon
+    .addr sprite_0a     ; L weapon
+    .addr sprite_0b     ; F weapon
+    .addr sprite_0c     ; R weapon
+    .addr sprite_0d     ; B weapon
+    .addr sprite_0e     ; falcon weapon
+    .addr sprite_0f     ; spike explosion
+    .addr sprite_10     ; large explosion
+    .addr sprite_11     ; large explosion broken up
+    .addr sprite_12     ; large ball explosion
+    .addr sprite_13     ; large open ball explosion
+    .addr sprite_14     ; large open ball explosion decay
+    .addr sprite_15     ; vertical laser
+    .addr sprite_16     ; horizontal laser
+    .addr sprite_17     ; up-left, up-right laser
+    .addr sprite_18     ; down-left, down-right laser
+    .addr sprite_19     ; red bullet
+    .addr sprite_1a     ; ball explosion
+    .addr sprite_1b     ; soldier running
+    .addr sprite_1c     ; soldier running
+    .addr sprite_1d     ; soldier running
+    .ifdef Probotector
+        .addr sprite_1b ; #$1e - soldier running
+        .addr sprite_1d ; #$1f - soldier running
+        .addr sprite_1e ; #$20 - soldier running
+        .addr sprite_1f ; #$21 - soldier running
+        .addr sprite_20 ; #$22 - soldier jumping
+    .else
+        .addr sprite_1e ; soldier running
+        .addr sprite_1f ; soldier running
+        .addr sprite_20 ; soldier jumping
+        .addr sprite_21 ; soldier with weapon
+        .addr sprite_22 ; unused soldier prone
+    .endif
+    .addr sprite_23     ; soldier aiming angled up
+    .addr sprite_24     ; soldier with weapon
+    .addr sprite_25     ; soldier aiming angled down
+    .addr sprite_26     ; sandbag sniper
+    .addr sprite_27     ; grenade thrower
+    .addr sprite_28     ; grenade thrower
+    .addr sprite_29     ; grenade
+    .addr sprite_2a     ; grenade
+    .addr sprite_2b     ; grenade
+    .addr sprite_2c     ; grenade
+    .addr sprite_2d     ; grenade
+    .addr sprite_2e     ; grenade
+    .addr sprite_2f     ; grenade
+    .addr sprite_30     ; grenade
+    .addr sprite_31     ; orian
+    .addr sprite_32     ; orian
+    .addr sprite_33     ; orian
+    .addr sprite_34     ; orian
+    .addr sprite_35     ; orian
+    .addr sprite_36     ; orian
+    .addr sprite_37     ; soldier in water
+    .addr sprite_38     ; soldier in water
+    .addr sprite_39     ; soldier in water
+    .addr sprite_3a     ; mortar round
+    .addr sprite_3b     ; overhead soldier
+    .addr sprite_3b     ; overhead soldier
+    .addr sprite_3d     ; overhead soldier
+    .addr sprite_3e     ; overhead soldier
+    .addr sprite_3f     ; overhead soldier
+    .addr sprite_40     ; overhead soldier
+    .addr sprite_41     ; overhead soldier
+    .addr sprite_42     ; overhead soldier
+    .addr sprite_43     ; overhead soldier
+    .addr sprite_44     ; overhead soldier
+    .addr sprite_45     ; overhead soldier
+    .addr sprite_46     ; overhead soldier
+    .addr sprite_47     ; overhead soldier
+    .addr sprite_48     ; overhead soldier
+    .addr sprite_49     ; overhead soldier
+    .addr sprite_4a     ; overhead soldier
+    .addr sprite_4b     ; overhead tank soldier
+    .addr sprite_4c     ; overhead tank soldier
+    .addr sprite_4d     ; overhead tank soldier
+    .addr sprite_4e     ; overhead tank soldier
+    .addr sprite_4f     ; overhead tank soldier
+    .addr sprite_50     ; overhead tank soldier
+    .addr sprite_51     ; overhead tank soldier
+    .addr sprite_52     ; overhead tank soldier
+    .addr sprite_53     ; overhead tank soldier
+    .addr sprite_54     ; tank boss electrode
+    .addr sprite_55     ; tank boss electrode
+    .addr sprite_56     ; tank boss electrode
+    .addr sprite_57     ; tank boss electrode
+    .addr sprite_58     ; tank boss electrode
+    .addr sprite_59     ; crouching soldier
+    .addr sprite_5a     ; crouching soldier
+    .addr sprite_5b     ; crouching soldier
+    .addr sprite_5c     ; spinning bubbles
+    .addr sprite_5d     ; spinning bubbles
+    .addr sprite_5e     ; spinning bubbles
+    .addr sprite_5f     ; spinning bubbles
+    .addr sprite_60     ; spinning bubbles
+    .addr sprite_61     ; spinning bubbles
+    .addr sprite_62     ; falling ceiling tile
+    .addr sprite_63     ; chandelier laser
+    .addr sprite_64     ; rack turret
+    .addr sprite_65     ; rack turret
+    .addr sprite_66     ; winged soldier
+    .addr sprite_67     ; winged soldier
+    .addr sprite_68     ; winged soldier
+    .addr sprite_69     ; winged soldier
+    .addr sprite_6a     ; winged soldier
+    .addr sprite_6b     ; winged soldier
+    .addr sprite_6c     ; winged soldier
+    .addr sprite_6d     ; winged soldier
+    .addr sprite_6e     ; winged soldier
+    .addr sprite_6f     ; falling rock
+    .addr sprite_70     ; falling rock
+    .addr sprite_71     ; falling rock
+    .addr sprite_72     ; falling rock
+    .addr sprite_73     ; red blob
+    .addr sprite_74     ; red blob
+    .addr sprite_75     ; alien skull
+    .addr sprite_76     ; alien skull
+    .addr sprite_77     ; alien skull
+    .addr sprite_78     ; alien ladybug
+    .addr sprite_79     ; alien ladybug
+    .addr sprite_7a     ; alien ladybug
+    .addr sprite_7b     ; alien ladybug
+    .addr sprite_7c     ; alien ladybug
+    .addr sprite_7d     ; alien ladybug
+    .addr sprite_7e     ; alien ladybug
+    .addr sprite_7f     ; alien ladybug
 
 sprite_ptr_tbl_1:
-    .addr sprite_80 ; alien ladybug
-    .addr sprite_81 ; alien ladybug
-    .addr sprite_82 ; baby alien ladybug
-    .addr sprite_83 ; baby alien ladybug
-    .addr sprite_84 ; big faced one-eyed monster
-    .addr sprite_85 ; big faced one-eyed monster
-    .addr sprite_86 ; big faced one-eyed monster
-    .addr sprite_87 ; big faced one-eyed monster
-    .addr sprite_88 ; alien serpent head
-    .addr sprite_89 ; alien serpent head
-    .addr sprite_8a ; alien serpent head
-    .addr sprite_8b ; alien serpent head
-    .addr sprite_8c ; alien serpent head
-    .addr sprite_8d ; alien serpent head
-    .addr sprite_8e ; alien serpent body
-    .addr sprite_8f ; jagger froid projectile
-    .addr sprite_90 ; manooki
-    .addr sprite_91 ; manooki
-    .addr sprite_92 ; manooki projectile
-    .addr sprite_93 ; manooki projectile
-    .addr sprite_94 ; poison drop
-    .addr sprite_95 ; poison drop
-    .addr sprite_96 ; poison drop
-    .addr sprite_97 ; poison drop
-    .addr sprite_98 ; poison drop
-    .addr sprite_99 ; poison drop
-    .addr sprite_9a ; poison drop
-    .addr sprite_9b ; poison drop
-    .addr sprite_9c ; poison drop
-    .addr sprite_9d ; poison drop
-    .addr sprite_9e ; alien spider
-    .addr sprite_9f ; alien spider
-    .addr sprite_a0 ; alien spider
-    .addr sprite_a1 ; fire ring projectile
-    .addr sprite_a2 ; fire ring projectile
-    .addr sprite_a3 ; fire ring projectile
-    .addr sprite_a4 ; fire ring projectile
-    .addr sprite_a5 ; temple of terror red blob
-    .addr sprite_a6 ; temple of terror red blob
-    .addr sprite_a7 ; level 1 boss helicopter heart
-    .addr sprite_a8 ; red bubble
-    .addr sprite_a9 ; red bubble
-    .addr sprite_aa ; blob
-    .addr sprite_ab ; blob
-    .addr sprite_ac ; crumbling rock
-    .addr sprite_ad ; crumbling rock
-    .addr sprite_ae ; crumbling rock
-    .addr sprite_af ; crumbling rock
-    .addr sprite_b0 ; crumbling rock
-    .addr sprite_b1 ; crumbling rock
-    .addr sprite_b2 ; crumbling rock
-    .addr sprite_b3 ; crumbling rock
-    .addr sprite_b4 ; fortress wall turret
-    .addr sprite_b5 ; fortress wall turret
-    .addr sprite_b6 ; fortress wall turret
-    .addr sprite_b7 ; fortress wall turret
-    .addr sprite_b8 ; intro screen logo red c bottom
-    .addr sprite_b9 ; intro screen cursor
-    .addr sprite_ba ; ending credits helicopter
-    .addr sprite_bb ; ending credits helicopter
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
-    .addr sprite_bc
+    .addr sprite_80        ; alien ladybug
+    .addr sprite_81        ; alien ladybug
+    .addr sprite_82        ; baby alien ladybug
+    .addr sprite_83        ; baby alien ladybug
+    .addr sprite_84        ; big faced one-eyed monster
+    .addr sprite_85        ; big faced one-eyed monster
+    .addr sprite_86        ; big faced one-eyed monster
+    .addr sprite_87        ; big faced one-eyed monster
+    .addr sprite_88        ; alien serpent head
+    .addr sprite_89        ; alien serpent head
+    .addr sprite_8a        ; alien serpent head
+    .addr sprite_8b        ; alien serpent head
+    .addr sprite_8c        ; alien serpent head
+    .addr sprite_8d        ; alien serpent head
+    .addr sprite_8e        ; alien serpent body
+    .addr sprite_8f        ; jagger froid projectile
+    .addr sprite_90        ; manooki
+    .addr sprite_91        ; manooki
+    .addr sprite_92        ; manooki projectile
+    .addr sprite_93        ; manooki projectile
+    .addr sprite_94        ; poison drop
+    .addr sprite_95        ; poison drop
+    .addr sprite_96        ; poison drop
+    .addr sprite_97        ; poison drop
+    .addr sprite_98        ; poison drop
+    .addr sprite_99        ; poison drop
+    .addr sprite_9a        ; poison drop
+    .addr sprite_9b        ; poison drop
+    .addr sprite_9c        ; poison drop
+    .addr sprite_9d        ; poison drop
+    .addr sprite_9e        ; alien spider
+    .addr sprite_9f        ; alien spider
+    .addr sprite_a0        ; alien spider
+    .addr sprite_a1        ; fire ring projectile
+    .addr sprite_a2        ; fire ring projectile
+    .addr sprite_a3        ; fire ring projectile
+    .addr sprite_a4        ; fire ring projectile
+    .addr sprite_a5        ; temple of terror red blob
+    .addr sprite_a6        ; temple of terror red blob
+    .addr sprite_a7        ; level 1 boss helicopter heart
+    .addr sprite_a8        ; red bubble
+    .addr sprite_a9        ; red bubble
+    .addr sprite_aa        ; blob
+    .addr sprite_ab        ; blob
+    .addr sprite_ac        ; crumbling rock
+    .addr sprite_ad        ; crumbling rock
+    .addr sprite_ae        ; crumbling rock
+    .addr sprite_af        ; crumbling rock
+    .addr sprite_b0        ; crumbling rock
+    .addr sprite_b1        ; crumbling rock
+    .addr sprite_b2        ; crumbling rock
+    .addr sprite_b3        ; crumbling rock
+    .addr sprite_b4        ; fortress wall turret
+    .addr sprite_b5        ; fortress wall turret
+    .addr sprite_b6        ; fortress wall turret
+    .addr sprite_b7        ; fortress wall turret
+    .addr sprite_b8        ; intro screen logo red c bottom
+    .addr sprite_b9        ; intro screen cursor
+    .addr sprite_ba        ; ending credits helicopter
+    .addr sprite_bb        ; ending credits helicopter
+    .ifdef Probotector
+        .addr sprite_bc    ; level 7 soldier
+        .addr sprite_bd    ; level 7 soldier
+        .addr sprite_be    ; level 7 soldier
+        .addr sprite_bf    ; level 7 soldier
+        .addr sprite_c0    ; level 7 soldier
+        .addr sprite_c1    ; level 7 soldier
+    .else
+        .addr sprite_empty
+        .addr sprite_empty
+        .addr sprite_empty
+        .addr sprite_empty
+        .addr sprite_empty
+        .addr sprite_empty
+    .endif
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
+    .addr sprite_empty
 
 sprite_00:
     .byte $ff
@@ -719,13 +736,13 @@ sprite_00:
 sprite_02:
     .byte $08             ; number of bytes in meta-sprite
     .byte $f8,$59,$00,$f8 ; 8x16 tile #$59 at location (-8,-8)
-    .byte $f8,$59,$c0,$00 ; 8x16 tile #$59 at location (0,-8)with sprite attribute #$c0
+    .byte $f8,$59,$c0,$00 ; 8x16 tile #$59 at location (0,-8) with sprite attribute #$c0
 
 ; small ball explosion
 sprite_03:
     .byte $08             ; number of bytes in meta-sprite
     .byte $f8,$7d,$00,$f8 ; 8x16 tile #$7d at location (-8,-8)
-    .byte $f8,$7d,$c0,$00 ; 8x16 tile #$7d at location (0,-8)with sprite attribute #$c0
+    .byte $f8,$7d,$c0,$00 ; 8x16 tile #$7d at location (0,-8) with sprite attribute #$c0
 
 ; small open ball explosion
 sprite_04:
@@ -895,117 +912,226 @@ sprite_1a:
 
 ; soldier running
 sprite_1b:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
-    .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
-    .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
-    .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
+        .byte $f1,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-15)
+        .byte $00,$ad,$00,$f6 ; 8x16 tile #$ad at location (-10,0)
+        .byte $0d,$c3,$00,$fd ; 8x16 tile #$c3 at location (-3,13)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
+        .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .endif
 
 ; soldier running
 sprite_1c:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f1,$b1,$00,$fc ; 8x16 tile #$b1 at location (-4,-15)
-    .byte $f8,$b3,$00,$f5 ; 8x16 tile #$b3 at location (-11,-8)
-    .byte $01,$b5,$00,$fd ; 8x16 tile #$b5 at location (-3,1)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ed,$b1,$00,$f9 ; 8x16 tile #$b1 at location (-7,-19)
+        .byte $f0,$b3,$00,$01 ; 8x16 tile #$b3 at location (1,-16)
+        .byte $fd,$b5,$00,$f6 ; 8x16 tile #$b5 at location (-10,-3)
+        .byte $0d,$b7,$00,$f6 ; 8x16 tile #$b7 at location (-10,13)
+        .byte $04,$b9,$00,$fe ; 8x16 tile #$b9 at location (-2,4)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f1,$b1,$00,$fc ; 8x16 tile #$b1 at location (-4,-15)
+        .byte $f8,$b3,$00,$f5 ; 8x16 tile #$b3 at location (-11,-8)
+        .byte $01,$b5,$00,$fd ; 8x16 tile #$b5 at location (-3,1)
+    .endif
 
 ; soldier running
 sprite_1d:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
-    .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
-    .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f2,$bb,$00,$f8 ; 8x16 tile #$bb at location (-8,-14)
+        .byte $f0,$bd,$00,$00 ; 8x16 tile #$bd at location (0,-16)
+        .byte $fe,$bf,$00,$f4 ; 8x16 tile #$bf at location (-12,-2)
+        .byte $02,$c1,$00,$fc ; 8x16 tile #$c1 at location (-4,2)
+        .byte $0d,$c3,$00,$03 ; 8x16 tile #$c3 at location (3,13)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
+        .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .endif
 
 ; soldier running
 sprite_1e:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
-    .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
-    .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
-    .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ee,$af,$00,$f9 ; 8x16 tile #$af at location (-7,-18)
+        .byte $ef,$c5,$00,$01 ; 8x16 tile #$c5 at location (1,-17)
+        .byte $fd,$b5,$00,$f8 ; 8x16 tile #$b5 at location (-8,-3)
+        .byte $0d,$b7,$00,$f8 ; 8x16 tile #$b7 at location (-8,13)
+        .byte $04,$b9,$00,$00 ; 8x16 tile #$b9 at location (0,4)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
+        .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .endif
 
 ; soldier running
 sprite_1f:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
-    .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
-    .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$ad,$00,$f7 ; 8x16 tile #$ad at location (-9,0)
+        .byte $0d,$c3,$00,$fe ; 8x16 tile #$c3 at location (-2,13)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$af,$00,$f9 ; 8x16 tile #$af at location (-7,-16)
+        .byte $f1,$c5,$00,$01 ; 8x16 tile #$c5 at location (1,-15)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
+        .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .endif
 
 ; soldier jumping
 sprite_20:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $ee,$bd,$00,$f8 ; 8x16 tile #$bd at location (-8,-18)
-    .byte $ee,$bf,$00,$00 ; 8x16 tile #$bf at location (0,-18)
-    .byte $fe,$c1,$00,$f6 ; 8x16 tile #$c1 at location (-10,-2)
-    .byte $fe,$c3,$00,$fe ; 8x16 tile #$c3 at location (-2,-2)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f8,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,-8)
+        .byte $f8,$df,$00,$f8 ; 8x16 tile #$df at location (-8,-8)
+        .byte $f8,$e1,$00,$00 ; 8x16 tile #$e1 at location (0,-8)
+        .byte $f9,$e3,$00,$08 ; 8x16 tile #$e3 at location (8,-7)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $ee,$bd,$00,$f8 ; 8x16 tile #$bd at location (-8,-18)
+        .byte $ee,$bf,$00,$00 ; 8x16 tile #$bf at location (0,-18)
+        .byte $fe,$c1,$00,$f6 ; 8x16 tile #$c1 at location (-10,-2)
+        .byte $fe,$c3,$00,$fe ; 8x16 tile #$c3 at location (-2,-2)
+    .endif
 
 ; soldier with weapon
 sprite_21:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$c7,$00,$00 ; 8x16 tile #$c7 at location (0,-16)
-    .byte $f0,$c5,$00,$f8 ; 8x16 tile #$c5 at location (-8,-16)
+    .ifdef Superc
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$c7,$00,$00 ; 8x16 tile #$c7 at location (0,-16)
+        .byte $f0,$c5,$00,$f8 ; 8x16 tile #$c5 at location (-8,-16)
+    .endif
 
 ; unused soldier prone
 sprite_22:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $00,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,0)
-    .byte $00,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,0)
-    .byte $00,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,0)
-    .byte $00,$db,$00,$08 ; 8x16 tile #$db at location (8,0)
+    .ifdef Superc
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $00,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,0)
+        .byte $00,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,0)
+        .byte $00,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,0)
+        .byte $00,$db,$00,$08 ; 8x16 tile #$db at location (8,0)
+    .endif
 
 ; soldier aiming angled up
 sprite_23:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
-    .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$cb,$00,$00 ; 8x16 tile #$cb at location (0,-16)
-    .byte $f0,$c9,$00,$f8 ; 8x16 tile #$c9 at location (-8,-16)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$c7,$00,$f8 ; 8x16 tile #$c7 at location (-8,-16)
+        .byte $f0,$c9,$00,$00 ; 8x16 tile #$c9 at location (0,-16)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$cb,$00,$00 ; 8x16 tile #$cb at location (0,-16)
+        .byte $f0,$c9,$00,$f8 ; 8x16 tile #$c9 at location (-8,-16)
+    .endif
 
 ; soldier with weapon
 sprite_24:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
-    .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$c7,$00,$00 ; 8x16 tile #$c7 at location (0,-16)
-    .byte $f0,$cd,$00,$f8 ; 8x16 tile #$cd at location (-8,-16)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$cb,$00,$f9 ; 8x16 tile #$cb at location (-7,-16)
+        .byte $f0,$cd,$00,$01 ; 8x16 tile #$cd at location (1,-16)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$c7,$00,$00 ; 8x16 tile #$c7 at location (0,-16)
+        .byte $f0,$cd,$00,$f8 ; 8x16 tile #$cd at location (-8,-16)
+    .endif
 
 ; soldier aiming angled down
 sprite_25:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $00,$d3,$00,$f7 ; tile #$d3 at location (-9,0)
-    .byte $00,$d5,$00,$ff ; tile #$d5 at location (-1,0)
-    .byte $80             ; stop re-coil effect
-    .byte $f2,$d1,$00,$00 ; tile #$d1 at location (0,-14)
-    .byte $f0,$cf,$00,$f8 ; tile #$cf at location (-8,-16)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$cf,$00,$f8 ; 8x16 tile #$cf at location (-8,-16)
+        .byte $f0,$d1,$00,$00 ; 8x16 tile #$d1 at location (0,-16)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$d3,$00,$f7 ; tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; tile #$d5 at location (-1,0)
+        .byte $80             ; stop re-coil effect
+        .byte $f2,$d1,$00,$00 ; tile #$d1 at location (0,-14)
+        .byte $f0,$cf,$00,$f8 ; tile #$cf at location (-8,-16)
+    .endif
 
 ; sandbag sniper
 sprite_26:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $00,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,0)
-    .byte $00,$df,$00,$f8 ; 8x16 tile #$df at location (-8,0)
-    .byte $ff,$e1,$00,$00 ; 8x16 tile #$e1 at location (0,-1)
-    .byte $00,$e3,$00,$08 ; 8x16 tile #$e3 at location (8,0)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $fc,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,-4)
+        .byte $fc,$df,$00,$f8 ; 8x16 tile #$df at location (-8,-4)
+        .byte $fc,$e1,$00,$00 ; 8x16 tile #$e1 at location (0,-4)
+        .byte $fd,$e3,$00,$08 ; 8x16 tile #$e3 at location (8,-3)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $00,$dd,$00,$f0 ; 8x16 tile #$dd at location (-16,0)
+        .byte $00,$df,$00,$f8 ; 8x16 tile #$df at location (-8,0)
+        .byte $ff,$e1,$00,$00 ; 8x16 tile #$e1 at location (0,-1)
+        .byte $00,$e3,$00,$08 ; 8x16 tile #$e3 at location (8,0)
+    .endif
 
 ; grenade thrower
 sprite_27:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $f0,$e9,$00,$f6 ; 8x16 tile #$e9 at location (-10,-16)
-    .byte $f0,$eb,$00,$fe ; 8x16 tile #$eb at location (-2,-16)
-    .byte $f1,$ed,$00,$06 ; 8x16 tile #$ed at location (6,-15)
-    .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
-    .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$e9,$00,$f6 ; 8x16 tile #$e9 at location (-10,-16)
+        .byte $f0,$eb,$00,$fe ; 8x16 tile #$eb at location (-2,-16)
+        .byte $f0,$ed,$00,$06 ; 8x16 tile #$ed at location (6,-16)
+        .byte $00,$d5,$40,$f8 ; 8x16 tile #$d5 at location (-8,0) (horizontal flip, palette 0)
+        .byte $00,$d3,$40,$00 ; 8x16 tile #$d3 at location (0,0) (horizontal flip, palette 0)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$e9,$00,$f6 ; 8x16 tile #$e9 at location (-10,-16)
+        .byte $f0,$eb,$00,$fe ; 8x16 tile #$eb at location (-2,-16)
+        .byte $f1,$ed,$00,$06 ; 8x16 tile #$ed at location (6,-15)
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+    .endif
 
 ; grenade thrower
 sprite_28:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $e0,$ef,$00,$fb ; 8x16 tile #$ef at location (-5,-32)
-    .byte $f0,$f1,$00,$f6 ; 8x16 tile #$f1 at location (-10,-16)
-    .byte $f0,$f3,$00,$fe ; 8x16 tile #$f3 at location (-2,-16)
-    .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
-    .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $e0,$ef,$00,$fc ; 8x16 tile #$ef at location (-4,-32)
+        .byte $f0,$f1,$00,$f5 ; 8x16 tile #$f1 at location (-11,-16)
+        .byte $f0,$f3,$00,$fd ; 8x16 tile #$f3 at location (-3,-16)
+        .byte $00,$d5,$40,$f8 ; 8x16 tile #$d5 at location (-8,0) (horizontal flip, palette 0)
+        .byte $00,$d3,$40,$00 ; 8x16 tile #$d3 at location (0,0) (horizontal flip, palette 0)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $e0,$ef,$00,$fb ; 8x16 tile #$ef at location (-5,-32)
+        .byte $f0,$f1,$00,$f6 ; 8x16 tile #$f1 at location (-10,-16)
+        .byte $f0,$f3,$00,$fe ; 8x16 tile #$f3 at location (-2,-16)
+        .byte $00,$d3,$00,$f7 ; 8x16 tile #$d3 at location (-9,0)
+        .byte $00,$d5,$00,$ff ; 8x16 tile #$d5 at location (-1,0)
+    .endif
 
 ; grenade
 sprite_29:
@@ -1102,21 +1228,39 @@ sprite_36:
 
 ; soldier in water
 sprite_37:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f0,$d9,$00,$f8 ; 8x16 tile #$d9 at location (-8,-16)
-    .byte $f0,$db,$00,$00 ; 8x16 tile #$db at location (0,-16)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$d9,$00,$f9 ; 8x16 tile #$d9 at location (-7,-16)
+        .byte $f0,$db,$00,$01 ; 8x16 tile #$db at location (1,-16)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$d9,$00,$f8 ; 8x16 tile #$d9 at location (-8,-16)
+        .byte $f0,$db,$00,$00 ; 8x16 tile #$db at location (0,-16)
+    .endif
 
 ; soldier in water
 sprite_38:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f1,$e9,$00,$f8 ; 8x16 tile #$e9 at location (-8,-15)
-    .byte $f1,$eb,$00,$00 ; 8x16 tile #$eb at location (0,-15)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$e9,$00,$f9 ; 8x16 tile #$e9 at location (-7,-16)
+        .byte $f0,$eb,$00,$01 ; 8x16 tile #$eb at location (1,-16)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f1,$e9,$00,$f8 ; 8x16 tile #$e9 at location (-8,-15)
+        .byte $f1,$eb,$00,$00 ; 8x16 tile #$eb at location (0,-15)
+    .endif
 
 ; soldier in water
 sprite_39:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f0,$ed,$00,$f8 ; 8x16 tile #$ed at location (-8,-16)
-    .byte $f0,$ef,$00,$00 ; 8x16 tile #$ef at location (0,-16)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$ed,$00,$fa ; 8x16 tile #$ed at location (-6,-16)
+        .byte $f0,$ef,$00,$02 ; 8x16 tile #$ef at location (2,-16)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$ed,$00,$f8 ; 8x16 tile #$ed at location (-8,-16)
+        .byte $f0,$ef,$00,$00 ; 8x16 tile #$ef at location (0,-16)
+    .endif
 
 ; mortar round
 sprite_3a:
@@ -1124,39 +1268,74 @@ sprite_3a:
 
 ; overhead soldier
 sprite_3b:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $03,$07,$01,$f7 ; 8x16 tile #$07 at location (-9,3) (palette 1)
-    .byte $00,$09,$01,$ff ; 8x16 tile #$09 at location (-1,0) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f3,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-13) (palette 1)
-    .byte $f0,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $02,$07,$01,$f8 ; 8x16 tile #$07 at location (-8,2) (palette 1)
+        .byte $00,$09,$01,$00 ; 8x16 tile #$09 at location (0,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f2,$ab,$01,$f8 ; 8x16 tile #$ab at location (-8,-14) (palette 1)
+        .byte $f0,$ad,$01,$00 ; 8x16 tile #$ad at location (0,-16) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $03,$07,$01,$f7 ; 8x16 tile #$07 at location (-9,3) (palette 1)
+        .byte $00,$09,$01,$ff ; 8x16 tile #$09 at location (-1,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f3,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-13) (palette 1)
+        .byte $f0,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-16) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_3d:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $04,$0b,$01,$f7 ; 8x16 tile #$0b at location (-9,4) (palette 1)
-    .byte $01,$0d,$01,$ff ; 8x16 tile #$0d at location (-1,1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f4,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-12) (palette 1)
-    .byte $f1,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-15) (palette 1)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $03,$0b,$01,$f8 ; 8x16 tile #$0b at location (-8,3) (palette 1)
+        .byte $01,$0d,$01,$00 ; 8x16 tile #$0d at location (0,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f3,$ab,$01,$f8 ; 8x16 tile #$ab at location (-8,-13) (palette 1)
+        .byte $f1,$ad,$01,$00 ; 8x16 tile #$ad at location (0,-15) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $04,$0b,$01,$f7 ; 8x16 tile #$0b at location (-9,4) (palette 1)
+        .byte $01,$0d,$01,$ff ; 8x16 tile #$0d at location (-1,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f4,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-12) (palette 1)
+        .byte $f1,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-15) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_3e:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $03,$0f,$01,$f7 ; 8x16 tile #$0f at location (-9,3) (palette 1)
-    .byte $00,$11,$01,$ff ; 8x16 tile #$11 at location (-1,0) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f3,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-13) (palette 1)
-    .byte $f0,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $02,$0f,$01,$f8 ; 8x16 tile #$0f at location (-8,2) (palette 1)
+        .byte $00,$11,$01,$00 ; 8x16 tile #$11 at location (0,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f2,$ab,$01,$f8 ; 8x16 tile #$ab at location (-8,-14) (palette 1)
+        .byte $f0,$ad,$01,$00 ; 8x16 tile #$ad at location (0,-16) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $03,$0f,$01,$f7 ; 8x16 tile #$0f at location (-9,3) (palette 1)
+        .byte $00,$11,$01,$ff ; 8x16 tile #$11 at location (-1,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f3,$ab,$01,$f9 ; 8x16 tile #$ab at location (-7,-13) (palette 1)
+        .byte $f0,$ad,$01,$ff ; 8x16 tile #$ad at location (-1,-16) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_3f:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $02,$17,$01,$f7 ; 8x16 tile #$17 at location (-9,2) (palette 1)
-    .byte $01,$19,$01,$ff ; 8x16 tile #$19 at location (-1,1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f2,$af,$01,$f7 ; 8x16 tile #$af at location (-9,-14) (palette 1)
-    .byte $f1,$b1,$01,$ff ; 8x16 tile #$b1 at location (-1,-15) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $01,$17,$01,$fc ; 8x16 tile #$17 at location (-4,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f2,$af,$01,$f7 ; 8x16 tile #$af at location (-9,-14) (palette 1)
+        .byte $f1,$b1,$01,$ff ; 8x16 tile #$b1 at location (-1,-15) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $02,$17,$01,$f7 ; 8x16 tile #$17 at location (-9,2) (palette 1)
+        .byte $01,$19,$01,$ff ; 8x16 tile #$19 at location (-1,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f2,$af,$01,$f7 ; 8x16 tile #$af at location (-9,-14) (palette 1)
+        .byte $f1,$b1,$01,$ff ; 8x16 tile #$b1 at location (-1,-15) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_40:
@@ -1194,142 +1373,281 @@ sprite_43:
 
 ; overhead soldier
 sprite_44:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $ff,$3b,$01,$fe ; 8x16 tile #$3b at location (-2,-1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $ef,$b7,$01,$f8 ; 8x16 tile #$b7 at location (-8,-17) (palette 1)
-    .byte $ef,$b9,$01,$00 ; 8x16 tile #$b9 at location (0,-17) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $ff,$3b,$01,$fd ; 8x16 tile #$3b at location (-3,-1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $ef,$b7,$01,$f8 ; 8x16 tile #$b7 at location (-8,-17) (palette 1)
+        .byte $ef,$b9,$01,$00 ; 8x16 tile #$b9 at location (0,-17) (palette 1)
+    .else
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $ff,$3b,$01,$fe ; 8x16 tile #$3b at location (-2,-1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $ef,$b7,$01,$f8 ; 8x16 tile #$b7 at location (-8,-17) (palette 1)
+        .byte $ef,$b9,$01,$00 ; 8x16 tile #$b9 at location (0,-17) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_45:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $ff,$25,$01,$f9 ; 8x16 tile #$25 at location (-7,-1) (palette 1)
-    .byte $ff,$27,$01,$01 ; 8x16 tile #$27 at location (1,-1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $ef,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-17) (palette 1)
-    .byte $ef,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-17) (palette 1)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$25,$01,$f6 ; 8x16 tile #$25 at location (-10,0) (palette 1)
+        .byte $00,$27,$01,$fe ; 8x16 tile #$27 at location (-2,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$b3,$01,$f6 ; 8x16 tile #$b3 at location (-10,-16) (palette 1)
+        .byte $f0,$b5,$01,$fe ; 8x16 tile #$b5 at location (-2,-16) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $ff,$25,$01,$f9 ; 8x16 tile #$25 at location (-7,-1) (palette 1)
+        .byte $ff,$27,$01,$01 ; 8x16 tile #$27 at location (1,-1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $ef,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-17) (palette 1)
+        .byte $ef,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-17) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_46:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $00,$29,$01,$fd ; 8x16 tile #$29 at location (-3,0) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-16) (palette 1)
-    .byte $f0,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $01,$29,$01,$fc ; 8x16 tile #$29 at location (-4,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f1,$b3,$01,$f6 ; 8x16 tile #$b3 at location (-10,-15) (palette 1)
+        .byte $f1,$b5,$01,$fe ; 8x16 tile #$b5 at location (-2,-15) (palette 1)
+    .else
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$29,$01,$fd ; 8x16 tile #$29 at location (-3,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-16) (palette 1)
+        .byte $f0,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-16) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_47:
-    .byte $11             ; number of bytes in meta-sprite
-    .byte $ff,$2b,$01,$fa ; 8x16 tile #$2b at location (-6,-1) (palette 1)
-    .byte $ff,$2d,$01,$02 ; 8x16 tile #$2d at location (2,-1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $ef,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-17) (palette 1)
-    .byte $ef,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-17) (palette 1)
+    .ifdef Probotector
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $00,$2b,$01,$f8 ; 8x16 tile #$2b at location (-8,0) (palette 1)
+        .byte $00,$2d,$01,$00 ; 8x16 tile #$2d at location (0,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$b3,$01,$f6 ; 8x16 tile #$b3 at location (-10,-16) (palette 1)
+        .byte $f0,$b5,$01,$fe ; 8x16 tile #$b5 at location (-2,-16) (palette 1)
+    .else
+        .byte $11             ; number of bytes in meta-sprite
+        .byte $ff,$2b,$01,$fa ; 8x16 tile #$2b at location (-6,-1) (palette 1)
+        .byte $ff,$2d,$01,$02 ; 8x16 tile #$2d at location (2,-1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $ef,$b3,$01,$f7 ; 8x16 tile #$b3 at location (-9,-17) (palette 1)
+        .byte $ef,$b5,$01,$ff ; 8x16 tile #$b5 at location (-1,-17) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_48:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $00,$3d,$01,$fc ; 8x16 tile #$3d at location (-4,0) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-16) (palette 1)
-    .byte $f0,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$3d,$01,$fc ; 8x16 tile #$3d at location (-4,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$bb,$01,$f8 ; 8x16 tile #$bb at location (-8,-16) (palette 1)
+        .byte $f0,$bd,$01,$00 ; 8x16 tile #$bd at location (0,-16) (palette 1)
+    .else
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$3d,$01,$fc ; 8x16 tile #$3d at location (-4,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-16) (palette 1)
+        .byte $f0,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-16) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_49:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $01,$43,$01,$fc ; 8x16 tile #$43 at location (-4,1) (palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f1,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-15) (palette 1)
-    .byte $f1,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-15) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $01,$43,$01,$fc ; 8x16 tile #$43 at location (-4,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f1,$bb,$01,$f8 ; 8x16 tile #$bb at location (-8,-15) (palette 1)
+        .byte $f1,$bd,$01,$00 ; 8x16 tile #$bd at location (0,-15) (palette 1)
+    .else
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $01,$43,$01,$fc ; 8x16 tile #$43 at location (-4,1) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f1,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-15) (palette 1)
+        .byte $f1,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-15) (palette 1)
+    .endif
 
 ; overhead soldier
 sprite_4a:
-    .byte $0d             ; number of bytes in meta-sprite
-    .byte $00,$3d,$41,$fc ; 8x16 tile #$3d at location (-4,0) (horizontal flip, palette 1)
-    .byte $80             ; stop re-coil effect
-    .byte $f0,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-16) (palette 1)
-    .byte $f0,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$19,$01,$fc ; 8x16 tile #$19 at location (-4,0) (palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$bb,$01,$f8 ; 8x16 tile #$bb at location (-8,-16) (palette 1)
+        .byte $f0,$bd,$01,$00 ; 8x16 tile #$bd at location (0,-16) (palette 1)
+    .else
+        .byte $0d             ; number of bytes in meta-sprite
+        .byte $00,$3d,$41,$fc ; 8x16 tile #$3d at location (-4,0) (horizontal flip, palette 1)
+        .byte $80             ; stop re-coil effect
+        .byte $f0,$bb,$01,$f9 ; 8x16 tile #$bb at location (-7,-16) (palette 1)
+        .byte $f0,$bd,$01,$01 ; 8x16 tile #$bd at location (1,-16) (palette 1)
+    .endif
 
 ; overhead tank soldier
 sprite_4b:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $ea,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-22)
-    .byte $ea,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-22) (horizontal flip, palette 0)
-    .byte $fa,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-6)
-    .byte $fa,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-6) (horizontal flip, palette 0)
-    .byte $0a,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,10)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ea,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-22)
+        .byte $ea,$e5,$40,$01 ; 8x16 tile #$e5 at location (1,-22) (horizontal flip, palette 0)
+        .byte $fa,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-6)
+        .byte $fa,$e7,$40,$01 ; 8x16 tile #$e7 at location (1,-6) (horizontal flip, palette 0)
+        .byte $0a,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,10)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ea,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-22)
+        .byte $ea,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-22) (horizontal flip, palette 0)
+        .byte $fa,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-6)
+        .byte $fa,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-6) (horizontal flip, palette 0)
+        .byte $0a,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,10)
+    .endif
 
 ; overhead tank soldier
 sprite_4c:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $ea,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-22)
-    .byte $f1,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-15)
-    .byte $fa,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-6)
-    .byte $01,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,1)
-    .byte $0a,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,10)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-16)
+        .byte $f0,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-16)
+        .byte $00,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,0)
+        .byte $00,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,0)
+        .byte $0a,$f3,$00,$f5 ; 8x16 tile #$f3 at location (-11,10)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ea,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-22)
+        .byte $f1,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-15)
+        .byte $fa,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-6)
+        .byte $01,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,1)
+        .byte $0a,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,10)
+    .endif
 
 ; overhead tank soldier
 sprite_4d:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $f2,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-14)
-    .byte $f2,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-14)
-    .byte $02,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,2)
-    .byte $02,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,2)
-    .byte $02,$fd,$00,$03 ; 8x16 tile #$fd at location (3,2)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-16)
+        .byte $f2,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-14)
+        .byte $00,$f9,$00,$f4 ; 8x16 tile #$f9 at location (-12,0)
+        .byte $00,$fb,$00,$fc ; 8x16 tile #$fb at location (-4,0)
+        .byte $02,$fd,$00,$04 ; 8x16 tile #$fd at location (4,2)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f2,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-14)
+        .byte $f2,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-14)
+        .byte $02,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,2)
+        .byte $02,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,2)
+        .byte $02,$fd,$00,$03 ; 8x16 tile #$fd at location (3,2)
+    .endif
 
 ; overhead tank soldier
 sprite_4e:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $d2,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-46)
-    .byte $d2,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-46) (horizontal flip, palette 0)
-    .byte $e2,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-30)
-    .byte $e2,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-30) (horizontal flip, palette 0)
-    .byte $f2,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-14)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d2,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-46)
+        .byte $d2,$e5,$40,$01 ; 8x16 tile #$e5 at location (1,-46) (horizontal flip, palette 0)
+        .byte $e2,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-30)
+        .byte $e2,$e7,$40,$01 ; 8x16 tile #$e7 at location (1,-30) (horizontal flip, palette 0)
+        .byte $f2,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-14)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d2,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-46)
+        .byte $d2,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-46) (horizontal flip, palette 0)
+        .byte $e2,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-30)
+        .byte $e2,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-30) (horizontal flip, palette 0)
+        .byte $f2,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-14)
+    .endif
 
 ; overhead tank soldier
 sprite_4f:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $d2,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-46)
-    .byte $d9,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-39)
-    .byte $e2,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-30)
-    .byte $e9,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-23)
-    .byte $f2,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,-14)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d8,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-40)
+        .byte $d8,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-40)
+        .byte $e8,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-24)
+        .byte $e8,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-24)
+        .byte $f2,$f3,$00,$f5 ; 8x16 tile #$f3 at location (-11,-14)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d2,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-46)
+        .byte $d9,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-39)
+        .byte $e2,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-30)
+        .byte $e9,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-23)
+        .byte $f2,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,-14)
+    .endif
 
 ; overhead tank soldier
 sprite_50:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $da,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-38)
-    .byte $da,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-38)
-    .byte $ea,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,-22)
-    .byte $ea,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,-22)
-    .byte $ea,$fd,$00,$03 ; 8x16 tile #$fd at location (3,-22)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d8,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-40)
+        .byte $da,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-38)
+        .byte $e8,$f9,$00,$f4 ; 8x16 tile #$f9 at location (-12,-24)
+        .byte $e8,$fb,$00,$fc ; 8x16 tile #$fb at location (-4,-24)
+        .byte $ea,$fd,$00,$04 ; 8x16 tile #$fd at location (4,-22)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $da,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-38)
+        .byte $da,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-38)
+        .byte $ea,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,-22)
+        .byte $ea,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,-22)
+        .byte $ea,$fd,$00,$03 ; 8x16 tile #$fd at location (3,-22)
+    .endif
 
 ; overhead tank soldier
 sprite_51:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $d8,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-40)
-    .byte $d8,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-40) (horizontal flip, palette 0)
-    .byte $e8,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-24)
-    .byte $e8,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-24) (horizontal flip, palette 0)
-    .byte $f8,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-8)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d8,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-40)
+        .byte $d8,$e5,$40,$01 ; 8x16 tile #$e5 at location (1,-40) (horizontal flip, palette 0)
+        .byte $e8,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-24
+        .byte $e8,$e7,$40,$01 ; 8x16 tile #$e7 at location (1,-24) (horizontal flip, palette 0)
+        .byte $f8,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-8)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d8,$e5,$00,$f9 ; 8x16 tile #$e5 at location (-7,-40)
+        .byte $d8,$e5,$40,$00 ; 8x16 tile #$e5 at location (0,-40) (horizontal flip, palette 0)
+        .byte $e8,$e7,$00,$f9 ; 8x16 tile #$e7 at location (-7,-24)
+        .byte $e8,$e7,$40,$00 ; 8x16 tile #$e7 at location (0,-24) (horizontal flip, palette 0)
+        .byte $f8,$e9,$00,$fd ; 8x16 tile #$e9 at location (-3,-8)
+    .endif
 
 ; overhead tank soldier
 sprite_52:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $d8,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-40)
-    .byte $df,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-33)
-    .byte $e8,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-24)
-    .byte $ef,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-17)
-    .byte $f8,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,-8)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $de,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-34)
+        .byte $de,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-34)
+        .byte $ee,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-18)
+        .byte $ee,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-18)
+        .byte $f8,$f3,$00,$f5 ; 8x16 tile #$f3 at location (-11,-8)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $d8,$ed,$00,$02 ; 8x16 tile #$ed at location (2,-40)
+        .byte $df,$eb,$00,$fa ; 8x16 tile #$eb at location (-6,-33)
+        .byte $e8,$f1,$00,$02 ; 8x16 tile #$f1 at location (2,-24)
+        .byte $ef,$ef,$00,$fa ; 8x16 tile #$ef at location (-6,-17)
+        .byte $f8,$f3,$00,$f3 ; 8x16 tile #$f3 at location (-13,-8)
+    .endif
 
 ; overhead tank soldier
 sprite_53:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $e0,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-32)
-    .byte $e0,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-32)
-    .byte $f0,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,-16)
-    .byte $f0,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,-16)
-    .byte $f0,$fd,$00,$03 ; 8x16 tile #$fd at location (3,-16)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $de,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-34)
+        .byte $e0,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-32)
+        .byte $ee,$f9,$00,$f4 ; 8x16 tile #$f9 at location (-12,-18)
+        .byte $ee,$fb,$00,$fc ; 8x16 tile #$fb at location (-4,-18)
+        .byte $f0,$fd,$00,$04 ; 8x16 tile #$fd at location (4,-16)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $e0,$f5,$00,$fc ; 8x16 tile #$f5 at location (-4,-32)
+        .byte $e0,$f7,$00,$04 ; 8x16 tile #$f7 at location (4,-32)
+        .byte $f0,$f9,$00,$f3 ; 8x16 tile #$f9 at location (-13,-16)
+        .byte $f0,$fb,$00,$fb ; 8x16 tile #$fb at location (-5,-16)
+        .byte $f0,$fd,$00,$03 ; 8x16 tile #$fd at location (3,-16)
+    .endif
 
 ; tank boss electrode
 sprite_54:
@@ -1383,33 +1701,63 @@ sprite_58:
 
 ; crouching soldier
 sprite_59:
-    .byte $04             ; number of bytes in meta-sprite
-    .byte $f0,$f3,$00,$00 ; 8x16 tile #$f3 at location (0,-16)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$f3,$00,$f8 ; 8x16 tile #$f3 at location (-8,-16)
+        .byte $f1,$f5,$00,$00 ; 8x16 tile #$f5 at location (0,-15)
+    .else
+        .byte $04             ; number of bytes in meta-sprite
+        .byte $f0,$f3,$00,$00 ; 8x16 tile #$f3 at location (0,-16)
+    .endif
 
 ; crouching soldier
 sprite_5a:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $fe,$f9,$00,$f1 ; 8x16 tile #$f9 at location (-15,-2)
-    .byte $f1,$f5,$00,$f8 ; 8x16 tile #$f5 at location (-8,-15)
-    .byte $f1,$f7,$00,$00 ; 8x16 tile #$f7 at location (0,-15)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$f7,$00,$f8 ; 8x16 tile #$f7 at location (-8,-16)
+        .byte $f0,$f9,$00,$00 ; 8x16 tile #$f9 at location (0,-16)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $fe,$f9,$00,$f1 ; 8x16 tile #$f9 at location (-15,-2)
+        .byte $f1,$f5,$00,$f8 ; 8x16 tile #$f5 at location (-8,-15)
+        .byte $f1,$f7,$00,$00 ; 8x16 tile #$f7 at location (0,-15)
+    .endif
 
 ; crouching soldier
 sprite_5b:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f0,$fb,$00,$f8 ; 8x16 tile #$fb at location (-8,-16)
-    .byte $f0,$fd,$00,$00 ; 8x16 tile #$fd at location (0,-16)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$fb,$00,$f7 ; 8x16 tile #$fb at location (-9,-16)
+        .byte $f0,$fd,$00,$ff ; 8x16 tile #$fd at location (-1,-16)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f0,$fb,$00,$f8 ; 8x16 tile #$fb at location (-8,-16)
+        .byte $f0,$fd,$00,$00 ; 8x16 tile #$fd at location (0,-16)
+    .endif
 
 ; spinning bubbles
 sprite_5c:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f8,$f9,$00,$f8 ; 8x16 tile #$f9 at location (-8,-8)
-    .byte $f8,$fd,$01,$fe ; 8x16 tile #$fd at location (-2,-8) (palette 1)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$f9,$03,$f8 ; 8x16 tile #$f9 at location (-8,-8) (palette 3)
+        .byte $f8,$fd,$01,$fe ; 8x16 tile #$fd at location (-2,-8) (palette 1)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$f9,$00,$f8 ; 8x16 tile #$f9 at location (-8,-8)
+        .byte $f8,$fd,$01,$fe ; 8x16 tile #$fd at location (-2,-8) (palette 1)
+    .endif
 
 ; spinning bubbles
 sprite_5d:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f8,$fd,$00,$fa ; 8x16 tile #$fd at location (-6,-8)
-    .byte $f8,$f7,$01,$00 ; 8x16 tile #$f7 at location (0,-8) (palette 1)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$fd,$03,$fa ; 8x16 tile #$fd at location (-6,-8) (palette 3)
+        .byte $f8,$f7,$01,$00 ; 8x16 tile #$f7 at location (0,-8) (palette 1)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$fd,$00,$fa ; 8x16 tile #$fd at location (-6,-8)
+        .byte $f8,$f7,$01,$00 ; 8x16 tile #$f7 at location (0,-8) (palette 1)
+    .endif
 
 ; spinning bubbles
 sprite_5e:
@@ -1422,15 +1770,27 @@ sprite_5f:
 
 ; spinning bubbles
 sprite_60:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f8,$fd,$01,$fa ; 8x16 tile #$fd at location (-6,-8) (palette 1)
-    .byte $f8,$f7,$00,$00 ; 8x16 tile #$f7 at location (0,-8)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$fd,$01,$fa ; 8x16 tile #$fd at location (-6,-8) (palette 1)
+        .byte $f8,$f7,$03,$00 ; 8x16 tile #$f7 at location (0,-8) (palette 3)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$fd,$01,$fa ; 8x16 tile #$fd at location (-6,-8) (palette 1)
+        .byte $f8,$f7,$00,$00 ; 8x16 tile #$f7 at location (0,-8)
+    .endif
 
 ; spinning bubbles
 sprite_61:
-    .byte $08             ; number of bytes in meta-sprite
-    .byte $f8,$f9,$01,$f8 ; 8x16 tile #$f9 at location (-8,-8) (palette 1)
-    .byte $f8,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,-8)
+    .ifdef Probotector
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$f9,$01,$f8 ; 8x16 tile #$f9 at location (-8,-8) (palette 1)
+        .byte $f8,$fd,$03,$fe ; 8x16 tile #$fd at location (-2,-8) (palette 3)
+    .else
+        .byte $08             ; number of bytes in meta-sprite
+        .byte $f8,$f9,$01,$f8 ; 8x16 tile #$f9 at location (-8,-8) (palette 1)
+        .byte $f8,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,-8)
+    .endif
 
 ; falling ceiling tile
 sprite_62:
@@ -1458,40 +1818,83 @@ sprite_65:
 
 ; winged soldier
 sprite_66:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
-    .byte $ee,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-18)
-    .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
-    .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
+        .byte $f0,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-16)
+        .byte $00,$0f,$00,$f6 ; 8x16 tile #$0f at location (-10,0)
+        .byte $00,$11,$00,$fe ; 8x16 tile #$11 at location (-2,0)
+        .byte $10,$13,$00,$f8 ; 8x16 tile #$13 at location (-8,16)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
+        .byte $ee,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-18)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .endif
 
 ; winged soldier
 sprite_67:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f1,$dd,$00,$fc ; 8x16 tile #$dd at location (-4,-15)
-    .byte $f8,$b3,$00,$f5 ; 8x16 tile #$b3 at location (-11,-8)
-    .byte $01,$b5,$00,$fd ; 8x16 tile #$b5 at location (-3,1)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ef,$c3,$00,$f8 ; 8x16 tile #$c3 at location (-8,-17)
+        .byte $ef,$dd,$00,$00 ; 8x16 tile #$dd at location (0,-17)
+        .byte $ff,$15,$00,$f6 ; 8x16 tile #$15 at location (-10,-1)
+        .byte $ff,$17,$00,$fe ; 8x16 tile #$17 at location (-2,-1)
+        .byte $0a,$45,$00,$03 ; 8x16 tile #$45 at location (3,10)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f1,$dd,$00,$fc ; 8x16 tile #$dd at location (-4,-15)
+        .byte $f8,$b3,$00,$f5 ; 8x16 tile #$b3 at location (-11,-8)
+        .byte $01,$b5,$00,$fd ; 8x16 tile #$b5 at location (-3,1)
+    .endif
 
 ; winged soldier
 sprite_68:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f0,$e1,$00,$ff ; 8x16 tile #$e1 at location (-1,-16)
-    .byte $f0,$df,$00,$f7 ; 8x16 tile #$df at location (-9,-16)
-    .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$df,$00,$f7 ; 8x16 tile #$df at location (-9,-16)
+        .byte $f0,$e1,$00,$ff ; 8x16 tile #$e1 at location (-1,-16)
+        .byte $00,$19,$00,$fc ; 8x16 tile #$19 at location (-4,0)
+        .byte $10,$1b,$00,$fc ; 8x16 tile #$1b at location (-4,16)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$e1,$00,$ff ; 8x16 tile #$e1 at location (-1,-16)
+        .byte $f0,$df,$00,$f7 ; 8x16 tile #$df at location (-9,-16)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .endif
 
 ; winged soldier
 sprite_69:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f0,$e1,$00,$ff ; 8x16 tile #$e1 at location (-1,-16)
-    .byte $f0,$df,$00,$f7 ; 8x16 tile #$df at location (-9,-16)
-    .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
-    .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $f0,$df,$00,$f6 ; 8x16 tile #$df at location (-10,-16)
+        .byte $f0,$e1,$00,$fe ; 8x16 tile #$e1 at location (-2,-16)
+        .byte $00,$0f,$00,$f5 ; 8x16 tile #$0f at location (-11,0)
+        .byte $00,$11,$00,$fd ; 8x16 tile #$11 at location (-3,0)
+        .byte $10,$13,$00,$f7 ; 8x16 tile #$13 at location (-9,16)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$e1,$00,$ff ; 8x16 tile #$e1 at location (-1,-16)
+        .byte $f0,$df,$00,$f7 ; 8x16 tile #$df at location (-9,-16)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+    .endif
 
 ; winged soldier
 sprite_6a:
-    .byte $0c             ; number of bytes in meta-sprite
-    .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
-    .byte $ee,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-18)
-    .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
+        .byte $f0,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-16)
+        .byte $00,$19,$00,$fb ; 8x16 tile #$19 at location (-5,0)
+        .byte $10,$1b,$00,$fb ; 8x16 tile #$1b at location (-5,16)
+    .else
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$d7,$00,$f8 ; 8x16 tile #$d7 at location (-8,-16)
+        .byte $ee,$d9,$00,$00 ; 8x16 tile #$d9 at location (0,-18)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+    .endif
 
 ; winged soldier
 sprite_6b:
@@ -1503,28 +1906,53 @@ sprite_6b:
 
 ; winged soldier
 sprite_6c:
-    .byte $14             ; number of bytes in meta-sprite
-    .byte $ee,$e7,$00,$f4 ; 8x16 tile #$e7 at location (-12,-18)
-    .byte $ee,$e7,$40,$04 ; 8x16 tile #$e7 at location (4,-18) (horizontal flip, palette 0)
-    .byte $f5,$e9,$00,$fc ; 8x16 tile #$e9 at location (-4,-11)
-    .byte $fe,$eb,$00,$f7 ; 8x16 tile #$eb at location (-9,-2)
-    .byte $05,$ed,$00,$00 ; 8x16 tile #$ed at location (0,5)
+    .ifdef Probotector
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ec,$e7,$00,$f4 ; 8x16 tile #$e7 at location (-12,-20)
+        .byte $ec,$e7,$40,$04 ; 8x16 tile #$e7 at location (4,-20) (horizontal flip)
+        .byte $f0,$e9,$00,$fc ; 8x16 tile #$e9 at location (-4,-16)
+        .byte $fc,$eb,$00,$f7 ; 8x16 tile #$eb at location (-9,-4)
+        .byte $00,$ed,$00,$ff ; 8x16 tile #$ed at location (-1,0)
+    .else
+        .byte $14             ; number of bytes in meta-sprite
+        .byte $ee,$e7,$00,$f4 ; 8x16 tile #$e7 at location (-12,-18)
+        .byte $ee,$e7,$40,$04 ; 8x16 tile #$e7 at location (4,-18) (horizontal flip, palette 0)
+        .byte $f5,$e9,$00,$fc ; 8x16 tile #$e9 at location (-4,-11)
+        .byte $fe,$eb,$00,$f7 ; 8x16 tile #$eb at location (-9,-2)
+        .byte $05,$ed,$00,$00 ; 8x16 tile #$ed at location (0,5)
+    .endif
 
 ; winged soldier
 sprite_6d:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f1,$f7,$00,$f7 ; 8x16 tile #$f7 at location (-9,-15)
-    .byte $f1,$f9,$00,$ff ; 8x16 tile #$f9 at location (-1,-15)
-    .byte $f5,$fb,$00,$07 ; 8x16 tile #$fb at location (7,-11)
-    .byte $01,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,1)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$f7,$00,$f5 ; 8x16 tile #$f7 at location (-11,-16)
+        .byte $f0,$f9,$00,$fd ; 8x16 tile #$f9 at location (-3,-16)
+        .byte $f5,$fb,$00,$05 ; 8x16 tile #$fb at location (5,-11)
+        .byte $00,$fd,$00,$fd ; 8x16 tile #$fd at location (-3,0)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f1,$f7,$00,$f7 ; 8x16 tile #$f7 at location (-9,-15)
+        .byte $f1,$f9,$00,$ff ; 8x16 tile #$f9 at location (-1,-15)
+        .byte $f5,$fb,$00,$07 ; 8x16 tile #$fb at location (7,-11)
+        .byte $01,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,1)
+    .endif
 
 ; winged soldier
 sprite_6e:
-    .byte $10             ; number of bytes in meta-sprite
-    .byte $f1,$f7,$00,$f7 ; 8x16 tile #$f7 at location (-9,-15)
-    .byte $f1,$f9,$00,$ff ; 8x16 tile #$f9 at location (-1,-15)
-    .byte $f5,$eb,$00,$07 ; 8x16 tile #$eb at location (7,-11)
-    .byte $01,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,1)
+    .ifdef Probotector
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$f7,$00,$f5 ; 8x16 tile #$f7 at location (-11,-16)
+        .byte $f0,$f9,$00,$fd ; 8x16 tile #$f9 at location (-3,-16)
+        .byte $f5,$eb,$00,$05 ; 8x16 tile #$eb at location (5,-11)
+        .byte $00,$fd,$00,$fd ; 8x16 tile #$fd at location (-3,0)
+    .else
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f1,$f7,$00,$f7 ; 8x16 tile #$f7 at location (-9,-15)
+        .byte $f1,$f9,$00,$ff ; 8x16 tile #$f9 at location (-1,-15)
+        .byte $f5,$eb,$00,$07 ; 8x16 tile #$eb at location (7,-11)
+        .byte $01,$fd,$00,$fe ; 8x16 tile #$fd at location (-2,1)
+    .endif
 
 ; falling rock
 sprite_6f:
@@ -2094,18 +2522,30 @@ sprite_b7:
 
 ; intro screen logo red c bottom
 sprite_b8:
-    .byte $2c             ; number of bytes in meta-sprite
-    .byte $00,$cb,$00,$00 ; 8x16 tile #$cb at location (0,0)
-    .byte $10,$cd,$00,$00 ; 8x16 tile #$cd at location (0,16)
-    .byte $20,$cf,$00,$00 ; 8x16 tile #$cf at location (0,32)
-    .byte $2e,$d1,$00,$08 ; 8x16 tile #$d1 at location (8,46)
-    .byte $2e,$d3,$00,$10 ; 8x16 tile #$d3 at location (16,46)
-    .byte $2e,$d5,$00,$18 ; 8x16 tile #$d5 at location (24,46)
-    .byte $2e,$d7,$00,$20 ; 8x16 tile #$d7 at location (32,46)
-    .byte $30,$db,$00,$28 ; 8x16 tile #$db at location (40,48)
-    .byte $30,$dd,$00,$30 ; 8x16 tile #$dd at location (48,48)
-    .byte $30,$df,$00,$38 ; 8x16 tile #$df at location (56,48)
-    .byte $2e,$e1,$00,$40 ; 8x16 tile #$e1 at location (64,46)
+    .ifdef Probotector
+        .byte $20             ; number of bytes in meta-sprite
+        .byte $08,$cb,$03,$e8 ; 8x16 tile #$cb at location (-24,8) (palette 3)
+        .byte $00,$cd,$03,$f8 ; 8x16 tile #$cd at location (-8,0) (palette 3)
+        .byte $08,$cf,$03,$00 ; 8x16 tile #$cf at location (0,8) (palette 3)
+        .byte $00,$d1,$03,$08 ; 8x16 tile #$d1 at location (8,0) (palette 3)
+        .byte $08,$d3,$03,$10 ; 8x16 tile #$d3 at location (16,8) (palette 3)
+        .byte $00,$d5,$03,$18 ; 8x16 tile #$d5 at location (24,0) (palette 3)
+        .byte $08,$d7,$03,$24 ; 8x16 tile #$d7 at location (36,8) (palette 3)
+        .byte $00,$db,$03,$38 ; 8x16 tile #$db at location (56,0) (palette 3)
+    .else
+        .byte $2c             ; number of bytes in meta-sprite
+        .byte $00,$cb,$00,$00 ; 8x16 tile #$cb at location (0,0)
+        .byte $10,$cd,$00,$00 ; 8x16 tile #$cd at location (0,16)
+        .byte $20,$cf,$00,$00 ; 8x16 tile #$cf at location (0,32)
+        .byte $2e,$d1,$00,$08 ; 8x16 tile #$d1 at location (8,46)
+        .byte $2e,$d3,$00,$10 ; 8x16 tile #$d3 at location (16,46)
+        .byte $2e,$d5,$00,$18 ; 8x16 tile #$d5 at location (24,46)
+        .byte $2e,$d7,$00,$20 ; 8x16 tile #$d7 at location (32,46)
+        .byte $30,$db,$00,$28 ; 8x16 tile #$db at location (40,48)
+        .byte $30,$dd,$00,$30 ; 8x16 tile #$dd at location (48,48)
+        .byte $30,$df,$00,$38 ; 8x16 tile #$df at location (56,48)
+        .byte $2e,$e1,$00,$40 ; 8x16 tile #$e1 at location (64,46)
+    .endif
 
 ; intro screen cursor
 sprite_b9:
@@ -2137,7 +2577,54 @@ sprite_bb:
     .byte $00,$df,$00,$fd ; 8x16 tile #$df at location (-3,0)
     .byte $00,$e1,$00,$05 ; 8x16 tile #$e1 at location (5,0)
 
-sprite_bc:
+.ifdef Probotector
+    ; level 7 soldier
+    sprite_bc:
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
+        .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+
+    ; level 7 soldier
+    sprite_bd:
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f1,$b1,$00,$fc ; 8x16 tile #$b1 at location (-4,-15)
+        .byte $fc,$b3,$00,$f5 ; 8x16 tile #$b3 at location (-11,-4)
+        .byte $01,$b5,$00,$fd ; 8x16 tile #$b5 at location (-3,1)
+
+    ; level 7 soldier
+    sprite_be:
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
+        .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+
+    ; level 7 soldier
+    sprite_bf:
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $f0,$b7,$00,$f7 ; 8x16 tile #$b7 at location (-9,-16)
+        .byte $f0,$b9,$00,$ff ; 8x16 tile #$b9 at location (-1,-16)
+        .byte $00,$ad,$00,$f4 ; 8x16 tile #$ad at location (-12,0)
+        .byte $fe,$af,$00,$fc ; 8x16 tile #$af at location (-4,-2)
+
+    ; level 7 soldier
+    sprite_c0:
+        .byte $0c             ; number of bytes in meta-sprite
+        .byte $f0,$a9,$00,$f8 ; 8x16 tile #$a9 at location (-8,-16)
+        .byte $ee,$ab,$00,$00 ; 8x16 tile #$ab at location (0,-18)
+        .byte $00,$bb,$00,$fa ; 8x16 tile #$bb at location (-6,0)
+
+    ; level 7 soldier
+    sprite_c1:
+        .byte $10             ; number of bytes in meta-sprite
+        .byte $ee,$bd,$00,$f8 ; 8x16 tile #$bd at location (-8,-18)
+        .byte $ee,$bf,$00,$00 ; 8x16 tile #$bf at location (0,-18)
+        .byte $fe,$c1,$00,$f6 ; 8x16 tile #$c1 at location (-10,-2)
+        .byte $fe,$c3,$00,$fe ; 8x16 tile #$c3 at location (-2,-2)
+.endif
+
+sprite_empty:
     .byte $ff
 
 ; pointer table for sprites
@@ -2272,350 +2759,663 @@ player_sprite_ptr_tbl:
     .addr player_sprite_3e
 
 player_sprite_00:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $f0,$03,$01,$fa ; 8x16 tile #$03 at location (-6,-16) (palette 1)
-    .byte $ef,$05,$01,$02 ; 8x16 tile #$05 at location (2,-17) (palette 1)
+    .byte $05                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f0,$03,$00,$fa ; 8x16 tile #$03 at location (-6,-16)
+        .byte $ef,$05,$00,$02 ; 8x16 tile #$05 at location (2,-17)
+    .else
+        .byte $f0,$03,$01,$fa ; 8x16 tile #$03 at location (-6,-16) (palette 1)
+        .byte $ef,$05,$01,$02 ; 8x16 tile #$05 at location (2,-17) (palette 1)
+    .endif
 
 player_running_bottom:
-    .byte $ff,$0f,$00,$f6 ; 8x16 tile #$0f at location (-10,-1)
-    .byte $00,$11,$00,$fe ; 8x16 tile #$11 at location (-2,0)
-    .byte $0f,$13,$00,$f4 ; 8x16 tile #$13 at location (-12,15)
+    .ifdef Probotector
+        .byte $00,$0f,$00,$f6 ; 8x16 tile #$0f at location (-10,0)
+        .byte $00,$11,$00,$fe ; 8x16 tile #$11 at location (-2,0)
+        .byte $10,$13,$00,$f8 ; 8x16 tile #$13 at location (-8,16)
+    .else
+        .byte $ff,$0f,$00,$f6 ; 8x16 tile #$0f at location (-10,-1)
+        .byte $00,$11,$00,$fe ; 8x16 tile #$11 at location (-2,0)
+        .byte $0f,$13,$00,$f4 ; 8x16 tile #$13 at location (-12,15)
+    .endif
 
 player_sprite_02:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $f1,$07,$01,$fc ; 8x16 tile #$07 at location (-4,-15) (palette 1)
-    .byte $f0,$09,$01,$04 ; 8x16 tile #$09 at location (4,-16) (palette 1)
+    .byte $05                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f1,$07,$00,$fb ; 8x16 tile #$07 at location (-5,-15)
+        .byte $f0,$09,$00,$03 ; 8x16 tile #$09 at location (3,-16)
+    .else
+        .byte $f1,$07,$01,$fc ; 8x16 tile #$07 at location (-4,-15) (palette 1)
+        .byte $f0,$09,$01,$04 ; 8x16 tile #$09 at location (4,-16) (palette 1)
+    .endif
 
 player_large_run_bottom:
-    .byte $00,$15,$00,$f6 ; 8x16 tile #$15 at location (-10,0)
-    .byte $01,$17,$00,$fe ; 8x16 tile #$17 at location (-2,1)
-    .byte $11,$13,$00,$01 ; 8x16 tile #$13 at location (1,17)
+    .ifdef Probotector
+        .byte $01,$15,$00,$f5 ; 8x16 tile #$15 at location (-11,1)
+        .byte $01,$17,$00,$fd ; 8x16 tile #$17 at location (-3,1)
+        .byte $0c,$45,$00,$02 ; 8x16 tile #$45 at location (2,12)
+    .else
+        .byte $00,$15,$00,$f6 ; 8x16 tile #$15 at location (-10,0)
+        .byte $01,$17,$00,$fe ; 8x16 tile #$17 at location (-2,1)
+        .byte $11,$13,$00,$01 ; 8x16 tile #$13 at location (1,17)
+    .endif
 
 player_sprite_03:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $ef,$0b,$01,$f8 ; 8x16 tile #$0b at location (-8,-17) (palette 1)
-    .byte $f0,$0d,$01,$00 ; 8x16 tile #$0d at location (0,-16) (palette 1)
+    .ifdef Probotector
+        .byte $04             ; number of sprites in meta-sprite
+        .byte $f0,$0b,$00,$f8 ; 8x16 tile #$0b at location (-8,-16)
+        .byte $f0,$0d,$00,$00 ; 8x16 tile #$0d at location (0,-16)
+    .else
+        .byte $05             ; number of sprites in meta-sprite
+        .byte $ef,$0b,$01,$f8 ; 8x16 tile #$0b at location (-8,-17) (palette 1)
+        .byte $f0,$0d,$01,$00 ; 8x16 tile #$0d at location (0,-16) (palette 1)
+    .endif
 
 player_standing_bottom:
-    .byte $ff,$19,$00,$f9 ; 8x16 tile #$19 at location (-7,-1)
-    .byte $00,$1b,$00,$01 ; 8x16 tile #$1b at location (1,0)
-    .byte $0f,$13,$00,$fb ; 8x16 tile #$13 at location (-5,15)
+    .ifdef Probotector
+        .byte $00,$19,$00,$fb ; 8x16 tile #$19 at location (-5,0)
+        .byte $10,$1b,$00,$fb ; 8x16 tile #$1b at location (-5,16)
+    .else
+        .byte $ff,$19,$00,$f9 ; 8x16 tile #$19 at location (-7,-1)
+        .byte $00,$1b,$00,$01 ; 8x16 tile #$1b at location (1,0)
+        .byte $0f,$13,$00,$fb ; 8x16 tile #$13 at location (-5,15)
+    .endif
 
 player_sprite_04:
     .byte $05                   ; number of sprites in meta-sprite
-    .byte $ef,$0b,$01,$f8       ; 8x16 tile #$0b at location (-8,-17) (palette 1)
-    .byte $f0,$0d,$01,$00       ; 8x16 tile #$0d at location (0,-16) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$0b,$00,$f8   ; 8x16 tile #$0b at location (-8,-16)
+        .byte $f0,$0d,$00,$00   ; 8x16 tile #$0d at location (0,-16)
+    .else
+        .byte $ef,$0b,$01,$f8   ; 8x16 tile #$0b at location (-8,-17) (palette 1)
+        .byte $f0,$0d,$01,$00   ; 8x16 tile #$0d at location (0,-16) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_05:
-    .byte $05                    ; number of sprites in meta-sprite
-    .byte $f0,$03,$01,$f9        ; 8x16 tile #$03 at location (-7,-16) (palette 1)
-    .byte $ef,$05,$01,$01        ; 8x16 tile #$05 at location (1,-17) (palette 1)
+    .ifdef Probotector
+        .byte $04                ; number of sprites in meta-sprite
+        .byte $f0,$03,$00,$fa    ; 8x16 tile #$03 at location (-6,-16)
+        .byte $f0,$05,$00,$02    ; 8x16 tile #$05 at location (2,-16)
+    .else
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$03,$01,$f9    ; 8x16 tile #$03 at location (-7,-16) (palette 1)
+        .byte $ef,$05,$01,$01    ; 8x16 tile #$05 at location (1,-17) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_06:
     .byte $06                   ; number of sprites in meta-sprite
-    .byte $f0,$1d,$01,$f7       ; 8x16 tile #$1d at location (-9,-16) (palette 1)
-    .byte $f0,$1f,$01,$ff       ; 8x16 tile #$1f at location (-1,-16) (palette 1)
-    .byte $ef,$21,$01,$07       ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$1d,$00,$f8   ; 8x16 tile #$1d at location (-8,-16)
+        .byte $f0,$1f,$00,$00   ; 8x16 tile #$1f at location (0,-16)
+        .byte $ee,$21,$00,$08   ; 8x16 tile #$21 at location (8,-18)
+    .else
+        .byte $f0,$1d,$01,$f7   ; 8x16 tile #$1d at location (-9,-16) (palette 1)
+        .byte $f0,$1f,$01,$ff   ; 8x16 tile #$1f at location (-1,-16) (palette 1)
+        .byte $ef,$21,$01,$07   ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_07:
     .byte $06                     ; number of sprites in meta-sprite
-    .byte $f1,$1d,$01,$f7         ; 8x16 tile #$1d at location (-9,-15) (palette 1)
-    .byte $f1,$1f,$01,$ff         ; 8x16 tile #$1f at location (-1,-15) (palette 1)
-    .byte $f0,$21,$01,$07         ; 8x16 tile #$21 at location (7,-16) (palette 1)
+    .ifdef Probotector
+        .byte $f1,$1d,$00,$f8     ; 8x16 tile #$1d at location (-8,-15)
+        .byte $f1,$1f,$00,$00     ; 8x16 tile #$1f at location (0,-15)
+        .byte $ef,$21,$00,$08     ; 8x16 tile #$21 at location (8,-17)
+    .else
+        .byte $f1,$1d,$01,$f7     ; 8x16 tile #$1d at location (-9,-15) (palette 1)
+        .byte $f1,$1f,$01,$ff     ; 8x16 tile #$1f at location (-1,-15) (palette 1)
+        .byte $f0,$21,$01,$07     ; 8x16 tile #$21 at location (7,-16) (palette 1)
+    .endif
     .byte $80                     ; shared sprite byte
     .addr player_large_run_bottom ; continue meta-sprite at player_large_run_bottom
 
 player_sprite_08:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $f0,$1d,$01,$f7        ; 8x16 tile #$1d at location (-9,-16) (palette 1)
-    .byte $f0,$1f,$01,$ff        ; 8x16 tile #$1f at location (-1,-16) (palette 1)
-    .byte $ef,$21,$01,$07        ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$1d,$00,$f8    ; 8x16 tile #$1d at location (-8,-16)
+        .byte $f0,$1f,$00,$00    ; 8x16 tile #$1f at location (0,-16)
+        .byte $ee,$21,$00,$08    ; 8x16 tile #$21 at location (8,-18)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $f0,$1d,$01,$f7    ; 8x16 tile #$1d at location (-9,-16) (palette 1)
+        .byte $f0,$1f,$01,$ff    ; 8x16 tile #$1f at location (-1,-16) (palette 1)
+        .byte $ef,$21,$01,$07    ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_09:
     .byte $06                   ; number of sprites in meta-sprite
-    .byte $f0,$1d,$01,$f7       ; 8x16 tile #$1d at location (-9,-16) (palette 1)
-    .byte $f0,$1f,$01,$ff       ; 8x16 tile #$1f at location (-1,-16) (palette 1)
-    .byte $ef,$21,$01,$07       ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$1d,$00,$f8   ; 8x16 tile #$1d at location (-8,-16)
+        .byte $f0,$1f,$00,$00   ; 8x16 tile #$1f at location (0,-16)
+        .byte $ee,$21,$00,$08   ; 8x16 tile #$21 at location (8,-18)
+    .else
+        .byte $f0,$1d,$01,$f7   ; 8x16 tile #$1d at location (-9,-16) (palette 1)
+        .byte $f0,$1f,$01,$ff   ; 8x16 tile #$1f at location (-1,-16) (palette 1)
+        .byte $ef,$21,$01,$07   ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_0a:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $f0,$1d,$01,$f7        ; 8x16 tile #$1d at location (-9,-16) (palette 1)
-    .byte $f0,$1f,$01,$ff        ; 8x16 tile #$1f at location (-1,-16) (palette 1)
-    .byte $ef,$21,$01,$07        ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$1d,$00,$f8    ; 8x16 tile #$1d at location (-8,-16)
+        .byte $f0,$1f,$00,$00    ; 8x16 tile #$1f at location (0,-16)
+        .byte $ee,$21,$00,$08    ; 8x16 tile #$21 at location (8,-18)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $f0,$1d,$01,$f7    ; 8x16 tile #$1d at location (-9,-16) (palette 1)
+        .byte $f0,$1f,$01,$ff    ; 8x16 tile #$1f at location (-1,-16) (palette 1)
+        .byte $ef,$21,$01,$07    ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_0b:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $f1,$1d,$01,$f7        ; 8x16 tile #$1d at location (-9,-15) (palette 1)
-    .byte $f1,$1f,$01,$ff        ; 8x16 tile #$1f at location (-1,-15) (palette 1)
-    .byte $f0,$21,$01,$07        ; 8x16 tile #$21 at location (7,-16) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f1,$1d,$00,$f8    ; 8x16 tile #$1d at location (-8,-15)
+        .byte $f1,$1f,$00,$00    ; 8x16 tile #$1f at location (0,-15)
+        .byte $ef,$21,$00,$08    ; 8x16 tile #$21 at location (8,-17)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $f1,$1d,$01,$f7    ; 8x16 tile #$1d at location (-9,-15) (palette 1)
+        .byte $f1,$1f,$01,$ff    ; 8x16 tile #$1f at location (-1,-15) (palette 1)
+        .byte $f0,$21,$01,$07    ; 8x16 tile #$21 at location (7,-16) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_0c:
     .byte $05                   ; number of sprites in meta-sprite
-    .byte $f0,$2b,$01,$fa       ; 8x16 tile #$2b at location (-6,-16) (palette 1)
-    .byte $ef,$2d,$01,$02       ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$2b,$00,$fa   ; 8x16 tile #$2b at location (-6,-16)
+        .byte $f0,$2d,$00,$02   ; 8x16 tile #$2d at location (2,-16)
+    .else
+        .byte $f0,$2b,$01,$fa   ; 8x16 tile #$2b at location (-6,-16) (palette 1)
+        .byte $ef,$2d,$01,$02   ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_0d:
     .byte $05                     ; number of sprites in meta-sprite
-    .byte $f1,$2b,$01,$fa         ; 8x16 tile #$2b at location (-6,-15) (palette 1)
-    .byte $f0,$2d,$01,$02         ; 8x16 tile #$2d at location (2,-16) (palette 1)
+    .ifdef Probotector
+        .byte $f1,$2b,$00,$fa     ; 8x16 tile #$2b at location (-6,-15)
+        .byte $f1,$2d,$00,$02     ; 8x16 tile #$2d at location (2,-15)
+    .else
+        .byte $f1,$2b,$01,$fa     ; 8x16 tile #$2b at location (-6,-15) (palette 1)
+        .byte $f0,$2d,$01,$02     ; 8x16 tile #$2d at location (2,-16) (palette 1)
+    .endif
     .byte $80                     ; shared sprite byte
     .addr player_large_run_bottom ; continue meta-sprite at player_large_run_bottom
 
 player_sprite_0e:
-    .byte $05                    ; number of sprites in meta-sprite
-    .byte $f0,$2b,$01,$fa        ; 8x16 tile #$2b at location (-6,-16) (palette 1)
-    .byte $ef,$2d,$01,$02        ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .ifdef Probotector
+        .byte $04                ; number of sprites in meta-sprite
+        .byte $f0,$2b,$00,$fa    ; 8x16 tile #$2b at location (-6,-16)
+        .byte $f0,$2d,$00,$02    ; 8x16 tile #$2d at location (2,-16)
+    .else
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$2b,$01,$fa    ; 8x16 tile #$2b at location (-6,-16) (palette 1)
+        .byte $ef,$2d,$01,$02    ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_0f:
     .byte $05                   ; number of sprites in meta-sprite
-    .byte $f0,$2b,$01,$fa       ; 8x16 tile #$2b at location (-6,-16) (palette 1)
-    .byte $ef,$2d,$01,$02       ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$2b,$00,$fa   ; 8x16 tile #$2b at location (-6,-16)
+        .byte $f0,$2d,$00,$02   ; 8x16 tile #$2d at location (2,-16)
+    .else
+        .byte $f0,$2b,$01,$fa   ; 8x16 tile #$2b at location (-6,-16) (palette 1)
+        .byte $ef,$2d,$01,$02   ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_10:
-    .byte $05                    ; number of sprites in meta-sprite
-    .byte $f0,$2b,$01,$fa        ; 8x16 tile #$2b at location (-6,-16) (palette 1)
-    .byte $ef,$2d,$01,$02        ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .ifdef Probotector
+        .byte $04                ; number of sprites in meta-sprite
+        .byte $f0,$2b,$00,$fa    ; 8x16 tile #$2b at location (-6,-16)
+        .byte $f0,$2d,$00,$02    ; 8x16 tile #$2d at location (2,-16)
+    .else
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$2b,$01,$fa    ; 8x16 tile #$2b at location (-6,-16) (palette 1)
+        .byte $ef,$2d,$01,$02    ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_11:
     .byte $06                   ; number of sprites in meta-sprite
-    .byte $ef,$2f,$01,$f6       ; 8x16 tile #$2f at location (-10,-17) (palette 1)
-    .byte $f0,$31,$01,$fe       ; 8x16 tile #$31 at location (-2,-16) (palette 1)
-    .byte $f8,$33,$01,$03       ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$2f,$00,$f7   ; 8x16 tile #$2f at location (-9,-16)
+        .byte $f0,$31,$00,$ff   ; 8x16 tile #$31 at location (-1,-16)
+        .byte $00,$33,$00,$03   ; 8x16 tile #$33 at location (3,0)
+    .else
+        .byte $ef,$2f,$01,$f6   ; 8x16 tile #$2f at location (-10,-17) (palette 1)
+        .byte $f0,$31,$01,$fe   ; 8x16 tile #$31 at location (-2,-16) (palette 1)
+        .byte $f8,$33,$01,$03   ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_12:
     .byte $06                     ; number of sprites in meta-sprite
-    .byte $f0,$2f,$01,$f6         ; 8x16 tile #$2f at location (-10,-16) (palette 1)
-    .byte $f1,$31,$01,$fe         ; 8x16 tile #$31 at location (-2,-15) (palette 1)
-    .byte $f9,$33,$01,$03         ; 8x16 tile #$33 at location (3,-7) (palette 1)
+    .ifdef Probotector
+        .byte $f1,$2f,$00,$f7     ; 8x16 tile #$2f at location (-9,-15)
+        .byte $f1,$31,$00,$ff     ; 8x16 tile #$31 at location (-1,-15)
+        .byte $01,$33,$00,$03     ; 8x16 tile #$33 at location (3,1)
+    .else
+        .byte $f0,$2f,$01,$f6     ; 8x16 tile #$2f at location (-10,-16) (palette 1)
+        .byte $f1,$31,$01,$fe     ; 8x16 tile #$31 at location (-2,-15) (palette 1)
+        .byte $f9,$33,$01,$03     ; 8x16 tile #$33 at location (3,-7) (palette 1)
+    .endif
     .byte $80                     ; shared sprite byte
     .addr player_large_run_bottom ; continue meta-sprite at player_large_run_bottom
 
 player_sprite_13:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $ef,$2f,$01,$f6        ; 8x16 tile #$2f at location (-10,-17) (palette 1)
-    .byte $f0,$31,$01,$fe        ; 8x16 tile #$31 at location (-2,-16) (palette 1)
-    .byte $f8,$33,$01,$03        ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$2f,$00,$f7    ; 8x16 tile #$2f at location (-9,-16)
+        .byte $f0,$31,$00,$ff    ; 8x16 tile #$31 at location (-1,-16)
+        .byte $00,$33,$00,$03    ; 8x16 tile #$33 at location (3,0)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $ef,$2f,$01,$f6    ; 8x16 tile #$2f at location (-10,-17) (palette 1)
+        .byte $f0,$31,$01,$fe    ; 8x16 tile #$31 at location (-2,-16) (palette 1)
+        .byte $f8,$33,$01,$03    ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_14:
     .byte $06                   ; number of sprites in meta-sprite
-    .byte $ef,$2f,$01,$f6       ; 8x16 tile #$2f at location (-10,-17) (palette 1)
-    .byte $f0,$31,$01,$fe       ; 8x16 tile #$31 at location (-2,-16) (palette 1)
-    .byte $f8,$33,$01,$03       ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$2f,$00,$f7   ; 8x16 tile #$2f at location (-9,-16)
+        .byte $f0,$31,$00,$ff   ; 8x16 tile #$31 at location (-1,-16)
+        .byte $00,$33,$00,$03   ; 8x16 tile #$33 at location (3,0)
+    .else
+        .byte $ef,$2f,$01,$f6   ; 8x16 tile #$2f at location (-10,-17) (palette 1)
+        .byte $f0,$31,$01,$fe   ; 8x16 tile #$31 at location (-2,-16) (palette 1)
+        .byte $f8,$33,$01,$03   ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr player_running_bottom ; continue meta-sprite at player_running_bottom
 
 player_sprite_15:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $ef,$2f,$01,$f6        ; 8x16 tile #$2f at location (-10,-17) (palette 1)
-    .byte $f0,$31,$01,$fe        ; 8x16 tile #$31 at location (-2,-16) (palette 1)
-    .byte $f8,$33,$01,$03        ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $f0,$2f,$00,$f7    ; 8x16 tile #$2f at location (-9,-16)
+        .byte $f0,$31,$00,$ff    ; 8x16 tile #$31 at location (-1,-16)
+        .byte $00,$33,$00,$03    ; 8x16 tile #$33 at location (3,0)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $ef,$2f,$01,$f6    ; 8x16 tile #$2f at location (-10,-17) (palette 1)
+        .byte $f0,$31,$01,$fe    ; 8x16 tile #$31 at location (-2,-16) (palette 1)
+        .byte $f8,$33,$01,$03    ; 8x16 tile #$33 at location (3,-8) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_16:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $02,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,2)
-    .byte $02,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,2)
-    .byte $02,$27,$01,$00 ; 8x16 tile #$27 at location (0,2) (palette 1)
-    .byte $02,$29,$01,$08 ; 8x16 tile #$29 at location (8,2) (palette 1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $03,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,3)
+        .byte $04,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,4)
+        .byte $04,$27,$00,$00 ; 8x16 tile #$27 at location (0,4)
+        .byte $04,$29,$00,$08 ; 8x16 tile #$29 at location (8,4)
+    .else
+        .byte $02,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,2)
+        .byte $02,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,2)
+        .byte $02,$27,$01,$00 ; 8x16 tile #$27 at location (0,2) (palette 1)
+        .byte $02,$29,$01,$08 ; 8x16 tile #$29 at location (8,2) (palette 1)
+    .endif
 
 player_sprite_17:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $03,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,3)
-    .byte $03,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,3)
-    .byte $03,$27,$01,$00 ; 8x16 tile #$27 at location (0,3) (palette 1)
-    .byte $03,$29,$01,$08 ; 8x16 tile #$29 at location (8,3) (palette 1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $04,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,4)
+        .byte $05,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,5)
+        .byte $05,$27,$00,$00 ; 8x16 tile #$27 at location (0,5)
+        .byte $05,$29,$00,$08 ; 8x16 tile #$29 at location (8,5)
+    .else
+        .byte $03,$23,$00,$f0 ; 8x16 tile #$23 at location (-16,3)
+        .byte $03,$25,$00,$f8 ; 8x16 tile #$25 at location (-8,3)
+        .byte $03,$27,$01,$00 ; 8x16 tile #$27 at location (0,3) (palette 1)
+        .byte $03,$29,$01,$08 ; 8x16 tile #$29 at location (8,3) (palette 1)
+    .endif
 
 player_sprite_18:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $e0,$35,$01,$ff        ; 8x16 tile #$35 at location (-1,-32) (palette 1)
-    .byte $ef,$37,$01,$f6        ; 8x16 tile #$37 at location (-10,-17) (palette 1)
-    .byte $f0,$39,$01,$fe        ; 8x16 tile #$39 at location (-2,-16) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $e0,$35,$00,$00    ; 8x16 tile #$35 at location (0,-32)
+        .byte $f0,$37,$00,$f8    ; 8x16 tile #$37 at location (-8,-16)
+        .byte $f0,$39,$00,$00    ; 8x16 tile #$39 at location (0,-16)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $e0,$35,$01,$ff    ; 8x16 tile #$35 at location (-1,-32) (palette 1)
+        .byte $ef,$37,$01,$f6    ; 8x16 tile #$37 at location (-10,-17) (palette 1)
+        .byte $f0,$39,$01,$fe    ; 8x16 tile #$39 at location (-2,-16) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_19:
-    .byte $06                    ; number of sprites in meta-sprite
-    .byte $e1,$35,$01,$ff        ; 8x16 tile #$35 at location (-1,-31) (palette 1)
-    .byte $f0,$37,$01,$f6        ; 8x16 tile #$37 at location (-10,-16) (palette 1)
-    .byte $f1,$39,$01,$fe        ; 8x16 tile #$39 at location (-2,-15) (palette 1)
+    .ifdef Probotector
+        .byte $05                ; number of sprites in meta-sprite
+        .byte $e1,$35,$00,$00    ; 8x16 tile #$35 at location (0,-31)
+        .byte $f1,$37,$00,$f8    ; 8x16 tile #$37 at location (-8,-15)
+        .byte $f1,$39,$00,$00    ; 8x16 tile #$39 at location (0,-15)
+    .else
+        .byte $06                ; number of sprites in meta-sprite
+        .byte $e1,$35,$01,$ff    ; 8x16 tile #$35 at location (-1,-31) (palette 1)
+        .byte $f0,$37,$01,$f6    ; 8x16 tile #$37 at location (-10,-16) (palette 1)
+        .byte $f1,$39,$01,$fe    ; 8x16 tile #$39 at location (-2,-15) (palette 1)
+    .endif
     .byte $80                    ; shared sprite byte
     .addr player_standing_bottom ; continue meta-sprite at player_standing_bottom
 
 player_sprite_1a:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f1,$3b,$01,$f8 ; 8x16 tile #$3b at location (-8,-15) (palette 1)
-    .byte $f1,$3d,$01,$00 ; 8x16 tile #$3d at location (0,-15) (palette 1)
-    .byte $01,$3f,$00,$f8 ; 8x16 tile #$3f at location (-8,1)
-    .byte $01,$41,$00,$00 ; 8x16 tile #$41 at location (0,1)
+    .ifdef Probotector
+        .byte $03             ; number of sprites in meta-sprite
+        .byte $f8,$3b,$00,$f8 ; 8x16 tile #$3b at location (-8,-8)
+        .byte $f0,$3d,$00,$00 ; 8x16 tile #$3d at location (0,-16)
+        .byte $00,$3f,$00,$00 ; 8x16 tile #$3f at location (0,0)
+    .else
+        .byte $04             ; number of sprites in meta-sprite
+        .byte $f1,$3b,$01,$f8 ; 8x16 tile #$3b at location (-8,-15) (palette 1)
+        .byte $f1,$3d,$01,$00 ; 8x16 tile #$3d at location (0,-15) (palette 1)
+        .byte $01,$3f,$00,$f8 ; 8x16 tile #$3f at location (-8,1)
+        .byte $01,$41,$00,$00 ; 8x16 tile #$41 at location (0,1)
+    .endif
 
 player_sprite_1b:
-    .byte $02             ; number of sprites in meta-sprite
-    .byte $f8,$43,$00,$f7 ; 8x16 tile #$43 at location (-9,-8)
-    .byte $f8,$45,$01,$ff ; 8x16 tile #$45 at location (-1,-8) (palette 1)
+    .byte $02                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f8,$41,$00,$f8 ; 8x16 tile #$41 at location (-8,-8)
+        .byte $f8,$43,$00,$00 ; 8x16 tile #$43 at location (0,-8)
+    .else
+        .byte $f8,$43,$00,$f7 ; 8x16 tile #$43 at location (-9,-8)
+        .byte $f8,$45,$01,$ff ; 8x16 tile #$45 at location (-1,-8) (palette 1)
+    .endif
 
 player_sprite_1c:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $ef,$41,$c0,$f8 ; 8x16 tile #$41 at location (-8,-17) (vertical flip, horizontal flip, palette 0)
-    .byte $ef,$3f,$c0,$00 ; 8x16 tile #$3f at location (0,-17) (vertical flip, horizontal flip, palette 0)
-    .byte $ff,$3d,$c1,$f8 ; 8x16 tile #$3d at location (-8,-1) (vertical flip, horizontal flip, palette 1)
-    .byte $ff,$3b,$c1,$00 ; 8x16 tile #$3b at location (0,-1) (vertical flip, horizontal flip, palette 1)
+    .ifdef Probotector
+        .byte $03             ; number of sprites in meta-sprite
+        .byte $f0,$3f,$c0,$f8 ; 8x16 tile #$3f at location (-8,-16) (vertical flip, horizontal flip, palette 0)
+        .byte $00,$3d,$c0,$f8 ; 8x16 tile #$3d at location (-8,0) (vertical flip, horizontal flip, palette 0)
+        .byte $f8,$3b,$c0,$00 ; 8x16 tile #$3b at location (0,-8) (vertical flip, horizontal flip, palette 0)
+    .else
+        .byte $04             ; number of sprites in meta-sprite
+        .byte $ef,$41,$c0,$f8 ; 8x16 tile #$41 at location (-8,-17) (vertical flip, horizontal flip, palette 0)
+        .byte $ef,$3f,$c0,$00 ; 8x16 tile #$3f at location (0,-17) (vertical flip, horizontal flip, palette 0)
+        .byte $ff,$3d,$c1,$f8 ; 8x16 tile #$3d at location (-8,-1) (vertical flip, horizontal flip, palette 1)
+        .byte $ff,$3b,$c1,$00 ; 8x16 tile #$3b at location (0,-1) (vertical flip, horizontal flip, palette 1)
+    .endif
 
 player_sprite_1d:
-    .byte $02             ; number of sprites in meta-sprite
-    .byte $f8,$45,$c1,$f9 ; 8x16 tile #$45 at location (-7,-8) (vertical flip, horizontal flip, palette 1)
-    .byte $f8,$43,$c0,$01 ; 8x16 tile #$43 at location (1,-8) (vertical flip, horizontal flip, palette 0)
+    .byte $02                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f8,$43,$c0,$f8 ; 8x16 tile #$43 at location (-8,-8) (vertical flip, horizontal flip, palette 0)
+        .byte $f8,$41,$c0,$00 ; 8x16 tile #$41 at location (0,-8) (vertical flip, horizontal flip, palette 0)
+    .else
+        .byte $f8,$45,$c1,$f9 ; 8x16 tile #$45 at location (-7,-8) (vertical flip, horizontal flip, palette 1)
+        .byte $f8,$43,$c0,$01 ; 8x16 tile #$43 at location (1,-8) (vertical flip, horizontal flip, palette 0)
+    .endif
 
 player_sprite_1e:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f2,$47,$01,$f6 ; 8x16 tile #$47 at location (-10,-14) (palette 1)
-    .byte $f2,$49,$01,$fe ; 8x16 tile #$49 at location (-2,-14) (palette 1)
-    .byte $02,$4b,$00,$f8 ; 8x16 tile #$4b at location (-8,2)
-    .byte $02,$4d,$00,$00 ; 8x16 tile #$4d at location (0,2)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f0,$47,$00,$f7 ; 8x16 tile #$47 at location (-9,-16)
+        .byte $f0,$49,$00,$ff ; 8x16 tile #$49 at location (-1,-16)
+        .byte $00,$4b,$00,$f9 ; 8x16 tile #$4b at location (-7,0)
+        .byte $00,$4d,$00,$01 ; 8x16 tile #$4d at location (1,0)
+    .else
+        .byte $f2,$47,$01,$f6 ; 8x16 tile #$47 at location (-10,-14) (palette 1)
+        .byte $f2,$49,$01,$fe ; 8x16 tile #$49 at location (-2,-14) (palette 1)
+        .byte $02,$4b,$00,$f8 ; 8x16 tile #$4b at location (-8,2)
+        .byte $02,$4d,$00,$00 ; 8x16 tile #$4d at location (0,2)
+    .endif
 
 player_sprite_1f:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $fb,$4f,$01,$f5 ; 8x16 tile #$4f at location (-11,-5) (palette 1)
-    .byte $fb,$51,$00,$fd ; 8x16 tile #$51 at location (-3,-5)
-    .byte $f9,$53,$00,$05 ; 8x16 tile #$53 at location (5,-7)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f9,$4f,$00,$f5 ; 8x16 tile #$4f at location (-11,-7)
+        .byte $fb,$51,$00,$fd ; 8x16 tile #$51 at location (-3,-5)
+        .byte $f7,$53,$00,$05 ; 8x16 tile #$53 at location (5,-9)
+    .else
+        .byte $fb,$4f,$01,$f5 ; 8x16 tile #$4f at location (-11,-5) (palette 1)
+        .byte $fb,$51,$00,$fd ; 8x16 tile #$51 at location (-3,-5)
+        .byte $f9,$53,$00,$05 ; 8x16 tile #$53 at location (5,-7)
+    .endif
 
 player_sprite_20:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f4,$4d,$c0,$f8 ; 8x16 tile #$4d at location (-8,-12) (vertical flip, horizontal flip, palette 0)
-    .byte $f4,$4b,$c0,$00 ; 8x16 tile #$4b at location (0,-12) (vertical flip, horizontal flip, palette 0)
-    .byte $04,$49,$c1,$fa ; 8x16 tile #$49 at location (-6,4) (vertical flip, horizontal flip, palette 1)
-    .byte $04,$47,$c1,$02 ; 8x16 tile #$47 at location (2,4) (vertical flip, horizontal flip, palette 1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f0,$4d,$c0,$f7 ; 8x16 tile #$4d at location (-9,-16) (vertical flip, horizontal flip, palette 0)
+        .byte $f0,$4b,$c0,$ff ; 8x16 tile #$4b at location (-1,-16) (vertical flip, horizontal flip, palette 0)
+        .byte $00,$49,$c0,$f9 ; 8x16 tile #$49 at location (-7,0) (vertical flip, horizontal flip, palette 0)
+        .byte $00,$47,$c0,$01 ; 8x16 tile #$47 at location (1,0) (vertical flip, horizontal flip, palette 0)
+    .else
+        .byte $f4,$4d,$c0,$f8 ; 8x16 tile #$4d at location (-8,-12) (vertical flip, horizontal flip, palette 0)
+        .byte $f4,$4b,$c0,$00 ; 8x16 tile #$4b at location (0,-12) (vertical flip, horizontal flip, palette 0)
+        .byte $04,$49,$c1,$fa ; 8x16 tile #$49 at location (-6,4) (vertical flip, horizontal flip, palette 1)
+        .byte $04,$47,$c1,$02 ; 8x16 tile #$47 at location (2,4) (vertical flip, horizontal flip, palette 1)
+    .endif
 
 player_sprite_21:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $fd,$53,$c0,$f3 ; 8x16 tile #$53 at location (-13,-3) (vertical flip, horizontal flip, palette 0)
-    .byte $fb,$51,$c0,$fb ; 8x16 tile #$51 at location (-5,-5) (vertical flip, horizontal flip, palette 0)
-    .byte $fb,$4f,$c1,$03 ; 8x16 tile #$4f at location (3,-5) (vertical flip, horizontal flip, palette 1)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f9,$53,$c0,$f3 ; 8x16 tile #$53 at location (-13,-7) (vertical flip, horizontal flip, palette 0)
+        .byte $f5,$51,$c0,$fb ; 8x16 tile #$51 at location (-5,-11) (vertical flip, horizontal flip, palette 0)
+        .byte $f7,$4f,$c0,$03 ; 8x16 tile #$4f at location (3,-9) (vertical flip, horizontal flip, palette 0)
+    .else
+        .byte $fd,$53,$c0,$f3 ; 8x16 tile #$53 at location (-13,-3) (vertical flip, horizontal flip, palette 0)
+        .byte $fb,$51,$c0,$fb ; 8x16 tile #$51 at location (-5,-5) (vertical flip, horizontal flip, palette 0)
+        .byte $fb,$4f,$c1,$03 ; 8x16 tile #$4f at location (3,-5) (vertical flip, horizontal flip, palette 1)
+    .endif
 
 player_sprite_22:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $03,$a5,$01,$f0 ; 8x16 tile #$a5 at location (-16,3) (palette 1)
-    .byte $03,$a7,$01,$f8 ; 8x16 tile #$a7 at location (-8,3) (palette 1)
-    .byte $03,$5b,$00,$00 ; 8x16 tile #$5b at location (0,3)
-    .byte $03,$6f,$00,$08 ; 8x16 tile #$6f at location (8,3)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$5b,$00,$f0 ; 8x16 tile #$5b at location (-16,0)
+        .byte $07,$6f,$00,$f8 ; 8x16 tile #$6f at location (-8,7)
+        .byte $01,$a5,$00,$00 ; 8x16 tile #$a5 at location (0,1)
+        .byte $08,$a7,$00,$08 ; 8x16 tile #$a7 at location (8,8)
+    .else
+        .byte $03,$a5,$01,$f0 ; 8x16 tile #$a5 at location (-16,3) (palette 1)
+        .byte $03,$a7,$01,$f8 ; 8x16 tile #$a7 at location (-8,3) (palette 1)
+        .byte $03,$5b,$00,$00 ; 8x16 tile #$5b at location (0,3)
+        .byte $03,$6f,$00,$08 ; 8x16 tile #$6f at location (8,3)
+    .endif
 
 player_sprite_23:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $f8,$1d,$01,$f7 ; 8x16 tile #$1d at location (-9,-8) (palette 1)
-    .byte $f8,$1f,$01,$ff ; 8x16 tile #$1f at location (-1,-8) (palette 1)
-    .byte $f7,$21,$01,$07 ; 8x16 tile #$21 at location (7,-9) (palette 1)
-    .byte $08,$e5,$00,$f7 ; 8x16 tile #$e5 at location (-9,8)
-    .byte $07,$e7,$00,$ff ; 8x16 tile #$e7 at location (-1,7)
+    .byte $05                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f7,$1d,$00,$f8 ; 8x16 tile #$1d at location (-8,-9)
+        .byte $f7,$1f,$00,$00 ; 8x16 tile #$1f at location (0,-9)
+        .byte $f4,$21,$00,$08 ; 8x16 tile #$21 at location (8,-12)
+        .byte $07,$e5,$00,$f8 ; 8x16 tile #$e5 at location (-8,7)
+        .byte $05,$e7,$00,$00 ; 8x16 tile #$e7 at location (0,5)
+    .else
+        .byte $f8,$1d,$01,$f7 ; 8x16 tile #$1d at location (-9,-8) (palette 1)
+        .byte $f8,$1f,$01,$ff ; 8x16 tile #$1f at location (-1,-8) (palette 1)
+        .byte $f7,$21,$01,$07 ; 8x16 tile #$21 at location (7,-9) (palette 1)
+        .byte $08,$e5,$00,$f7 ; 8x16 tile #$e5 at location (-9,8)
+        .byte $07,$e7,$00,$ff ; 8x16 tile #$e7 at location (-1,7)
+    .endif
 
 player_sprite_24:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $f9,$1d,$01,$f7 ; 8x16 tile #$1d at location (-9,-7) (palette 1)
-    .byte $f9,$1f,$01,$ff ; 8x16 tile #$1f at location (-1,-7) (palette 1)
-    .byte $f8,$21,$01,$07 ; 8x16 tile #$21 at location (7,-8) (palette 1)
-    .byte $08,$e5,$00,$f7 ; 8x16 tile #$e5 at location (-9,8)
-    .byte $07,$e7,$00,$ff ; 8x16 tile #$e7 at location (-1,7)
+    .byte $05                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f8,$1d,$00,$f8 ; 8x16 tile #$1d at location (-8,-8)
+        .byte $f8,$1f,$00,$00 ; 8x16 tile #$1f at location (0,-8)
+        .byte $f5,$21,$00,$08 ; 8x16 tile #$21 at location (8,-11)
+        .byte $07,$e5,$00,$f8 ; 8x16 tile #$e5 at location (-8,7)
+        .byte $05,$e7,$00,$00 ; 8x16 tile #$e7 at location (0,5)
+    .else
+        .byte $f9,$1d,$01,$f7 ; 8x16 tile #$1d at location (-9,-7) (palette 1)
+        .byte $f9,$1f,$01,$ff ; 8x16 tile #$1f at location (-1,-7) (palette 1)
+        .byte $f8,$21,$01,$07 ; 8x16 tile #$21 at location (7,-8) (palette 1)
+        .byte $08,$e5,$00,$f7 ; 8x16 tile #$e5 at location (-9,8)
+        .byte $07,$e7,$00,$ff ; 8x16 tile #$e7 at location (-1,7)
+    .endif
 
 player_sprite_25:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f0,$07,$01,$fc ; 8x16 tile #$07 at location (-4,-16) (palette 1)
-    .byte $ef,$09,$01,$04 ; 8x16 tile #$09 at location (4,-17) (palette 1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f1,$07,$00,$fb ; 8x16 tile #$07 at location (-5,-15)
+        .byte $f0,$09,$00,$03 ; 8x16 tile #$09 at location (3,-16)
+    .else
+        .byte $f0,$07,$01,$fc ; 8x16 tile #$07 at location (-4,-16) (palette 1)
+        .byte $ef,$09,$01,$04 ; 8x16 tile #$09 at location (4,-17) (palette 1)
+    .endif
 
 player_water_splash:
-    .byte $00,$e5,$01,$f8 ; 8x16 tile #$e5 at location (-8,0) (palette 1)
-    .byte $ff,$e7,$01,$00 ; 8x16 tile #$e7 at location (0,-1) (palette 1)
+    .ifdef Probotector
+        .byte $00,$e5,$00,$f6 ; 8x16 tile #$e5 at location (-10,0)
+        .byte $00,$e7,$00,$fe ; 8x16 tile #$e7 at location (-2,0)
+    .else
+        .byte $00,$e5,$01,$f8 ; 8x16 tile #$e5 at location (-8,0) (palette 1)
+        .byte $ff,$e7,$01,$00 ; 8x16 tile #$e7 at location (0,-1) (palette 1)
+    .endif
 
 ; same as player_water_splash above
 player_sprite_26:
-    .byte $02             ; number of sprites in meta-sprite
-    .byte $00,$e5,$01,$f8 ; 8x16 tile #$e5 at location (-8,0) (palette 1)
-    .byte $ff,$e7,$01,$00 ; 8x16 tile #$e7 at location (0,-1) (palette 1)
+    .byte $02                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$e5,$00,$f6 ; 8x16 tile #$e5 at location (-10,0)
+        .byte $00,$e7,$00,$fe ; 8x16 tile #$e7 at location (-2,0)
+    .else
+        .byte $00,$e5,$01,$f8 ; 8x16 tile #$e5 at location (-8,0) (palette 1)
+        .byte $ff,$e7,$01,$00 ; 8x16 tile #$e7 at location (0,-1) (palette 1)
+    .endif
 
 player_sprite_28:
     .byte $05                 ; number of sprites in meta-sprite
-    .byte $f0,$1d,$01,$f7     ; 8x16 tile #$1d at location (-9,-16) (palette 1)
-    .byte $f0,$1f,$01,$ff     ; 8x16 tile #$1f at location (-1,-16) (palette 1)
-    .byte $ef,$21,$01,$07     ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$1d,$00,$f8 ; 8x16 tile #$1d at location (-8,-16)
+        .byte $f0,$1f,$00,$00 ; 8x16 tile #$1f at location (0,-16)
+        .byte $ee,$21,$00,$08 ; 8x16 tile #$21 at location (8,-18)
+    .else
+        .byte $f0,$1d,$01,$f7 ; 8x16 tile #$1d at location (-9,-16) (palette 1)
+        .byte $f0,$1f,$01,$ff ; 8x16 tile #$1f at location (-1,-16) (palette 1)
+        .byte $ef,$21,$01,$07 ; 8x16 tile #$21 at location (7,-17) (palette 1)
+    .endif
     .byte $80                 ; shared sprite byte
     .addr player_water_splash ; continue meta-sprite at player_water_splash
 
 player_sprite_2a:
     .byte $04                 ; number of sprites in meta-sprite
-    .byte $f0,$2b,$01,$fa     ; 8x16 tile #$2b at location (-6,-16) (palette 1)
-    .byte $ef,$2d,$01,$02     ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$2b,$00,$fa ; 8x16 tile #$2b at location (-6,-16)
+        .byte $f0,$2d,$00,$02 ; 8x16 tile #$2d at location (2,-16)
+    .else
+        .byte $f0,$2b,$01,$fa ; 8x16 tile #$2b at location (-6,-16) (palette 1)
+        .byte $ef,$2d,$01,$02 ; 8x16 tile #$2d at location (2,-17) (palette 1)
+    .endif
     .byte $80                 ; shared sprite byte
     .addr player_water_splash ; continue meta-sprite at player_water_splash
 
 player_sprite_2b:
     .byte $05                 ; number of sprites in meta-sprite
-    .byte $e0,$35,$01,$ff     ; 8x16 tile #$35 at location (-1,-32) (palette 1)
-    .byte $ef,$37,$01,$f6     ; 8x16 tile #$37 at location (-10,-17) (palette 1)
-    .byte $f0,$39,$01,$fe     ; 8x16 tile #$39 at location (-2,-16) (palette 1)
+    .ifdef Probotector
+        .byte $e0,$35,$00,$00 ; 8x16 tile #$35 at location (0,-32)
+        .byte $f0,$37,$00,$f8 ; 8x16 tile #$37 at location (-8,-16)
+        .byte $f0,$39,$00,$00 ; 8x16 tile #$39 at location (0,-16)
+    .else
+        .byte $e0,$35,$01,$ff ; 8x16 tile #$35 at location (-1,-32) (palette 1)
+        .byte $ef,$37,$01,$f6 ; 8x16 tile #$37 at location (-10,-17) (palette 1)
+        .byte $f0,$39,$01,$fe ; 8x16 tile #$39 at location (-2,-16) (palette 1)
+    .endif
     .byte $80                 ; shared sprite byte
     .addr player_water_splash ; continue meta-sprite at player_water_splash
 
 player_sprite_2c:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $03,$07,$00,$f7 ; 8x16 tile #$07 at location (-9,3)
-    .byte $00,$09,$00,$ff ; 8x16 tile #$09 at location (-1,0)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $02,$07,$00,$f8 ; 8x16 tile #$07 at location (-8,2)
+        .byte $00,$09,$00,$00 ; 8x16 tile #$09 at location (0,0)
+    .else
+        .byte $03,$07,$00,$f7 ; 8x16 tile #$07 at location (-9,3)
+        .byte $00,$09,$00,$ff ; 8x16 tile #$09 at location (-1,0)
+    .endif
 
 player_overhead_top:
-    .byte $f3,$03,$01,$f9 ; 8x16 tile #$03 at location (-7,-13) (palette 1)
-    .byte $f0,$05,$01,$ff ; 8x16 tile #$05 at location (-1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $f2,$03,$00,$f8 ; 8x16 tile #$03 at location (-8,-14)
+        .byte $f0,$05,$00,$00 ; 8x16 tile #$05 at location (0,-16)
+    .else
+        .byte $f3,$03,$01,$f9 ; 8x16 tile #$03 at location (-7,-13) (palette 1)
+        .byte $f0,$05,$01,$ff ; 8x16 tile #$05 at location (-1,-16) (palette 1)
+    .endif
 
 player_sprite_2d:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f4,$03,$01,$f9 ; 8x16 tile #$03 at location (-7,-12) (palette 1)
-    .byte $f1,$05,$01,$ff ; 8x16 tile #$05 at location (-1,-15) (palette 1)
-    .byte $04,$0b,$00,$f7 ; 8x16 tile #$0b at location (-9,4)
-    .byte $01,$0d,$00,$ff ; 8x16 tile #$0d at location (-1,1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f3,$03,$00,$f8 ; 8x16 tile #$03 at location (-8,-13)
+        .byte $f1,$05,$00,$00 ; 8x16 tile #$05 at location (0,-15)
+        .byte $03,$0b,$00,$f8 ; 8x16 tile #$0b at location (-8,3)
+        .byte $01,$0d,$00,$00 ; 8x16 tile #$0d at location (0,1)
+    .else
+        .byte $f4,$03,$01,$f9 ; 8x16 tile #$03 at location (-7,-12) (palette 1)
+        .byte $f1,$05,$01,$ff ; 8x16 tile #$05 at location (-1,-15) (palette 1)
+        .byte $04,$0b,$00,$f7 ; 8x16 tile #$0b at location (-9,4)
+        .byte $01,$0d,$00,$ff ; 8x16 tile #$0d at location (-1,1)
+    .endif
 
 player_sprite_2e:
     .byte $04                 ; number of sprites in meta-sprite
-    .byte $03,$0f,$00,$f7     ; 8x16 tile #$0f at location (-9,3)
-    .byte $00,$11,$00,$ff     ; 8x16 tile #$11 at location (-1,0)
+    .ifdef Probotector
+        .byte $02,$0f,$00,$f8 ; 8x16 tile #$0f at location (-8,2)
+        .byte $00,$11,$00,$00 ; 8x16 tile #$11 at location (0,0)
+    .else
+        .byte $03,$0f,$00,$f7 ; 8x16 tile #$0f at location (-9,3)
+        .byte $00,$11,$00,$ff ; 8x16 tile #$11 at location (-1,0)
+    .endif
     .byte $80                 ; shared sprite byte
     .addr player_overhead_top ; continue meta-sprite at player_overhead_top
 
 player_sprite_2f:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $02,$17,$00,$f7 ; 8x16 tile #$17 at location (-9,2)
-    .byte $01,$19,$00,$ff ; 8x16 tile #$19 at location (-1,1)
+    .ifdef Probotector
+        .byte $03             ; number of sprites in meta-sprite
+        .byte $01,$17,$00,$fc ; 8x16 tile #$17 at location (-4,1)
+    .else
+        .byte $04             ; number of sprites in meta-sprite
+        .byte $02,$17,$00,$f7 ; 8x16 tile #$17 at location (-9,2)
+        .byte $01,$19,$00,$ff ; 8x16 tile #$19 at location (-1,1)
+    .endif
 
 overhead_down_angle_top:
-    .byte $f2,$13,$01,$f7 ; 8x16 tile #$13 at location (-9,-14) (palette 1)
-    .byte $f1,$15,$01,$ff ; 8x16 tile #$15 at location (-1,-15) (palette 1)
+    .ifdef Probotector
+        .byte $f2,$13,$00,$f7 ; 8x16 tile #$13 at location (-9,-14)
+        .byte $f1,$15,$00,$ff ; 8x16 tile #$15 at location (-1,-15)
+    .else
+        .byte $f2,$13,$01,$f7 ; 8x16 tile #$13 at location (-9,-14) (palette 1)
+        .byte $f1,$15,$01,$ff ; 8x16 tile #$15 at location (-1,-15) (palette 1)
+    .endif
 
 player_sprite_30:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $02,$1b,$00,$fd ; 8x16 tile #$1b at location (-3,2)
-    .byte $f3,$13,$01,$f7 ; 8x16 tile #$13 at location (-9,-13) (palette 1)
-    .byte $f2,$15,$01,$ff ; 8x16 tile #$15 at location (-1,-14) (palette 1)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $02,$1b,$00,$fd ; 8x16 tile #$1b at location (-3,2)
+        .byte $f3,$13,$00,$f7 ; 8x16 tile #$13 at location (-9,-13)
+        .byte $f2,$15,$00,$ff ; 8x16 tile #$15 at location (-1,-14)
+    .else
+        .byte $02,$1b,$00,$fd ; 8x16 tile #$1b at location (-3,2)
+        .byte $f3,$13,$01,$f7 ; 8x16 tile #$13 at location (-9,-13) (palette 1)
+        .byte $f2,$15,$01,$ff ; 8x16 tile #$15 at location (-1,-14) (palette 1)
+    .endif
 
 player_sprite_31:
     .byte $04                     ; number of sprites in meta-sprite
@@ -2630,84 +3430,157 @@ player_sprite_32:
     .byte $ff,$37,$00,$00 ; 8x16 tile #$37 at location (0,-1)
 
 overhead_up_angle_top:
-    .byte $ef,$31,$01,$f8 ; 8x16 tile #$31 at location (-8,-17) (palette 1)
-    .byte $ef,$33,$01,$00 ; 8x16 tile #$33 at location (0,-17) (palette 1)
+    .ifdef Probotector
+        .byte $ef,$31,$00,$f8 ; 8x16 tile #$31 at location (-8,-17)
+        .byte $ef,$33,$00,$00 ; 8x16 tile #$33 at location (0,-17)
+    .else
+        .byte $ef,$31,$01,$f8 ; 8x16 tile #$31 at location (-8,-17) (palette 1)
+        .byte $ef,$33,$01,$00 ; 8x16 tile #$33 at location (0,-17) (palette 1)
+    .endif
 
 player_sprite_33:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $00,$39,$00,$fd ; 8x16 tile #$39 at location (-3,0)
-    .byte $f0,$31,$01,$f8 ; 8x16 tile #$31 at location (-8,-16) (palette 1)
-    .byte $f0,$33,$01,$00 ; 8x16 tile #$33 at location (0,-16) (palette 1)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$39,$00,$fd ; 8x16 tile #$39 at location (-3,0)
+        .byte $f0,$31,$00,$f8 ; 8x16 tile #$31 at location (-8,-16)
+        .byte $f0,$33,$00,$00 ; 8x16 tile #$33 at location (0,-16)
+    .else
+        .byte $00,$39,$00,$fd ; 8x16 tile #$39 at location (-3,0)
+        .byte $f0,$31,$01,$f8 ; 8x16 tile #$31 at location (-8,-16) (palette 1)
+        .byte $f0,$33,$01,$00 ; 8x16 tile #$33 at location (0,-16) (palette 1)
+    .endif
 
 player_sprite_34:
     .byte $03                   ; number of sprites in meta-sprite
-    .byte $ff,$3b,$00,$fe       ; 8x16 tile #$3b at location (-2,-1)
+    .ifdef Probotector
+        .byte $ff,$3b,$00,$fd   ; 8x16 tile #$3b at location (-3,-1)
+    .else
+        .byte $ff,$3b,$00,$fe   ; 8x16 tile #$3b at location (-2,-1)
+    .endif
     .byte $80                   ; shared sprite byte
     .addr overhead_up_angle_top ; continue meta-sprite at overhead_up_angle_top
 
 player_sprite_35:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $ff,$25,$00,$f9 ; 8x16 tile #$25 at location (-7,-1)
-    .byte $ff,$27,$00,$01 ; 8x16 tile #$27 at location (1,-1)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$25,$00,$f6 ; 8x16 tile #$25 at location (-10,0)
+        .byte $00,$27,$00,$fe ; 8x16 tile #$27 at location (-2,0)
+    .else
+        .byte $ff,$25,$00,$f9 ; 8x16 tile #$25 at location (-7,-1)
+        .byte $ff,$27,$00,$01 ; 8x16 tile #$27 at location (1,-1)
+    .endif
 
 overhead_x_top:
-    .byte $ef,$21,$01,$f7 ; 8x16 tile #$21 at location (-9,-17) (palette 1)
-    .byte $ef,$23,$01,$ff ; 8x16 tile #$23 at location (-1,-17) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$21,$00,$f6 ; 8x16 tile #$21 at location (-10,-16)
+        .byte $f0,$23,$00,$fe ; 8x16 tile #$23 at location (-2,-16)
+    .else
+        .byte $ef,$21,$01,$f7 ; 8x16 tile #$21 at location (-9,-17) (palette 1)
+        .byte $ef,$23,$01,$ff ; 8x16 tile #$23 at location (-1,-17) (palette 1)
+    .endif
 
 player_sprite_36:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $00,$29,$00,$fd ; 8x16 tile #$29 at location (-3,0)
-    .byte $f0,$21,$01,$f7 ; 8x16 tile #$21 at location (-9,-16) (palette 1)
-    .byte $f0,$23,$01,$ff ; 8x16 tile #$23 at location (-1,-16) (palette 1)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $ff,$29,$00,$fc ; 8x16 tile #$29 at location (-4,-1)
+        .byte $f1,$21,$00,$f6 ; 8x16 tile #$21 at location (-10,-15)
+        .byte $f1,$23,$00,$fe ; 8x16 tile #$23 at location (-2,-15)
+    .else
+        .byte $00,$29,$00,$fd ; 8x16 tile #$29 at location (-3,0)
+        .byte $f0,$21,$01,$f7 ; 8x16 tile #$21 at location (-9,-16) (palette 1)
+        .byte $f0,$23,$01,$ff ; 8x16 tile #$23 at location (-1,-16) (palette 1)
+    .endif
 
 player_sprite_37:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $ff,$2b,$00,$fa ; 8x16 tile #$2b at location (-6,-1)
-    .byte $ff,$2d,$00,$02 ; 8x16 tile #$2d at location (2,-1)
-    .byte $80             ; shared sprite byte
-    .addr overhead_x_top  ; continue meta-sprite at overhead_x_top
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$2b,$00,$f8 ; 8x16 tile #$2b at location (-8,0)
+        .byte $00,$2d,$00,$00 ; 8x16 tile #$2d at location (0,0)
+    .else
+        .byte $ff,$2b,$00,$fa ; 8x16 tile #$2b at location (-6,-1)
+        .byte $ff,$2d,$00,$02 ; 8x16 tile #$2d at location (2,-1)
+    .endif
+    .byte $80                 ; shared sprite byte
+    .addr overhead_x_top      ; continue meta-sprite at overhead_x_top
 
 player_sprite_38:
     .byte $03             ; number of sprites in meta-sprite
     .byte $00,$3d,$00,$fc ; 8x16 tile #$3d at location (-4,0)
 
 overhead_y_top:
-    .byte $f0,$3f,$01,$f9 ; 8x16 tile #$3f at location (-7,-16) (palette 1)
-    .byte $f0,$41,$01,$01 ; 8x16 tile #$41 at location (1,-16) (palette 1)
+    .ifdef Probotector
+        .byte $f0,$3f,$00,$f8 ; 8x16 tile #$3f at location (-8,-16)
+        .byte $f0,$41,$00,$00 ; 8x16 tile #$41 at location (0,-16)
+    .else
+        .byte $f0,$3f,$01,$f9 ; 8x16 tile #$3f at location (-7,-16) (palette 1)
+        .byte $f0,$41,$01,$01 ; 8x16 tile #$41 at location (1,-16) (palette 1)
+    .endif
 
 player_sprite_39:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $01,$43,$00,$fc ; 8x16 tile #$43 at location (-4,1)
-    .byte $f1,$3f,$01,$f9 ; 8x16 tile #$3f at location (-7,-15) (palette 1)
-    .byte $f1,$41,$01,$01 ; 8x16 tile #$41 at location (1,-15) (palette 1)
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $01,$43,$00,$fc ; 8x16 tile #$43 at location (-4,1)
+        .byte $f1,$3f,$00,$f8 ; 8x16 tile #$3f at location (-8,-15)
+        .byte $f1,$41,$00,$00 ; 8x16 tile #$41 at location (0,-15)
+    .else
+        .byte $01,$43,$00,$fc ; 8x16 tile #$43 at location (-4,1)
+        .byte $f1,$3f,$01,$f9 ; 8x16 tile #$3f at location (-7,-15) (palette 1)
+        .byte $f1,$41,$01,$01 ; 8x16 tile #$41 at location (1,-15) (palette 1)
+    .endif
 
 player_sprite_3a:
-    .byte $03             ; number of sprites in meta-sprite
-    .byte $00,$3d,$40,$fc ; 8x16 tile #$3d at location (-4,0) (horizontal flip, palette 0)
-    .byte $80             ; shared sprite byte
-    .addr overhead_y_top  ; continue meta-sprite at overhead_y_top
+    .byte $03                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $00,$19,$00,$fc ; 8x16 tile #$19 at location (-4,0)
+    .else
+        .byte $00,$3d,$40,$fc ; 8x16 tile #$3d at location (-4,0) (horizontal flip, palette 0)
+    .endif
+    .byte $80                 ; shared sprite byte
+    .addr overhead_y_top      ; continue meta-sprite at overhead_y_top
 
 player_sprite_3b:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $f0,$4b,$01,$f6 ; 8x16 tile #$4b at location (-10,-16) (palette 1)
-    .byte $f0,$4d,$01,$fe ; 8x16 tile #$4d at location (-2,-16) (palette 1)
-    .byte $f3,$4f,$01,$06 ; 8x16 tile #$4f at location (6,-13) (palette 1)
-    .byte $00,$51,$00,$fc ; 8x16 tile #$51 at location (-4,0)
+    .byte $04                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f0,$4b,$00,$f6 ; 8x16 tile #$4b at location (-10,-16)
+        .byte $f0,$4d,$00,$fe ; 8x16 tile #$4d at location (-2,-16)
+        .byte $f3,$4f,$00,$06 ; 8x16 tile #$4f at location (6,-13)
+        .byte $00,$51,$00,$fc ; 8x16 tile #$51 at location (-4,0)
+    .else
+        .byte $f0,$4b,$01,$f6 ; 8x16 tile #$4b at location (-10,-16) (palette 1)
+        .byte $f0,$4d,$01,$fe ; 8x16 tile #$4d at location (-2,-16) (palette 1)
+        .byte $f3,$4f,$01,$06 ; 8x16 tile #$4f at location (6,-13) (palette 1)
+        .byte $00,$51,$00,$fc ; 8x16 tile #$51 at location (-4,0)
+    .endif
 
 player_sprite_3c:
-    .byte $04             ; number of sprites in meta-sprite
-    .byte $fb,$53,$01,$f4 ; 8x16 tile #$53 at location (-12,-5) (palette 1)
-    .byte $f9,$5b,$01,$fa ; 8x16 tile #$5b at location (-6,-7) (palette 1)
-    .byte $f2,$6f,$00,$fe ; 8x16 tile #$6f at location (-2,-14)
-    .byte $02,$a5,$01,$02 ; 8x16 tile #$a5 at location (2,2) (palette 1)
+    .ifdef Probotector
+        .byte $03             ; number of sprites in meta-sprite
+        .byte $f2,$53,$00,$f4 ; 8x16 tile #$53 at location (-12,-14)
+        .byte $f9,$5b,$00,$f9 ; 8x16 tile #$5b at location (-7,-7)
+        .byte $fb,$6f,$00,$01 ; 8x16 tile #$6f at location (1,-5)
+    .else
+        .byte $04             ; number of sprites in meta-sprite
+        .byte $fb,$53,$01,$f4 ; 8x16 tile #$53 at location (-12,-5) (palette 1)
+        .byte $f9,$5b,$01,$fa ; 8x16 tile #$5b at location (-6,-7) (palette 1)
+        .byte $f2,$6f,$00,$fe ; 8x16 tile #$6f at location (-2,-14)
+        .byte $02,$a5,$01,$02 ; 8x16 tile #$a5 at location (2,2) (palette 1)
+    .endif
 
 player_sprite_3d:
-    .byte $05             ; number of sprites in meta-sprite
-    .byte $ef,$a7,$00,$fa ; 8x16 tile #$a7 at location (-6,-17)
-    .byte $f3,$45,$00,$02 ; 8x16 tile #$45 at location (2,-13)
-    .byte $00,$2f,$01,$f2 ; 8x16 tile #$2f at location (-14,0) (palette 1)
-    .byte $ff,$47,$01,$fa ; 8x16 tile #$47 at location (-6,-1) (palette 1)
-    .byte $03,$49,$01,$02 ; 8x16 tile #$49 at location (2,3) (palette 1)
+    .byte $05                 ; number of sprites in meta-sprite
+    .ifdef Probotector
+        .byte $f0,$a5,$00,$f8 ; 8x16 tile #$a5 at location (-8,-16)
+        .byte $f0,$45,$00,$00 ; 8x16 tile #$45 at location (0,-16)
+        .byte $00,$2f,$00,$f1 ; 8x16 tile #$2f at location (-15,0)
+        .byte $00,$47,$00,$f9 ; 8x16 tile #$47 at location (-7,0)
+        .byte $00,$49,$00,$01 ; 8x16 tile #$49 at location (1,0)
+    .else
+        .byte $ef,$a7,$00,$fa ; 8x16 tile #$a7 at location (-6,-17)
+        .byte $f3,$45,$00,$02 ; 8x16 tile #$45 at location (2,-13)
+        .byte $00,$2f,$01,$f2 ; 8x16 tile #$2f at location (-14,0) (palette 1)
+        .byte $ff,$47,$01,$fa ; 8x16 tile #$47 at location (-6,-1) (palette 1)
+        .byte $03,$49,$01,$02 ; 8x16 tile #$49 at location (2,3) (palette 1)
+    .endif
 
 ; shared unused sprite
 player_sprite_3e:
@@ -2941,19 +3814,23 @@ level_2_run_tile_routines:
     rts
 
 level_2_y_tile_routine_pts_tbl:
-    .byte $0a,$00 ; Y_TILE_ROUTINE #$00, vertical screen #$0a, vertical scroll #$00
-    .byte $09,$e0 ; Y_TILE_ROUTINE #$01, vertical screen #$09, vertical scroll #$e0
-    .byte $09,$8e ; Y_TILE_ROUTINE #$02, vertical screen #$09, vertical scroll #$8e
-    .byte $08,$d0 ; Y_TILE_ROUTINE #$03, vertical screen #$08, vertical scroll #$d0
-    .byte $08,$8e ; Y_TILE_ROUTINE #$04, vertical screen #$08, vertical scroll #$e8
-    .byte $08,$80 ; Y_TILE_ROUTINE #$05, vertical screen #$08, vertical scroll #$80
-    .byte $07,$90 ; Y_TILE_ROUTINE #$06, vertical screen #$07, vertical scroll #$90
-    .byte $03,$00 ; Y_TILE_ROUTINE #$07, vertical screen #$03, vertical scroll #$00
-    .byte $02,$18 ; Y_TILE_ROUTINE #$08, vertical screen #$02, vertical scroll #$18
-    .byte $02,$00 ; Y_TILE_ROUTINE #$09, vertical screen #$02, vertical scroll #$00
-    .byte $01,$60 ; Y_TILE_ROUTINE #$0a, vertical screen #$01, vertical scroll #$60
-    .byte $01,$00 ; Y_TILE_ROUTINE #$0b, vertical screen #$01, vertical scroll #$00
-    .byte $00,$80 ; Y_TILE_ROUTINE #$0c, vertical screen #$00, vertical scroll #$80
+    .byte $0a,$00      ; Y_TILE_ROUTINE #$00, vertical screen #$0a, vertical scroll #$00
+    .byte $09,$e0      ; Y_TILE_ROUTINE #$01, vertical screen #$09, vertical scroll #$e0
+    .byte $09,$8e      ; Y_TILE_ROUTINE #$02, vertical screen #$09, vertical scroll #$8e
+    .byte $08,$d0      ; Y_TILE_ROUTINE #$03, vertical screen #$08, vertical scroll #$d0
+    .byte $08,$8e      ; Y_TILE_ROUTINE #$04, vertical screen #$08, vertical scroll #$e8
+    .byte $08,$80      ; Y_TILE_ROUTINE #$05, vertical screen #$08, vertical scroll #$80
+    .byte $07,$90      ; Y_TILE_ROUTINE #$06, vertical screen #$07, vertical scroll #$90
+    .byte $03,$00      ; Y_TILE_ROUTINE #$07, vertical screen #$03, vertical scroll #$00
+    .byte $02,$18      ; Y_TILE_ROUTINE #$08, vertical screen #$02, vertical scroll #$18
+    .ifdef Probotector
+        .byte $01,$e0  ; Y_TILE_ROUTINE #$09, vertical screen #$01, vertical scroll #$e0
+    .else
+        .byte $02,$00  ; Y_TILE_ROUTINE #$09, vertical screen #$02, vertical scroll #$00
+    .endif
+    .byte $01,$60      ; Y_TILE_ROUTINE #$0a, vertical screen #$01, vertical scroll #$60
+    .byte $01,$00      ; Y_TILE_ROUTINE #$0b, vertical screen #$01, vertical scroll #$00
+    .byte $00,$80      ; Y_TILE_ROUTINE #$0c, vertical screen #$00, vertical scroll #$80
     .byte $ff
 
 level_2_run_y_tile_routine:
@@ -3014,6 +3891,10 @@ level_2_y_tile_routine_07:
     bne level_2_set_palette_adv_routine
 
 level_2_y_tile_routine_09:
+    .ifdef Probotector
+        lda #$02
+        sta X_SCREEN
+    .endif
     ldy #$8c                                ; white, light gray, medium olive
     jsr set_level_palette                   ; set background palette 0
     ldy #$90

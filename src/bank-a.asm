@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 
 ; Bank A contains Level 2 (First Base) and Level 4 (Inner Base) enemies.
@@ -99,6 +99,7 @@
 .import set_nmi_noop_irq
 .import run_routine_from_tbl_below
 .import fire_bullet_at_player_1x_speed
+.import reset_scroll_draw_point
 .import reset_draw_point
 .import init_irq_scroll
 
@@ -1357,6 +1358,12 @@ tank_boss_routine_01:
     bne tank_boss_routine_exit ; exit if scroll isn't complete
     lda #$00
     sta NT_CURRENT_COLUMN
+    .ifdef Probotector
+        lda #$03
+        sta DRAW_X_SCREEN
+        lda #$02
+        sta SCREENS_DRAWN      ; set boss screen
+    .endif
     lda #$02
     sta SCREEN_SCROLL_TYPE
     lda #$08
@@ -1405,14 +1412,16 @@ tank_boss_reset:
 
 ; draws floor tiles, create gunners and electrode enemies
 tank_boss_routine_03:
-    ldy #$03
-    lda #$55
+    .ifdef Superc
+        ldy #$03
+        lda #$55
 
-@loop:
-    sta ATTRIBUTE_OVERRIDES+6,y          ; replace supertile indexes #$ec,#$ed,#$ee,#$ef attribute bytes
+    @loop:
+        sta ATTRIBUTE_OVERRIDES+6,y      ; replace supertile indexes #$ec,#$ed,#$ee,#$ef attribute bytes
                                          ; with #$55
-    dey
-    bpl @loop
+        dey
+        bpl @loop
+    .endif
     lda ENEMY_VAR_1,x                    ; load which floor tiles to draw
     asl
     asl                                  ; quadruple since each entry is #$04 bytes
@@ -1585,6 +1594,9 @@ tank_boss_routine_07:
 tank_boss_routine_09:
     lda #$00
     sta NT_MIRRORING                   ; set nametable mirroring (0: vertical; 1: horizontal)
+    .ifdef Probotector
+        sta X_SCREEN
+    .endif
     jmp set_boss_defeated_remove_enemy ; set boss defeated flag, strip alive attribute bit, and remove enemy
 
 ; set created bullet initial position based on aim direction
@@ -1639,7 +1651,11 @@ tank_boss_set_irqs:
     lda IRQ_Y_SCROLL         ; load vertical scroll used for tank boss
     and #$07                 ; for bg enemies, fine grain scrolling happens by adjusting the irqs
     sta SCANLINE_IRQ_2_DIFF
-    lda #$27
+    .ifdef Probotector
+        lda #$1a
+    .else
+        lda #$27
+    .endif
     sec                      ; set carry flag in preparation for subtraction
     sbc SCANLINE_IRQ_2_DIFF  ; subtract any fine-grain scrolling
     sta SCANLINE_IRQ_1       ; set where first scanline interrupt occurs
@@ -2813,7 +2829,14 @@ elevator_bg_tiles_02_03:
 ; scrolls elevator by #$20
 elevator_scroll:
     lda ENEMY_Y_POS,x        ; load enemy's Y position
+    .ifdef Probotector
+        sec
+        sbc #$0c
+    .endif
     sta SCANLINE_IRQ_1
+    .ifdef Probotector
+        lda ENEMY_Y_POS,x
+    .endif
     clc                      ; clear carry in preparation for addition
     adc #$20
     clc                      ; clear carry in preparation for addition
@@ -3683,7 +3706,11 @@ laser_chandelier_routine_02:
     lda #$05                  ; table contains same pointer twice (same as position #$04)
     sta IRQ_TYPE              ; set irq routine type to irq_handler_04_ptr_tbl
                               ; level 4 laser chandelier
-    lda #$18
+    .ifdef Probotector
+        lda #$0c
+    .else
+        lda #$18
+    .endif
     sta SCANLINE_IRQ_1        ; first interrupt occurs at scanline #$18
     lda #$01
     sta SCANLINE_IRQ_2_DIFF   ; set the number of scanlines after SCANLINE_IRQ_1 to run the next scanline IRQ
@@ -3757,9 +3784,14 @@ laser_chandelier_routine_04:
     jmp advance_enemy_routine           ; all arms destroyed, advance to next routine (destroy routine)
 
 laser_chandelier_routine_09:
-    .byte $20,$8c,$fc,$20
-    .byte $88,$f1,$e6,$65,$a9,$08,$8d,$f0,$07,$a9,$0a,$8d,$f1,$07,$4c,$37
-    .byte $a3
+    jsr set_nmi_noop_irq
+    jsr reset_scroll_draw_point
+    inc DRAW_X_SCREEN
+    lda #$08
+    sta LEFT_TOP_HALF_CHR_BANK
+    lda #$0a
+    sta LEFT_BOTTOM_CHR_HALF_BANK
+    jmp set_boss_defeated_remove_enemy
 
 laser_chandelier_set_x_vel:
     lda ENEMY_VAR_3,x                  ; load remaining number of undestroyed arms

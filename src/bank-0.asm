@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 0 deals mostly with player routines.  This includes managing player
 ; movement, player sprite and palettes, player background collision boxes, and
@@ -4613,30 +4613,57 @@ blank_nametables:
 
 ; intro screen nametable tiles
 graphic_data_01:
-    .byte $00,$20,$6b,$00,$8b,$2e,$2f,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d
-    .byte $14,$00,$8c,$30,$31,$32,$3e,$3f,$40,$41,$42,$43,$44,$45,$46,$14
-    .byte $00,$82,$33,$34,$27,$00,$88,$47,$48,$49,$4a,$4b,$4c,$4d,$4e,$17
-    .byte $00,$8a,$4f,$50,$51,$52,$53,$54,$55,$55,$56,$57,$15,$00,$83,$58
-    .byte $59,$5a,$04,$00,$84,$5b,$5c,$5d,$5e,$14,$00,$84,$5f,$60,$61,$62
-    .byte $06,$00,$81,$72,$0b,$00,$93,$73,$74,$75,$76,$77,$78,$79,$7a,$7b
-    .byte $7c,$7d,$7e,$7f,$80,$81,$82,$83,$84,$85,$0d,$00,$93,$86,$87,$88
-    .byte $89,$8a,$8b,$8c,$8d,$8e,$8f,$00,$90,$91,$92,$93,$94,$95,$96,$97
-    .byte $0d,$00,$93,$98,$99,$9a,$9b,$9c,$9d,$9e,$9f,$a0,$a1,$a2,$a3,$a4
-    .byte $a5,$a6,$a7,$a8,$a9,$aa,$0d,$00,$93,$ab,$ac,$ad,$9f,$ae,$af,$b0
-    .byte $9f,$b1,$b2,$00,$b3,$00,$b4,$b5,$b6,$b7,$b8,$97,$0d,$00,$97,$b9
-    .byte $ba,$bb,$bc,$bd,$be,$bb,$bf,$c0,$c1,$00,$c2,$c3,$c4,$c5,$c6,$c7
-    .byte $c8,$c9,$00,$63,$64,$65,$1d,$00,$82,$66,$67,$16,$00,$8b,$68,$69
-    .byte $6a,$6b,$6c,$6d,$6e,$6f,$00,$70,$71,$19,$00,$81,$72,$33,$00,$8b
-    .byte $1a,$16,$0b,$23,$00,$1d,$0f,$16,$0f,$0d,$1e,$31,$00,$88,$02,$00
-    .byte $1a,$16,$0b,$23,$0f,$1c,$04,$00,$89,$03,$00,$1a,$16,$0b,$23,$0f
-    .byte $1c,$1d,$2e,$00,$8d,$1e,$17,$00,$0b,$18,$0e,$00,$27,$00,$02,$0a
-    .byte $0a,$01,$0e,$00,$98,$15,$19,$18,$0b,$17,$13,$00,$13,$18,$0e,$1f
-    .byte $1d,$1e,$1c,$23,$00,$0d,$19,$26,$ca,$16,$1e,$0e,$26,$0e,$00,$8b
-    .byte $16,$13,$0d,$0f,$18,$1d,$0f,$0e,$00,$0c,$23,$0f,$00,$98,$18,$13
-    .byte $18,$1e,$0f,$18,$0e,$19,$00,$19,$10,$00,$0b,$17,$0f,$1c,$13,$0d
-    .byte $0b,$00,$13,$18,$0d,$26,$70,$00,$03,$f0,$8b,$00,$00,$40,$50,$50
-    .byte $5f,$5f,$1f,$00,$00,$44,$04,$55,$83,$d1,$30,$00,$03,$a0,$85,$ac
-    .byte $af,$af,$03,$00,$06,$aa,$82,$00,$00,$06,$aa,$09,$00,$ff
+    .ifdef Probotector
+        .byte $00,$20,$6a,$00,$8c,$cb,$cc,$cd,$ce,$cf,$f6,$f7,$f8,$cf,$f9,$fa
+        .byte $fb,$13,$00,$8e,$30,$db,$dc,$dd,$de,$df,$eb,$ec,$ed,$df,$ee,$ef
+        .byte $84,$79,$3e,$00,$82,$fd,$fe,$11,$00,$8f,$59,$5a,$96,$97,$98,$99
+        .byte $9a,$9b,$9c,$fc,$c6,$c7,$c8,$c9,$c3,$11,$00,$8f,$a4,$a5,$a6,$a7
+        .byte $a8,$a9,$aa,$ab,$ac,$ad,$d6,$d7,$d8,$d9,$da,$11,$00,$91,$b4,$b5
+        .byte $b6,$b7,$b8,$b9,$ba,$bb,$bc,$bd,$e6,$e7,$e8,$e9,$ea,$00,$a3,$0e
+        .byte $00,$93,$31,$32,$33,$34,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d,$3e
+        .byte $3f,$a0,$a1,$a2,$c4,$0c,$00,$94,$40,$41,$42,$43,$44,$45,$46,$47
+        .byte $48,$49,$4a,$4b,$4c,$4d,$4e,$4f,$b0,$b1,$b2,$b3,$0d,$00,$95,$51
+        .byte $52,$53,$54,$55,$46,$57,$58,$52,$53,$5b,$5c,$5d,$5e,$5f,$c0,$c1
+        .byte $c2,$50,$c4,$b3,$07,$00,$99,$9d,$9e,$9f,$60,$61,$62,$63,$64,$65
+        .byte $66,$67,$68,$69,$6a,$6b,$6c,$6d,$6e,$6f,$d0,$d1,$d2,$d3,$d4,$d5
+        .byte $08,$00,$98,$ae,$af,$70,$71,$72,$73,$74,$75,$76,$77,$78,$69,$7a
+        .byte $7b,$7c,$7d,$7e,$7f,$e0,$e1,$e2,$e3,$e4,$e5,$08,$00,$9a,$be,$bf
+        .byte $80,$81,$82,$83,$74,$85,$86,$87,$88,$89,$8a,$8b,$8c,$8d,$8e,$8f
+        .byte $f0,$f1,$f2,$f3,$f4,$f5,$2e,$2f,$08,$00,$88,$90,$91,$92,$93,$94
+        .byte $95,$b2,$b3,$19,$00,$82,$56,$b2,$41,$00,$8b,$1a,$16,$0b,$23,$00
+        .byte $1d,$0f,$16,$0f,$0d,$1e,$31,$00,$88,$02,$00,$1a,$16,$0b,$23,$0f
+        .byte $1c,$04,$00,$89,$03,$00,$1a,$16,$0b,$23,$0f,$1c,$1d,$4e,$00,$8d
+        .byte $1e,$17,$00,$0b,$18,$0e,$00,$27,$00,$02,$0a,$0a,$03,$12,$00,$8f
+        .byte $15,$19,$18,$0b,$17,$13,$00,$0d,$19,$26,$ca,$16,$1e,$0e,$26,$0f
+        .byte $00,$95,$16,$13,$0d,$0f,$18,$1d,$0f,$0e,$00,$0c,$23,$00,$18,$13
+        .byte $18,$1e,$0f,$18,$0e,$19,$26,$6f,$00,$04,$50,$04,$00,$04,$05,$2a
+        .byte $00,$ff
+    .else
+        .byte $00,$20,$6b,$00,$8b,$2e,$2f,$35,$36,$37,$38,$39,$3a,$3b,$3c,$3d
+        .byte $14,$00,$8c,$30,$31,$32,$3e,$3f,$40,$41,$42,$43,$44,$45,$46,$14
+        .byte $00,$82,$33,$34,$27,$00,$88,$47,$48,$49,$4a,$4b,$4c,$4d,$4e,$17
+        .byte $00,$8a,$4f,$50,$51,$52,$53,$54,$55,$55,$56,$57,$15,$00,$83,$58
+        .byte $59,$5a,$04,$00,$84,$5b,$5c,$5d,$5e,$14,$00,$84,$5f,$60,$61,$62
+        .byte $06,$00,$81,$72,$0b,$00,$93,$73,$74,$75,$76,$77,$78,$79,$7a,$7b
+        .byte $7c,$7d,$7e,$7f,$80,$81,$82,$83,$84,$85,$0d,$00,$93,$86,$87,$88
+        .byte $89,$8a,$8b,$8c,$8d,$8e,$8f,$00,$90,$91,$92,$93,$94,$95,$96,$97
+        .byte $0d,$00,$93,$98,$99,$9a,$9b,$9c,$9d,$9e,$9f,$a0,$a1,$a2,$a3,$a4
+        .byte $a5,$a6,$a7,$a8,$a9,$aa,$0d,$00,$93,$ab,$ac,$ad,$9f,$ae,$af,$b0
+        .byte $9f,$b1,$b2,$00,$b3,$00,$b4,$b5,$b6,$b7,$b8,$97,$0d,$00,$97,$b9
+        .byte $ba,$bb,$bc,$bd,$be,$bb,$bf,$c0,$c1,$00,$c2,$c3,$c4,$c5,$c6,$c7
+        .byte $c8,$c9,$00,$63,$64,$65,$1d,$00,$82,$66,$67,$16,$00,$8b,$68,$69
+        .byte $6a,$6b,$6c,$6d,$6e,$6f,$00,$70,$71,$19,$00,$81,$72,$33,$00,$8b
+        .byte $1a,$16,$0b,$23,$00,$1d,$0f,$16,$0f,$0d,$1e,$31,$00,$88,$02,$00
+        .byte $1a,$16,$0b,$23,$0f,$1c,$04,$00,$89,$03,$00,$1a,$16,$0b,$23,$0f
+        .byte $1c,$1d,$2e,$00,$8d,$1e,$17,$00,$0b,$18,$0e,$00,$27,$00,$02,$0a
+        .byte $0a,$01,$0e,$00,$98,$15,$19,$18,$0b,$17,$13,$00,$13,$18,$0e,$1f
+        .byte $1d,$1e,$1c,$23,$00,$0d,$19,$26,$ca,$16,$1e,$0e,$26,$0e,$00,$8b
+        .byte $16,$13,$0d,$0f,$18,$1d,$0f,$0e,$00,$0c,$23,$0f,$00,$98,$18,$13
+        .byte $18,$1e,$0f,$18,$0e,$19,$00,$19,$10,$00,$0b,$17,$0f,$1c,$13,$0d
+        .byte $0b,$00,$13,$18,$0d,$26,$70,$00,$03,$f0,$8b,$00,$00,$40,$50,$50
+        .byte $5f,$5f,$1f,$00,$00,$44,$04,$55,$83,$d1,$30,$00,$03,$a0,$85,$ac
+        .byte $af,$af,$03,$00,$06,$aa,$82,$00,$00,$06,$aa,$09,$00,$ff
+    .endif
 
 ; end of game credits mountains and clouds nametable data
 graphic_data_02:
@@ -4663,16 +4690,21 @@ graphic_data_02:
 
 init_level_vars:
     lda #$00
-    sta SUPERTILE_ATTRIBUTE_OVERRIDE ; clear door destroyed flag
-    ldx #$09
+    .ifdef Superc
+        sta SUPERTILE_ATTRIBUTE_OVERRIDE ; clear door destroyed flag
+        ldx #$09
 
-@loop:
-    sta ATTRIBUTE_OVERRIDES,x              ; clear any supertile attribute overrides
-    dex
-    bpl @loop
+    @loop:
+        sta ATTRIBUTE_OVERRIDES,x          ; clear any supertile attribute overrides
+        dex
+        bpl @loop
+    .endif
     sta NT_MIRRORING                       ; set nametable mirroring (0: vertical; 1: horizontal)
     sta X_SCROLL                           ; initialize PPU horizontal scroll
     sta BACKUP_X_SCROLL
+    .ifdef Probotector
+        lda #$ff
+    .endif
     sta Y_SCROLL                           ; initialize PPU vertical scroll
     sta BACKUP_Y_SCROLL
     lda PPUCTRL_SETTINGS
@@ -4839,7 +4871,12 @@ handle_y_scroll:
     lda Y_SCROLL_DIR           ; 0 = vertically scrolling up, 1 = vertically scrolling down
     beq @set_y_draw_routine_01 ; branch if scrolling up
     lda NT_ROW_SCROLL          ; scrolling down, incrementing number of nametable rows scrolled
-    adc #$01
+    .ifdef Probotector
+        clc
+        adc #$02
+    .else
+        adc #$01
+    .endif
     cmp #$1e                   ; see if scrolled past the last nametable row (wrapping around)
     bcc @check_bottom          ; branch if no need to update screen
     inc LEVEL_Y_SCREEN         ; move to next screen down vertically

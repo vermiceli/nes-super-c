@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank B contains graphics data for Level 7 (Headquarters) and Level 8 (The
 ; Final Stage).  The rest of the graphics for Level 7 and Level 8 is in bank a.

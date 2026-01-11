@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; constants.asm contains the list of constants with meaningful names for the
 ; memory addresses used by the game. It also contains constants for the various
@@ -173,9 +173,15 @@
 .importzp SOUND_VAR_1                     ; $e2
 .importzp SOUND_VAR_2                     ; $e4
 .importzp SOUND_VAR_3                     ; $e5
-.importzp SOUND_PART_ADDR                 ; $e6
+.ifdef Superc
+    .importzp SOUND_PART_ADDR             ; $e6
+.endif
 .importzp SOUND_CODE_ADDR                 ; $e8
-.importzp NUM_SOUND_PARTS                 ; $ea
+.ifdef Probotector
+    .importzp SOUND_FLAGS                 ; $ea
+.else
+    .importzp NUM_SOUND_PARTS             ; $ea
+.endif
 .importzp CUR_SOUND_PERIOD_LOW            ; $ec
 .importzp CUR_SOUND_LEN_TIMER_HIGH        ; $ed
 .importzp DEMO_LEVEL                      ; $f0
@@ -194,7 +200,9 @@
 .import SOUND_CMD_LENGTH                ; $0104
 .import SOUND_CODE                      ; $010a
 .import SOUND_LENGTH_MULTIPLIER         ; $0110
-.import SOUND_FLAGS                     ; $0116
+.ifdef Superc
+    .import SOUND_FLAGS                 ; $0116
+.endif
 .import SOUND_CMD_REPEATS               ; $011c
 .import SOUND_CMD_ADDRS_LOW             ; $0128
 .import SOUND_CMD_ADDRS_HIGH            ; $012e
@@ -217,6 +225,9 @@
 .import SOUND_FRAME_SKIP                ; $0173
 .import VIBRATO_CTRL                    ; $0175
 .import SOUND_VAR_UNUSED                ; $0179
+.ifdef Probotector
+    .import NUM_SOUND_PARTS             ; $017c
+.endif
 .import SOUND_DPCM_SAMPLE               ; $0187
 .import SOUND_TIMER_ADJ                 ; $0189
 .import SOUND_OCTAVE_SHIFT              ; $018e
@@ -246,6 +257,9 @@
 .import SOUND_VOLUME_ADJ                ; $01c2
 .import SOUND_PERIOD_LOW                ; $01c4
 .import SOUND_LEN_TIMER_HIGH            ; $01cc
+.ifdef Probotector
+    .import SOUND_PROBO_2               ; $01ce
+.endif
 .import OAMDMA_CPU_BUFFER               ; $0200
 .import CPU_GRAPHICS_BUFFER             ; $0300
 .import GRAPHICS_BUFFER_TEMP            ; $03c0
@@ -329,6 +343,9 @@
 .import RIGHT_FOURTH_QTR_CHR_BANK       ; $07f5
 .import SPLIT_X_SCROLL                  ; $07f6
 .import SPLIT_PPUCTRL                   ; $07f7
+.ifdef Probotector
+    .import SPLIT_SCANLINE_IRQ_1        ; $07f8
+.endif
 .import SPLIT_SCANLINE_IRQ_2            ; $07f9
 .import SPLIT_SCANLINE_IRQ_3            ; $07fa
 .import IRQ_HANDLER_PPUADDR             ; $07fb

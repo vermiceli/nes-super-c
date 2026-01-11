@@ -17,8 +17,7 @@ then
     DBG_NAME="probotector.dbg"
     GAME_HASH="4302bf3fdaf704f11fcd60c83bf475d11c8ebc772a31b45318c1abbf5ea011992d9e8714268b2b7ce938d2426599794d0277868a98c6162bcc5a10ae851c8eb5"
     ASSETS_NAME="probotector-assets.txt"
-    echo "Probotector not supported."
-    exit 1
+    GAME="Probotector"
 else
     GAME="Superc"
 fi

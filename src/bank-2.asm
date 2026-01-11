@@ -1,4 +1,4 @@
-; NES Super C Disassembly - v1.00
+; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
 ; Bank 2 contains the enemy routines for Level 1 (Fort Firestorn) and Level 3
 ; (Jungle).
@@ -409,10 +409,17 @@ helicopter_turret_update_ui:
     rts
 
 helicopter_turret_ppu_addr_tbl:
-    .byte $8d,$2e ; turret 0
-    .byte $90,$2e ; turret 1
-    .byte $93,$2e ; turret 2
-    .byte $96,$2e ; turret 3
+    .ifdef Probotector
+        .byte $8f,$2e  ; turret 0
+        .byte $92,$2e  ; turret 1
+        .byte $95,$2e  ; turret 2
+        .byte $98,$2e  ; turret 3
+    .else
+        .byte $8d,$2e  ; turret 0
+        .byte $90,$2e  ; turret 1
+        .byte $93,$2e  ; turret 2
+        .byte $96,$2e  ; turret 3
+    .endif
 
 ; set helicopter bay X and Y position
 set_helicopter_bay_vars:
@@ -472,11 +479,19 @@ set_helicopter_turret_vars:
 
 ; y offset, then x offset from helicopter core position
 helicopter_turret_bay_offset:
-    .byte $02,$d0 ; helicopter turret 0 (-48, 2)
-    .byte $02,$e8 ; helicopter turret 1 (-24, 2)
-    .byte $02,$00 ; helicopter turret 2 (0, 2)
-    .byte $02,$18 ; helicopter turret 3 (24, 2)
-    .byte $0a,$b0 ; helicopter bay (-80, 10)
+    .ifdef Probotector
+        .byte $02,$e0  ; helicopter turret 0 (-48, 2)
+        .byte $02,$f8  ; helicopter turret 1 (-24, 2)
+        .byte $02,$10  ; helicopter turret 2 (0, 2)
+        .byte $02,$28  ; helicopter turret 3 (24, 2)
+        .byte $0a,$d0  ; helicopter bay (-80, 10)
+    .else
+        .byte $02,$d0  ; helicopter turret 0 (-48, 2)
+        .byte $02,$e8  ; helicopter turret 1 (-24, 2)
+        .byte $02,$00  ; helicopter turret 2 (0, 2)
+        .byte $02,$18  ; helicopter turret 3 (24, 2)
+        .byte $0a,$b0  ; helicopter bay (-80, 10)
+    .endif
 
 ; enemy type #$23
 helicopter_bay_routine_ptr_tbl:
@@ -621,7 +636,11 @@ helicopter_bay_set_tiles:
     sta $08                              ; store animation frame data address low byte
     lda helicopter_bay_frame_ptr_tbl+1,y ; load animation frame data address high byte
     sta $09                              ; store animation frame data address high byte
-    lda #$a8
+    .ifdef Probotector
+        lda #$ac
+    .else
+        lda #$a8
+    .endif
     sta $00                              ; set initial PPU write address low byte
     lda #$2a
     sta $01                              ; set initial PPU write address high byte
@@ -641,7 +660,11 @@ helicopter_bay_set_tiles:
     lda $00                   ; load PPU address low byte
     sta CPU_GRAPHICS_BUFFER,x ; set PPU address low byte
     inx                       ; increment graphics buffer offset
-    lda #$05                  ; writing #$05 tiles to graphics buffer
+    .ifdef Probotector
+        lda #$04              ; writing #$04 tiles to graphics buffer
+    .else
+        lda #$05              ; writing #$05 tiles to graphics buffer
+    .endif
     sta CPU_GRAPHICS_BUFFER,x ; store group size in graphics buffer
     sta $0b                   ; store group size in $0b
     inx                       ; increment graphics buffer offset
@@ -678,29 +701,55 @@ helicopter_bay_frame_ptr_tbl:
     .addr helicopter_bay_frame_02 ; frame 2 - more open
     .addr helicopter_bay_frame_03 ; frame 3 - fully open
 
-helicopter_bay_frame_00:
-    .byte $00,$00,$5b,$5c,$5d
-    .byte $00,$00,$00,$68,$69
-    .byte $00,$00,$00,$00,$7c
-    .byte $00,$00,$00,$00,$00
+.ifdef Probotector
+    helicopter_bay_frame_00:
+        .byte $26,$27,$28,$3a
+        .byte $00,$00,$2b,$2c
+        .byte $00,$00,$00,$2e
+        .byte $00,$00,$00,$00
 
-helicopter_bay_frame_01:
-    .byte $93,$94,$95,$5c,$5d
-    .byte $00,$96,$97,$98,$69
-    .byte $00,$00,$00,$96,$7c
-    .byte $00,$00,$00,$00,$00
+    helicopter_bay_frame_01:
+        .byte $98,$99,$28,$3a
+        .byte $9a,$9b,$9c,$2c
+        .byte $00,$00,$9a,$9d
+        .byte $00,$00,$00,$00
 
-helicopter_bay_frame_02:
-    .byte $00,$00,$99,$5c,$5d
-    .byte $00,$00,$9a,$68,$69
-    .byte $9b,$9c,$9d,$9e,$9f
-    .byte $00,$00,$00,$00,$00
+    helicopter_bay_frame_02:
+        .byte $26,$27,$28,$3a
+        .byte $00,$a4,$2b,$2c
+        .byte $a7,$a8,$a9,$aa
+        .byte $00,$00,$00,$00
 
-helicopter_bay_frame_03:
-    .byte $00,$00,$5b,$5c,$5d
-    .byte $00,$00,$9a,$68,$69
-    .byte $00,$00,$a0,$a1,$a2
-    .byte $a3,$a4,$a5,$a6,$00
+    helicopter_bay_frame_03:
+        .byte $26,$27,$28,$3a
+        .byte $00,$a5,$a6,$2c
+        .byte $00,$ab,$ac,$ad
+        .byte $ae,$af,$b0,$00
+.else
+    helicopter_bay_frame_00:
+        .byte $00,$00,$5b,$5c,$5d
+        .byte $00,$00,$00,$68,$69
+        .byte $00,$00,$00,$00,$7c
+        .byte $00,$00,$00,$00,$00
+
+    helicopter_bay_frame_01:
+        .byte $93,$94,$95,$5c,$5d
+        .byte $00,$96,$97,$98,$69
+        .byte $00,$00,$00,$96,$7c
+        .byte $00,$00,$00,$00,$00
+
+    helicopter_bay_frame_02:
+        .byte $00,$00,$99,$5c,$5d
+        .byte $00,$00,$9a,$68,$69
+        .byte $9b,$9c,$9d,$9e,$9f
+        .byte $00,$00,$00,$00,$00
+
+    helicopter_bay_frame_03:
+        .byte $00,$00,$5b,$5c,$5d
+        .byte $00,$00,$9a,$68,$69
+        .byte $00,$00,$a0,$a1,$a2
+        .byte $a3,$a4,$a5,$a6,$00
+.endif
 
 ; enemy type #$62
 intro_helicopter_routine_ptr_tbl:
@@ -977,7 +1026,11 @@ helicopter_core_routine_01:
     lda #$01
     sta IRQ_TYPE                            ; set irq routine type to irq_handler_01_ptr_tbl
                                             ; level 1 fort firestorm boss screen
-    lda #$a2
+    .ifdef Probotector
+        lda #$94
+    .else
+        lda #$a2
+    .endif
     sta SCANLINE_IRQ_1                      ; set scanline irq to be right where the ground starts
     lda Y_SCROLL                            ; load PPU vertical scroll
     sta IRQ_Y_SCROLL                        ; use same vertical scroll for both screens
@@ -1215,7 +1268,11 @@ helicopter_core_subroutine_04:
     bne helicopter_core_subroutine_exit2 ; branch if core not yet moved off-screen to right
     lda ENEMY_X_POS,x                    ; helicopter core moved off screen to right
                                          ; load enemy's X position
-    cmp #$30
+    .ifdef Probotector
+        cmp #$20
+    .else
+        cmp #$30
+    .endif
     bcs adv_helicopter_core_subroutine   ; branch to advance routine if core far off to the right
     rts                                  ; core not yet far enough to the right, exit
 
@@ -1319,7 +1376,11 @@ helicopter_core_change_bay_routine_tbl:
 ; output
 ;  * carry flag - set when graphics buffer full, clear otherwise
 helicopter_write_attr:
-    lda #$14
+    .ifdef Probotector
+        lda #$21
+    .else
+        lda #$14
+    .endif
     sta $08                    ; writing #$14 bytes
     ldy #$00
     ldx GRAPHICS_BUFFER_OFFSET
@@ -1341,19 +1402,32 @@ helicopter_write_attr:
     rts
 
 helicopter_attribute_data_tbl:
-    .byte $03                 ; repeat mode
-    .byte $2b,$d8             ; PPU address $2bd8 (bottom left nametable attribute table)
-    .byte $12                 ; number of repetitions
-    .byte $aa                 ; byte to write (palette)
-    .byte $06                 ; block mode
-    .byte $2b,$ea             ; PPU address $2bea (bottom left nametable attribute table)
-    .byte $05                 ; length of data to write
-    .byte $ae,$fa,$fa,$fa,$fa ; graphic bytes to write
-    .byte $ff                 ; end block mode
-    .byte $03                 ; repeat mode
-    .byte $2b,$ef             ; PPU address $2bef (bottom left nametable attribute table)
-    .byte $08                 ; number of repetitions
-    .byte $aa                 ; byte to write (palette)
+    .ifdef Probotector
+        .byte 03                                                              ; repeat mode
+        .byte $2b,$d8                                                         ; PPU address $2bd8 (bottom left nametable attribute table)
+        .byte $09                                                             ; number of repetitions
+        .byte $aa                                                             ; byte to write (palette)
+        .byte $06                                                             ; block mode
+        .byte $2b,$e1                                                         ; PPU address $2be1
+        .byte $17                                                             ; length of data to write
+        .byte $ea,$fa,$ea,$fa,$fa,$ba,$ea,$fb,$fb,$0f,$eb,$fa,$aa,$ea,$fb,$00
+        .byte $00,$00,$ef,$aa,$aa,$aa,$aa
+        .byte $ff
+    .else
+        .byte $03                                                             ; repeat mode
+        .byte $2b,$d8                                                         ; PPU address $2bd8 (bottom left nametable attribute table)
+        .byte $12                                                             ; number of repetitions
+        .byte $aa                                                             ; byte to write (palette)
+        .byte $06                                                             ; block mode
+        .byte $2b,$ea                                                         ; PPU address $2bea (bottom left nametable attribute table)
+        .byte $05                                                             ; length of data to write
+        .byte $ae,$fa,$fa,$fa,$fa                                             ; graphic bytes to write
+        .byte $ff                                                             ; end block mode
+        .byte $03                                                             ; repeat mode
+        .byte $2b,$ef                                                         ; PPU address $2bef (bottom left nametable attribute table)
+        .byte $08                                                             ; number of repetitions
+        .byte $aa                                                             ; byte to write (palette)
+    .endif
 
 helicopter_core_exit3:
     rts
@@ -1381,19 +1455,36 @@ helicopter_core_draw_helicopter:
     asl
     lda PPUCTRL_SETTINGS
     bcc @calc_offset
-    eor #$01
+    eor #$01                    ; switch to other horizontal nametable
 
 @calc_offset:
     lsr
     ldy #$00
+    .ifdef Probotector
+        lda $0b              ; load X scroll
+        bcc @continue        ; branch if base nametable is $2000 or $2800
+        cmp #$01
+        bcs @write_block
+        adc #$20
+        clc
+        jmp @sub_write_block
+    @continue:
+        cmp #$03
+        bcc @write_block
+        cmp #$20
+    .else
+        bcs @write_block
+        lda $0b
+    @continue:
+        cmp #$03
+        bcc @write_block
+        cmp #$1f
+    .endif
     bcs @write_block
-    lda $0b
-    cmp #$03
-    bcc @write_block
-    cmp #$1f
-    bcs @write_block
+
+@sub_write_block:
     sbc #$02
-    tay              ; transfer offset graphics read offset to y
+    tay      ; transfer offset graphics read offset to y
 
 @write_block:
     tya
@@ -1416,7 +1507,11 @@ helicopter_core_draw_helicopter:
     sta CPU_GRAPHICS_BUFFER,x     ; write PPU address high byte
     inx                           ; increment graphics buffer write offset
     inx                           ; increment graphics buffer write offset
-    lda #$0b
+    .ifdef Probotector
+        lda #$0a
+    .else
+        lda #$0b
+    .endif
     sta CPU_GRAPHICS_BUFFER,x     ; writing #$0b bytes
     sta $0a                       ; set remaining bytes to draw
     inx                           ; increment graphics buffer write offset
@@ -1428,7 +1523,11 @@ helicopter_core_draw_helicopter:
     inx                        ; increment graphics buffer write offset
     lda $08
     clc                        ; clear carry in preparation for addition
-    adc #$1c
+    .ifdef Probotector
+        adc #$1e
+    .else
+        adc #$1c
+    .endif
     sta $08
     lda $09
     adc #$00
@@ -1446,26 +1545,48 @@ helicopter_draw_ptr_tbl:
     .addr helicopter_draw_00
 
 helicopter_draw_00:
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $04,$05,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$08,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$0b,$0c,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$0f,$08,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$1a,$00
-    .byte $00,$00,$00,$00,$00,$1c,$1d,$1e,$1f,$20,$21,$22,$23,$23,$24,$25
-    .byte $26,$27,$28,$29,$2a,$2b,$2c,$2d,$2e,$2f,$30,$31,$32,$00,$00,$00
-    .byte $00,$33,$34,$35,$36,$37,$38,$39,$3a,$3a,$3a,$3b,$3c,$3d,$3e,$3f
-    .byte $40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$00,$00,$00,$00,$4a,$4b
-    .byte $4c,$4d,$4e,$4f,$50,$51,$c2,$c3,$51,$c2,$c3,$51,$c2,$c3,$51,$c2
-    .byte $c3,$54,$55,$56,$57,$58,$59,$5a,$00,$00,$00,$00,$00,$00,$00,$5b
-    .byte $5c,$5d,$c4,$c5,$60,$c4,$c5,$60,$c4,$c5,$60,$c4,$c5,$61,$62,$63
-    .byte $64,$65,$66,$67,$00,$00,$00,$00,$00,$00,$00,$00,$68,$69,$6a,$6b
-    .byte $6c,$6d,$6e,$6f,$70,$71,$72,$73,$74,$75,$76,$77,$78,$79,$7a,$7b
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$7c,$7d,$7e,$7f,$80,$81,$82
-    .byte $83,$84,$85,$86,$87,$88,$89,$8a,$8b,$8c,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$8d,$8e,$00,$00,$00,$00
-    .byte $00,$00,$00,$8f,$90,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$91,$92,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00
+    .ifdef Probotector
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$3c,$3d,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$3e
+        .byte $3f,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$08,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$40,$41,$42,$42,$42,$42
+        .byte $43,$44,$45,$46,$00,$00,$00,$00,$00,$00,$00,$0b,$08,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$0c,$0d,$0e,$47,$48,$49,$49,$49,$4a,$4b,$4c
+        .byte $4d,$4e,$4f,$50,$51,$00,$00,$00,$00,$10,$11,$12,$12,$12,$12,$12
+        .byte $13,$14,$15,$16,$16,$17,$52,$53,$53,$53,$53,$54,$55,$56,$57,$58
+        .byte $59,$5a,$5b,$5c,$00,$00,$00,$18,$19,$1a,$1b,$1c,$1d,$1d,$1e,$1e
+        .byte $1f,$1e,$34,$35,$5d,$34,$35,$5d,$34,$35,$5d,$34,$35,$5e,$5f,$60
+        .byte $61,$62,$63,$64,$00,$00,$22,$23,$23,$24,$25,$25,$26,$26,$27,$28
+        .byte $3a,$3b,$65,$3a,$3b,$65,$3a,$3b,$65,$3a,$3b,$66,$1a,$67,$68,$69
+        .byte $6a,$6b,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2b,$2c,$2d
+        .byte $6c,$2d,$6d,$6e,$6f,$70,$71,$70,$72,$73,$74,$75,$76,$77,$78,$79
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$2e,$2f,$7a,$7b
+        .byte $7c,$7d,$7e,$7e,$7e,$7f,$80,$81,$82,$83,$84,$85,$86,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$87,$87,$87,$88,$87
+        .byte $87,$87,$87,$87,$89,$87,$87,$8a,$00,$00,$00,$00
+    .else
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $04,$05,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$08,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$0b,$0c,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$0f,$08,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$1a,$00
+        .byte $00,$00,$00,$00,$00,$1c,$1d,$1e,$1f,$20,$21,$22,$23,$23,$24,$25
+        .byte $26,$27,$28,$29,$2a,$2b,$2c,$2d,$2e,$2f,$30,$31,$32,$00,$00,$00
+        .byte $00,$33,$34,$35,$36,$37,$38,$39,$3a,$3a,$3a,$3b,$3c,$3d,$3e,$3f
+        .byte $40,$41,$42,$43,$44,$45,$46,$47,$48,$49,$00,$00,$00,$00,$4a,$4b
+        .byte $4c,$4d,$4e,$4f,$50,$51,$c2,$c3,$51,$c2,$c3,$51,$c2,$c3,$51,$c2
+        .byte $c3,$54,$55,$56,$57,$58,$59,$5a,$00,$00,$00,$00,$00,$00,$00,$5b
+        .byte $5c,$5d,$c4,$c5,$60,$c4,$c5,$60,$c4,$c5,$60,$c4,$c5,$61,$62,$63
+        .byte $64,$65,$66,$67,$00,$00,$00,$00,$00,$00,$00,$00,$68,$69,$6a,$6b
+        .byte $6c,$6d,$6e,$6f,$70,$71,$72,$73,$74,$75,$76,$77,$78,$79,$7a,$7b
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$7c,$7d,$7e,$7f,$80,$81,$82
+        .byte $83,$84,$85,$86,$87,$88,$89,$8a,$8b,$8c,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$8d,$8e,$00,$00,$00,$00
+        .byte $00,$00,$00,$8f,$90,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$91,$92,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00
+    .endif
 
 ; draw helicopter as scroll reveals and hides parts of it
 ; due to horizontal mirroring (vertical arrangement) the entire helicopter
@@ -1661,43 +1782,83 @@ helicopter_core_bg_tile_ptr_tbl:
     .addr helicopter_core_bg_tile_05
 
 ; negative number signals end of stream
-helicopter_core_bg_tile_00:
-    .byte $21,$0e,$04,$00,$00,$00,$00,$21,$0f,$04,$00,$00,$00,$00,$20,$10
-    .byte $06,$09,$09,$00,$00,$00,$00,$21,$11,$03,$00,$00,$00,$21,$12,$02
-    .byte $00,$00,$06,$10,$08,$09,$09,$09,$0a,$09,$0a,$09,$0a,$1a,$10,$06
-    .byte $0a,$09,$0a,$09,$0a,$09,$26,$10,$1a,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-    .byte $00,$00,$00,$03,$0e,$02,$00,$00,$03,$0f,$02,$00,$00,$00,$10,$06
-    .byte $b4,$b5,$b6,$b7,$b8,$b9,$01,$11,$03,$00,$0d,$af,$01,$12,$02,$00
-    .byte $00,$ff
+.ifdef Probotector
+    helicopter_core_bg_tile_00:
+        .byte $21,$0f,$04,$00,$00,$00,$00,$20,$10,$04,$04,$04,$04,$00,$20,$11
+        .byte $06,$00,$00,$00,$00,$00,$00,$21,$12,$05,$00,$00,$00,$00,$00,$21
+        .byte $13,$04,$00,$00,$00,$00,$07,$10,$08,$04,$04,$04,$05,$04,$05,$04
+        .byte $05,$1b,$10,$05,$05,$04,$05,$04,$05,$27,$10,$19,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$03,$0f,$02,$00,$00,$03,$10,$02,$00,$00,$00
+        .byte $11,$06,$9e,$9f,$a0,$a1,$a2,$a3,$01,$12,$04,$00,$09,$93,$94,$01
+        .byte $13,$04,$00,$00,$18,$97,$ff
 
-helicopter_core_bg_tile_01:
-    .byte $20,$10,$02,$00,$00,$06,$10,$08,$00,$00,$00,$00,$09,$09,$0a,$09
-    .byte $1a,$10,$06,$09,$0a,$09,$09,$00,$00,$01,$0e,$01,$01,$01,$0f,$02
-    .byte $02,$03,$00,$10,$06,$00,$00,$06,$07,$08,$00,$03,$11,$02,$0e,$0f
-    .byte $03,$12,$02,$1b,$1c,$ff
+    helicopter_core_bg_tile_01:
+        .byte $20,$10,$03,$00,$00,$00,$07,$10,$08,$00,$00,$00,$00,$04,$04,$05
+        .byte $04,$1b,$10,$05,$04,$05,$04,$04,$00,$01,$0f,$01,$01,$01,$10,$02
+        .byte $02,$03,$00,$11,$06,$00,$00,$06,$07,$08,$00,$03,$12,$03,$0a,$0b
+        .byte $08,$03,$13,$03,$0f,$10,$11,$ff
 
-helicopter_core_bg_tile_02:
-    .byte $0a,$10,$14,$00,$00,$00,$00,$00,$09,$09,$0a,$0a,$c6,$0c,$0a,$0a
-    .byte $09,$09,$00,$00,$00,$00,$00,$01,$0e,$04,$00,$00,$a7,$a8,$01,$0f
-    .byte $04,$00,$00,$a9,$aa,$02,$10,$02,$ab,$ac,$01,$11,$04,$ad,$ae,$af
-    .byte $b0,$01,$12,$04,$b1,$b2,$b3,$5d,$ff
+    helicopter_core_bg_tile_02:
+        .byte $0b,$10,$14,$00,$00,$00,$00,$00,$04,$04,$05,$05,$b1,$3f,$05,$05
+        .byte $04,$04,$00,$00,$00,$00,$00,$01,$0f,$04,$00,$00,$8b,$8c,$01,$10
+        .byte $04,$00,$00,$8d,$8e,$02,$11,$02,$8f,$90,$01,$12,$04,$91,$92,$93
+        .byte $94,$01,$13,$04,$95,$96,$18,$97,$ff
 
-helicopter_core_bg_tile_03:
-    .byte $0f,$10,$0a,$00,$00,$00,$00,$c8,$c9,$00,$00,$00,$00,$03,$0e,$02
-    .byte $00,$00,$03,$0f,$02,$00,$00,$00,$10,$06,$b4,$b5,$b6,$b7,$b8,$b9
-    .byte $01,$11,$03,$00,$0d,$af,$01,$12,$02,$00,$00,$ff
+    helicopter_core_bg_tile_03:
+        .byte $10,$10,$0a,$00,$00,$00,$00,$b3,$b4,$00,$00,$00,$00,$03,$0f,$02
+        .byte $00,$00,$03,$10,$02,$00,$00,$00,$11,$06,$9e,$9f,$a0,$a1,$a2,$a3
+        .byte $01,$12,$04,$00,$09,$93,$94,$01,$13,$04,$00,$00,$18,$97,$ff
 
-helicopter_core_bg_tile_04:
-    .byte $0f,$10,$0a,$09,$09,$0a,$0a,$0b,$c7,$0a,$0a,$09,$09,$01,$0e,$01
-    .byte $01,$01,$0f,$02,$02,$03,$00,$10,$06,$00,$00,$06,$07,$08,$00,$03
-    .byte $11,$02,$0e,$0f,$03,$12,$02,$1b,$1c,$ff
+    helicopter_core_bg_tile_04:
+        .byte $10,$10,$0a,$04,$04,$05,$05,$3e,$b2,$05,$05,$04,$04,$01,$0f,$01
+        .byte $01,$01,$10,$02,$02,$03,$00,$11,$06,$00,$00,$06,$07,$08,$00,$03
+        .byte $12,$03,$0a,$0b,$08,$03,$13,$03,$0f,$10,$11,$ff
 
-helicopter_core_bg_tile_05:
-    .byte $0a,$10,$14,$09,$09,$0a,$09,$0a,$0a,$0a,$0a,$0a,$0b,$0c,$0a,$0a
-    .byte $0a,$0a,$0a,$09,$0a,$09,$09,$01,$0e,$04,$00,$00,$a7,$a8,$01,$0f
-    .byte $04,$00,$00,$a9,$aa,$02,$10,$02,$ab,$ac,$01,$11,$04,$ad,$ae,$af
-    .byte $b0,$01,$12,$04,$b1,$b2,$b3,$5d,$ff
+    helicopter_core_bg_tile_05:
+        .byte $0b,$10,$14,$04,$04,$05,$04,$05,$05,$05,$05,$05,$47,$48,$05,$05
+        .byte $05,$05,$05,$04,$05,$04,$04,$01,$0f,$04,$00,$00,$8b,$8c,$01,$10
+        .byte $04,$00,$00,$8d,$8e,$02,$11,$02,$8f,$90,$01,$12,$04,$91,$92,$93
+        .byte $94,$01,$13,$04,$95,$96,$18,$97,$ff
+.else
+    helicopter_core_bg_tile_00:
+        .byte $21,$0e,$04,$00,$00,$00,$00,$21,$0f,$04,$00,$00,$00,$00,$20,$10
+        .byte $06,$09,$09,$00,$00,$00,$00,$21,$11,$03,$00,$00,$00,$21,$12,$02
+        .byte $00,$00,$06,$10,$08,$09,$09,$09,$0a,$09,$0a,$09,$0a,$1a,$10,$06
+        .byte $0a,$09,$0a,$09,$0a,$09,$26,$10,$1a,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .byte $00,$00,$00,$03,$0e,$02,$00,$00,$03,$0f,$02,$00,$00,$00,$10,$06
+        .byte $b4,$b5,$b6,$b7,$b8,$b9,$01,$11,$03,$00,$0d,$af,$01,$12,$02,$00
+        .byte $00,$ff
+
+    helicopter_core_bg_tile_01:
+        .byte $20,$10,$02,$00,$00,$06,$10,$08,$00,$00,$00,$00,$09,$09,$0a,$09
+        .byte $1a,$10,$06,$09,$0a,$09,$09,$00,$00,$01,$0e,$01,$01,$01,$0f,$02
+        .byte $02,$03,$00,$10,$06,$00,$00,$06,$07,$08,$00,$03,$11,$02,$0e,$0f
+        .byte $03,$12,$02,$1b,$1c,$ff
+
+    helicopter_core_bg_tile_02:
+        .byte $0a,$10,$14,$00,$00,$00,$00,$00,$09,$09,$0a,$0a,$c6,$0c,$0a,$0a
+        .byte $09,$09,$00,$00,$00,$00,$00,$01,$0e,$04,$00,$00,$a7,$a8,$01,$0f
+        .byte $04,$00,$00,$a9,$aa,$02,$10,$02,$ab,$ac,$01,$11,$04,$ad,$ae,$af
+        .byte $b0,$01,$12,$04,$b1,$b2,$b3,$5d,$ff
+
+    helicopter_core_bg_tile_03:
+        .byte $0f,$10,$0a,$00,$00,$00,$00,$c8,$c9,$00,$00,$00,$00,$03,$0e,$02
+        .byte $00,$00,$03,$0f,$02,$00,$00,$00,$10,$06,$b4,$b5,$b6,$b7,$b8,$b9
+        .byte $01,$11,$03,$00,$0d,$af,$01,$12,$02,$00,$00,$ff
+
+    helicopter_core_bg_tile_04:
+        .byte $0f,$10,$0a,$09,$09,$0a,$0a,$0b,$c7,$0a,$0a,$09,$09,$01,$0e,$01
+        .byte $01,$01,$0f,$02,$02,$03,$00,$10,$06,$00,$00,$06,$07,$08,$00,$03
+        .byte $11,$02,$0e,$0f,$03,$12,$02,$1b,$1c,$ff
+
+    helicopter_core_bg_tile_05:
+        .byte $0a,$10,$14,$09,$09,$0a,$09,$0a,$0a,$0a,$0a,$0a,$0b,$0c,$0a,$0a
+        .byte $0a,$0a,$0a,$09,$0a,$09,$09,$01,$0e,$04,$00,$00,$a7,$a8,$01,$0f
+        .byte $04,$00,$00,$a9,$aa,$02,$10,$02,$ab,$ac,$01,$11,$04,$ad,$ae,$af
+        .byte $b0,$01,$12,$04,$b1,$b2,$b3,$5d,$ff
+.endif
 
 ; enemy type #$26
 crouching_sniper_routine_ptr_tbl:
@@ -3487,28 +3648,35 @@ fortress_wall_core_init_irq:
     lda #$00
     sta ENEMY_VAR_7,x
     lda #$01
-    sta NT_MIRRORING                     ; set nametable mirroring (0: vertical; 1: horizontal)
-    lda #$00                             ; moving to top left nametable where fortress wall core is drawn
-    sta Y_SCROLL                         ; set PPU vertical scroll to top of nametables (no scroll)
+    sta NT_MIRRORING                               ; set nametable mirroring (0: vertical; 1: horizontal)
+    lda #$00                                       ; moving to top left nametable where fortress wall core is drawn
+    sta Y_SCROLL                                   ; set PPU vertical scroll to top of nametables (no scroll)
     sta IRQ_Y_SCROLL
-    sta X_SCROLL                         ; set PPU horizontal scroll to no scroll
+    sta X_SCROLL                                   ; set PPU horizontal scroll to no scroll
     sta IRQ_X_SCROLL
     lda #$aa
-    sta PPUCTRL_SETTINGS                 ; enable nmi for vertical blank, 8x16 sprites, base nametable $2800
-    lda #$a8                             ; settings for post IRQ
-    sta IRQ_PPUCTRL_SETTINGS             ; enable nmi for vertical blank, 8x16 sprites, base nametable $2000
-    jsr init_bg_boss_pre_irq_max_scrolls ; init boss screen pre-irq scroll max values
+    sta PPUCTRL_SETTINGS                           ; enable nmi for vertical blank, 8x16 sprites, base nametable $2800
+    lda #$a8                                       ; settings for post IRQ
+    sta IRQ_PPUCTRL_SETTINGS                       ; enable nmi for vertical blank, 8x16 sprites, base nametable $2000
+    jsr init_bg_boss_pre_irq_max_scrolls           ; init boss screen pre-irq scroll max values
     lda #$08
-    sta IRQ_TYPE                         ; set irq routine type to irq_handler_07_ptr_tbl
-                                         ; level 3 jungle boss screen (fortress wall)
-    lda #$a2
-    sta SCANLINE_IRQ_1                   ; set initial scanline where interrupt will occur
-                                         ; interrupt occurs when drawing the ground
-    ldy #$4f                             ; number of bytes to clear
-    jsr clear_partial_bg_collision_data  ; clear the first #$50 bytes of BG_COLLISION_DATA
+    sta IRQ_TYPE                                   ; set irq routine type to irq_handler_07_ptr_tbl
+                                                   ; level 3 jungle boss screen (fortress wall)
+    .ifdef Probotector
+        lda #$95
+        sta SCANLINE_IRQ_1                         ; set initial scanline where interrupt will occur
+                                                   ; interrupt occurs when drawing the ground
+        jsr probotector_set_fortress_wall_irq_diff
+    .else
+        lda #$a2
+        sta SCANLINE_IRQ_1                         ; set initial scanline where interrupt will occur
+                                                   ; interrupt occurs when drawing the ground
+    .endif
+    ldy #$4f                                       ; number of bytes to clear
+    jsr clear_partial_bg_collision_data            ; clear the first #$50 bytes of BG_COLLISION_DATA
     lda #$09
-    sta ENEMY_VAR_1,x                    ; 9 frames to draw the fortress wall on the bottom of the nametable (top of scroll)
-    jmp advance_enemy_routine            ; advance to next routine
+    sta ENEMY_VAR_1,x                              ; 9 frames to draw the fortress wall on the bottom of the nametable (top of scroll)
+    jmp advance_enemy_routine                      ; advance to next routine
 
 fortress_wall_core_routine_03:
     lda X_DRAW_ROUTINE
@@ -3532,15 +3700,22 @@ fortress_wall_core_routine_04:
     sta IRQ_PPUCTRL_SETTINGS
     inc SCANLINE_IRQ_1
     jsr fortress_wall_y_scroll
-    lda SCANLINE_IRQ_1              ; load scanline where interrupt will occur
-    cmp #$c8
+    .ifdef Probotector
+        jsr probotector_set_fortress_wall_irq_diff
+    .endif
+    lda SCANLINE_IRQ_1                             ; load scanline where interrupt will occur
+    .ifdef Probotector
+        cmp #$bc
+    .else
+        cmp #$c8
+    .endif
     bcc fortress_wall_core_exit
     lda #$16
-    sta LEFT_TOP_HALF_CHR_BANK      ; set bank number of PPU $0000-$07ff (top half of left pattern table)
+    sta LEFT_TOP_HALF_CHR_BANK                     ; set bank number of PPU $0000-$07ff (top half of left pattern table)
     lda #$18
-    sta LEFT_BOTTOM_CHR_HALF_BANK   ; set bank number of PPU $0800-$0fff (bottom half of left pattern table)
+    sta LEFT_BOTTOM_CHR_HALF_BANK                  ; set bank number of PPU $0800-$0fff (bottom half of left pattern table)
     lda #$10
-    jmp set_delay_adv_enemy_routine ; set delay to #$10 and set routine to fortress_wall_core_routine_05
+    jmp set_delay_adv_enemy_routine                ; set delay to #$10 and set routine to fortress_wall_core_routine_05
 
 fortress_wall_core_routine_05:
     dec ENEMY_DELAY,x
@@ -3588,6 +3763,15 @@ fortress_wall_core_routine_0b:
     lda #$aa
     sta PPUCTRL_SETTINGS               ; enable nmi for vertical blank, 8x16 sprites, base nametable $2800
     jmp set_boss_defeated_remove_enemy ; set boss defeated flag, strip alive attribute bit, and remove enemy
+
+.ifdef Probotector
+    probotector_set_fortress_wall_irq_diff:
+        lda #$db
+        sec
+        sbc SCANLINE_IRQ_1
+        sta SCANLINE_IRQ_2_DIFF
+        rts
+.endif
 
 ; input
 ;  * y - fortress_wall_core_y_vel_tbl offset (0 = -1, 2 = 0.25)
@@ -3705,21 +3889,32 @@ fortress_wall_core_subroutine_03:
     rts
 
 fortress_wall_core_subroutine_04:
-    jsr x_earthquake_shake     ; scroll left/right for earthquake effect
-    lda SCANLINE_IRQ_1         ; load scanline where interrupt will occur
-    cmp #$a3
-    beq fortress_wall_y_scroll ; branch if scanline interrupt for ground split occurs at 63% of the screen
-    lda GLOBAL_TIMER           ; ground not yet risen to 63% location
+    jsr x_earthquake_shake                         ; scroll left/right for earthquake effect
+    lda SCANLINE_IRQ_1                             ; load scanline where interrupt will occur
+    .ifdef Probotector
+        cmp #$96
+    .else
+        cmp #$a3
+    .endif
+    beq fortress_wall_y_scroll                     ; branch if scanline interrupt for ground split occurs at 63% of the screen
+    lda GLOBAL_TIMER                               ; ground not yet risen to 63% location
     lsr
-    bcc fortress_wall_y_scroll ; branch if even timer value
-    dec SCANLINE_IRQ_1         ; move scanline up one line every other frame
+    bcc fortress_wall_y_scroll                     ; branch if even timer value
+    dec SCANLINE_IRQ_1                             ; move scanline up one line every other frame
+    .ifdef Probotector
+        jsr probotector_set_fortress_wall_irq_diff
+    .endif
 
 ; scroll pre-irq vertically up to cause the fortress wall to descend into the ground
 ; offsets rising ground
 fortress_wall_y_scroll:
     lda SCANLINE_IRQ_1 ; load scanline where ground interrupt will occur
     sec                ; set carry flag in preparation for subtraction
-    sbc #$a2           ; subtract scanline irq line for where ground stops at highest point
+    .ifdef Probotector
+        sbc #$95       ; subtract scanline irq line for where ground stops at highest point
+    .else
+        sbc #$a2       ; subtract scanline irq line for where ground stops at highest point
+    .endif
     sta $00            ; store number of scanlines above ground will be at its highest point
     lda #$f0           ; -16
     sec                ; set carry flag in preparation for subtraction
@@ -3970,7 +4165,14 @@ fortress_wall_turret_x_adj_tbl:
     .byte $00,$db,$ac ; turret below core
     .byte $db,$00,$00 ; turret left of core
 
+.ifdef Probotector
+    ; !(UNUSED) duplicated level_7_supertile_data from bank a
+    ; probably a leftover artifact of the build system
+    ; can be safely removed and used for other purposes
+    .incbin "assets/chr_rom/unused_remnant_00.bin"
+.endif
+
 ; end of bank
-; unused #$0 bytes out of #$2,000 bytes total (100% full)
-; unused 0 bytes out of 8,192 bytes total (100% full)
+; unused #$2b2 bytes out of #$2,000 bytes total (97.68% full)
+; unused 690 bytes out of 8,192 bytes total (97.68% full)
 bank_2_unused_space:
