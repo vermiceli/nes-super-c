@@ -5512,7 +5512,7 @@ landing_y_incline_adj_tbl:
     .byte $f0 ; #$0a - player on negative incline (most of time)
     .byte $10 ; #$0b - player on negative incline (start)
 
-; next y offset to use when reading
+; next Y offset to use when reading
 landing_y_incline_off_tbl:
     .byte $00 ; #$06 -> exit
     .byte $08 ; #$07 -> #$08

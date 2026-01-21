@@ -230,7 +230,7 @@ wall_cannon_set_supertiles:
     lda wall_cannon_2nd_supertile_tbl,y    ; load second supertile offset
     sta $0c                                ; store second supertile offset
     lda wall_cannon_1st_supertile_tbl,y    ; load first supertile offset
-    ldy #$10                               ; x offset = #$08, y offset = #$18 (one half supertile below)
+    ldy #$10                               ; X offset = #$08, Y offset = #$18 (one half supertile below)
     jsr load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     lda #$01
     rts
@@ -433,26 +433,26 @@ set_helicopter_turret_vars:
     and #$07                           ; strip to just the 'offset' that defines the turret or bay
     asl                                ; double since each entry is #$02 bytes
     tay                                ; transfer to offset register
-    lda helicopter_turret_bay_offset,y ; load turret/bay y offset
-    sta $08                            ; store turret/bay y offset in $08
+    lda helicopter_turret_bay_offset,y ; load turret/bay Y offset
+    sta $08                            ; store turret/bay Y offset in $08
     asl                                ; push offset direction bit to carry
-    lda #$00                           ; assume y offset is downward
-    bcc @continue_x                    ; branch if y offset is down
-    lda #$ff                           ; y offset upward (I don't think ever happens)
+    lda #$00                           ; assume Y offset is downward
+    bcc @continue_x                    ; branch if Y offset is down
+    lda #$ff                           ; Y offset upward (I don't think ever happens)
 
 @continue_x:
     sta $0a                              ; store offset direction in $0a (0 = down, #$ff = up)
-    lda helicopter_turret_bay_offset+1,y ; load turret/bay x offset
-    sta $09                              ; store turret/bay x offset
+    lda helicopter_turret_bay_offset+1,y ; load turret/bay X offset
+    sta $09                              ; store turret/bay X offset
     asl                                  ; push offset direction bit to carry
-    lda #$00                             ; assume x offset is to the right
-    bcc @continue                        ; branch if x offset is to the right
+    lda #$00                             ; assume X offset is to the right
+    bcc @continue                        ; branch if X offset is to the right
     lda #$ff                             ; offset direction to left
 
 @continue:
     sta $0b           ; store offset direction (0 = right, #$ff = left)
     ldy ENEMY_VAR_5,x ; load helicopter core slot index
-    lda $09           ; load turret/bay x offset
+    lda $09           ; load turret/bay X offset
     clc               ; clear carry in preparation for addition
     adc ENEMY_X_POS,y ; add to helicopter core X position
     sta ENEMY_X_POS,x ; update turret/bay X position based on offset from core location
@@ -462,11 +462,11 @@ set_helicopter_turret_vars:
                       ; adds 1 if direction is left and off screen the left (#$ff + #$00 + no carry == 1)
     sta ENEMY_VAR_7,x ; set number of off-screen turrets (x-axis)
     bne @clear_sprite ; branch turret is off-screen to hide sprite
-    lda $08           ; turret on screen, load turret/bay y offset
+    lda $08           ; turret on screen, load turret/bay Y offset
     clc               ; clear carry in preparation for addition
     adc ENEMY_Y_POS,y ; add to helicopter core Y position
     sta ENEMY_Y_POS,x ; update turret/bay Y position based on offset from core location
-    lda $0a           ; load y offset direction (0 = down, 1 = up)
+    lda $0a           ; load Y offset direction (0 = down, 1 = up)
                       ; dir + num_offscreen_turrets + carry
     adc ENEMY_VAR_6,y ; add 1 if direction is down and off screen to the bottom (#$00 + #$00 + carry == 1)
                       ; adds 1 if direction is up and off screen to the top (#$ff + #$01 + no carry == 1)
@@ -477,7 +477,7 @@ set_helicopter_turret_vars:
 @clear_sprite:
     jmp clear_enemy_sprite
 
-; y offset, then x offset from helicopter core position
+; Y offset, then X offset from helicopter core position
 helicopter_turret_bay_offset:
     .ifdef Probotector
         .byte $02,$e0  ; helicopter turret 0 (-48, 2)
@@ -2151,7 +2151,7 @@ grass_covered_turret_anim_y:
                                                 ; !(OBS) this should never happen because this method is never called until
                                                 ; activated, and player can't scroll left, only right
     lda grass_covered_turret_supertiles_tbl,y
-    ldy #$01                                    ; x offset = #$18, y offset = #$08 (supertile to the right)
+    ldy #$01                                    ; X offset = #$18, Y offset = #$08 (supertile to the right)
     jsr load_banks_update_enemy_supertiles      ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     lda #$01
     rts
@@ -2288,7 +2288,7 @@ ground_mortar_anim_y:
     lda ground_mortar_supertiles_tbl+1,y
     sta $0c
     lda ground_mortar_supertiles_tbl,y
-    ldy #$10                               ; x offset = #$08, y offset = #$18 (one half supertile below)
+    ldy #$10                               ; X offset = #$08, Y offset = #$18 (one half supertile below)
     jmp load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
 
 ground_mortar_supertiles_tbl:
@@ -3506,7 +3506,7 @@ robot_spider_bg_tiles_ptr_tbl:
     .addr robot_spider_bg_tiles_00 ; frame #$08
     .addr robot_spider_bg_tiles_11 ; frame #$08
 
-; byte 0 = x offset
+; byte 0 = X offset
 robot_spider_bg_tiles_00:
     .byte $d8,$f8,$05,$0d,$16,$20,$36,$3a,$e0,$e8,$07,$01,$05,$0e,$17,$21
     .byte $37,$3b,$e8,$e8,$08,$02,$06,$0f,$18,$22,$38,$3c,$3e,$f0,$f0,$07

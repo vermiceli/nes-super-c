@@ -76,7 +76,7 @@ Normal sprite
 first byte is size of sprite
 then read from end to front
 
-if byte is negative, after adding x offset, if not on right half of screen, then don't draw sprite byte (see @skip_sprite)
+if byte is negative, after adding X offset, if not on right half of screen, then don't draw sprite byte (see @skip_sprite)
 
 example
 sprite byte x is #$fc (-4)

@@ -164,7 +164,7 @@ alien_mouth_routine_00:
     tay                         ; transfer to offset register
     lda ENEMY_Y_POS,x           ; load enemy's Y position
     clc                         ; clear carry in preparation for addition
-    adc alien_mouth_y_adj_tbl,y ; add y offset amount
+    adc alien_mouth_y_adj_tbl,y ; add Y offset amount
     sta ENEMY_Y_POS,x           ; store new Y position
     lda ENEMY_X_POS,x           ; load enemy's X position
     sec                         ; set carry flag in preparation for subtraction
@@ -291,7 +291,7 @@ alien_mouth_draw_supertiles:
     sta $0c                                ; store in $0c for use by load_banks_update_enemy_supertiles
     iny                                    ; increment read offset
     lda ($08),y                            ; load second supertile index (offset into level_8_supertile_data)
-    ldy #$e0                               ; x offset = #$08, y offset = #$e8 (one supertile above)
+    ldy #$e0                               ; X offset = #$08, Y offset = #$e8 (one supertile above)
     jsr load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     lda #$01                               ; !(HUH) not sure why used, clears zero flag
     rts
@@ -1540,7 +1540,7 @@ falling_rubble_routine_00:
                                            ; load amount to add to initial Y position
     asl
     asl
-    asl                                    ; triple amount below initial y offset
+    asl                                    ; triple amount below initial Y offset
     adc #$24
     sta ENEMY_Y_POS,x                      ; set initial Y position
     ldy ENEMY_VAR_1,x                      ; load initial X position offset

@@ -2097,12 +2097,12 @@ rack_turret_routine_01:
     ldy ENEMY_VAR_2,x                     ; load enemy X velocity index (0 = -0.5, 1 = 0.5)
     lda ENEMY_Y_POS,x                     ; load enemy's Y position
     clc                                   ; clear carry in preparation for addition
-    adc rack_turret_bullet_y_offset_tbl,y ; add enemy y offset to get bullet initial Y position
+    adc rack_turret_bullet_y_offset_tbl,y ; add enemy Y offset to get bullet initial Y position
     sta $08                               ; set bullet creation Y position
     lda ENEMY_X_POS,x                     ; load enemy's X position
     clc                                   ; clear carry in preparation for addition
-    adc rack_turret_bullet_x_offset_tbl,y ; add enemy y offset to get bullet initial X position
-    sta $09                               ; set bullet creation x point
+    adc rack_turret_bullet_x_offset_tbl,y ; add enemy X offset to get bullet initial X position
+    sta $09                               ; set bullet creation X point
     ldy ENEMY_VAR_3,x                     ; load player index of player to target (0 = p1, 1 = p2)
     sty $0a                               ; set player index of player to target for fire_bullet_at_player_1x_speed
     lda ENEMY_Y_POS,x                     ; load enemy's Y position

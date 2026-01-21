@@ -603,7 +603,7 @@ storage_bay_set_supertile:
     lda storage_bay_supertile_tbl+1,y      ; load second supertile index
     sta $0c                                ; set second supertile index (bottom)
     lda storage_bay_supertile_tbl,y        ; load first supertile index
-    ldy #$1f                               ; x offset = -8, y offset = #$18 (one half supertile below)
+    ldy #$1f                               ; X offset = -8, Y offset = #$18 (one half supertile below)
     jmp load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
 
 storage_bay_supertile_tbl:
@@ -1838,7 +1838,7 @@ calc_mouth_pit_location:
     eor #$01                         ; player is in game over (or p2 was checked and it's a 1 player game)
     tay                              ; select other player
 
-; check if player X position + x offset in center 75% of screen
+; check if player X position + X offset in center 75% of screen
 @check_x:
     lda PLAYER_SPRITE_X_POS,y ; load X position of random non-game over player
     clc                       ; clear carry in preparation for addition
@@ -1848,7 +1848,7 @@ calc_mouth_pit_location:
     cmp #$e0
     bcc @check_y              ; branch to move to y if result is in center 75% of screen
 
-; player X position + x offset was on edge of screen, use subtraction instead
+; player X position + X offset was on edge of screen, use subtraction instead
 @new_x_test:
     lda #$00
     sec                       ; set carry flag in preparation for subtraction
@@ -1856,7 +1856,7 @@ calc_mouth_pit_location:
     clc                       ; clear carry in preparation for addition
     adc PLAYER_SPRITE_X_POS,y ; subtract x region from player X position
 
-; check if player Y position + y offset in center 75% of screen
+; check if player Y position + Y offset in center 75% of screen
 @check_y:
     and #$e0
     sta $09                   ; store x region for mouth pit
@@ -1868,11 +1868,11 @@ calc_mouth_pit_location:
     cmp #$38
     bcs @continue             ; branch if result is in y region 21.875% to 87.5% of screen
 
-; player Y position + y offset was on edge of screen, use subtraction instead
+; player Y position + Y offset was on edge of screen, use subtraction instead
 @new_y_test:
     lda PLAYER_SPRITE_Y_POS,y
     sec                       ; set carry flag in preparation for subtraction
-    sbc $08                   ; subtract y offset from random non-game over player Y pos
+    sbc $08                   ; subtract Y offset from random non-game over player Y pos
 
 @continue:
     jsr add_y_scroll     ; add vertical scroll to Y position
@@ -2624,8 +2624,8 @@ alien_ladybug_invert_direction:
 ;  * x - enemy offset slot
 ; output
 ;  * $0a - targeting options
-;  * $0b - x point to target
-;  * $0c - y point to target
+;  * $0b - X point to target
+;  * $0c - Y point to target
 alien_ladybug_set_target_p:
     jsr alien_ladybug_random_down_target ; target random point ($0b, $0c) on bottom of screen
     lda ENEMY_VAR_4,x                    ; load targeting options
@@ -3005,7 +3005,7 @@ boss_baby_alien_ladybug_routine_01:
     rts
 
 baby_alien_ladybug_check_collision:
-    lda #$08                    ; assume moving right with #$08 x offset
+    lda #$08                    ; assume moving right with #$08 X offset
     ldy ENEMY_X_VELOCITY_FAST,x ; load enemy's fast X velocity
     bpl @continue               ; branch if moving right
     lda #$f8                    ; moving left, will subtract #$08

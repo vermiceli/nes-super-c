@@ -79,9 +79,9 @@ load_hud_sprites_to_oam_buffer:
     lda $02                     ; load sprite attributes
     sta OAMDMA_CPU_BUFFER+2,x   ; write the tile attributes (blue palette for p1, red palette for p2)
     lsr                         ; set carry flag if on player 2
-    lda sprite_medal_x_offset,y ; load x offset based on sprite number
+    lda sprite_medal_x_offset,y ; load X offset based on sprite number
     bcc @continue               ; branch for player 1
-    adc #$af                    ; add #$af to sprite x offset if on player 2 (see previous lsr)
+    adc #$af                    ; add #$af to sprite X offset if on player 2 (see previous lsr)
     clc
 
 @continue:
@@ -104,7 +104,7 @@ hud_sprites:
     .byte $8d,$8d,$8d,$8d ; medals
     .byte $83,$85,$87,$89 ; game over text
 
-; x offsets to where each sprite should go
+; X offsets to where each sprite should go
 sprite_medal_x_offset:
     .byte $10,$1c,$28,$34
     .byte $10,$1c,$28,$34
@@ -151,7 +151,7 @@ load_player_metasprite_to_oam_buffer:
 
 @write_sprite:
     clc                       ; clear carry in preparation for addition
-    adc $01                   ; add SPRITE_Y_POS to sprite y offset (sets tile's absolute position)
+    adc $01                   ; add SPRITE_Y_POS to sprite Y offset (sets tile's absolute position)
     sta OAMDMA_CPU_BUFFER,x   ; write Y position to CPU buffer
     iny                       ; increment player_sprite_xx read offset
     lda ($08),y

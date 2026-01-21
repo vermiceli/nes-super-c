@@ -4728,7 +4728,7 @@ init_level_vars:
     sta INCLINE_BG_COLLISION_FLAG
     lda level_overhead_flag_tbl,y
     sta OVERHEAD_FLAG                      ; 0 = side view, 1 = overhead view
-    lda level_y_center_tbl,y               ; load y point at level in which to cause scroll
+    lda level_y_center_tbl,y               ; load Y point at level in which to cause scroll
     sta LEVEL_Y_CENTER
     lda level_enemy_gen_ctrl_tbl,y
     sta ENEMY_GEN_CTRL
@@ -4760,7 +4760,7 @@ level_incline_bg_collision_tbl:
 level_overhead_flag_tbl:
     .byte $00,$01,$00,$00,$00,$01,$00,$00
 
-; y point at level in which to cause scroll
+; Y point at level in which to cause scroll
 level_y_center_tbl:
     .byte $80,$d0,$a0,$a0,$80,$d0,$80,$a0
 

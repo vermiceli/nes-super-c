@@ -332,7 +332,7 @@ test_player_fg_collision:
     tay                                ; y = PLAYER_ACTION_STATE + ENEMY_COLLISION_INDEX + 1
                                        ; this is the row within collision_box_tbl where the collision configuration is
     lda PLAYER_SPRITE_X_POS,x          ; load player X position
-    sbc collision_box_tbl+1,y          ; subtract collision box center x offset (since value is negative, effectively adding)
+    sbc collision_box_tbl+1,y          ; subtract collision box center X offset (since value is negative, effectively adding)
                                        ; this is the amount of x distance on the left side of the enemy to consider collision
     sbc $05                            ; PLAYER_SPRITE_X_POS - collision_box_center_x_offset - ENEMY_X_POS
     cmp collision_box_tbl+3,y          ; see if player is within collision box width
@@ -341,7 +341,7 @@ test_player_fg_collision:
                                        ; when approaching from the right value will eventually equal width
     bcs @exit                          ; exit if player-enemy is not within the collision box width
     lda PLAYER_SPRITE_Y_POS,x          ; player in collision box width, check collision box height
-    sbc collision_box_tbl,y            ; subtract collision box center y offset
+    sbc collision_box_tbl,y            ; subtract collision box center Y offset
     sbc $06                            ; (PLAYER_SPRITE_Y_POS + collision_box_center_y_offset) - ENEMY_Y_POS
     cmp collision_box_tbl+2,y          ; see if player is within collision box height
     bcc @player_in_enemy_collision_box ; branch if player within collision box (both width and height)
@@ -367,7 +367,7 @@ test_player_fg_collision:
     bcs @exit2                  ; exit if not testing player collision
     lda PLAYER_SPRITE_X_POS,y   ; testing player enemy collision, load player X position
     sec                         ; set carry flag in preparation for subtraction
-    sbc $05                     ; subtract collision point x offset from player position
+    sbc $05                     ; subtract collision point X offset from player position
     bcs @handle_collision
     eor #$ff
     adc #$01
@@ -464,7 +464,7 @@ test_player_bullet_collision:
     tay                                 ; y = PLAYER_BULLET_COLLISION_CODE + ENEMY_COLLISION_INDEX + 1
                                         ; y now specifies which row in collision_box_tbl to use
     lda PLAYER_BULLET_X_POS,x           ; load player bullet X position
-    sbc collision_box_tbl+1,y           ; subtract collision box center x offset (since value is negative, effectively adding)
+    sbc collision_box_tbl+1,y           ; subtract collision box center X offset (since value is negative, effectively adding)
                                         ; this is the amount of x distance on the left side of the enemy to consider collision
     sbc $05                             ; PLAYER_BULLET_X_POS - collision_box_center_x_offset - ENEMY_X_POS
     cmp collision_box_tbl+3,y           ; see if bullet is within collision box width
@@ -848,8 +848,8 @@ enemy_routine_explosions:
     jsr try_create_enemy_from_existing    ; create enemy explosion
     bcc standard_explosion_exit           ; branch if unable to create enemy explosion
     ldy ENEMY_VAR_4,x                     ; load current explosion index
-    lda standard_explosion_y_offset_tbl,y ; load y offset from enemy position
-    adc ENEMY_Y_POS,x                     ; add y offset to enemy position
+    lda standard_explosion_y_offset_tbl,y ; load Y offset from enemy position
+    adc ENEMY_Y_POS,x                     ; add Y offset to enemy position
     sta $08                               ; store Y position in $08
     ror                                   ; move overflow flag to bit 7, bit 0 to carry
     eor standard_explosion_y_offset_tbl,y ; checking if bit 7 of offset is set and no carry
@@ -857,8 +857,8 @@ enemy_routine_explosions:
                                           ; this checks if offscreen
     bmi clear_created_enemy_sprite        ; branch if off screen below or above
                                           ; set explosion sprite to #$00 (not visible)
-    lda standard_explosion_x_offset_tbl,y ; load x offset from enemy position
-    adc ENEMY_X_POS,x                     ; add x offset from enemy position
+    lda standard_explosion_x_offset_tbl,y ; load X offset from enemy position
+    adc ENEMY_X_POS,x                     ; add X offset from enemy position
     sta $09                               ; store Y position in $09
     ror
     eor standard_explosion_x_offset_tbl,y ; checking if bit 7 of offset is set and no carry
@@ -1603,12 +1603,12 @@ bg_collision_exit_clear:
     rts
 
 ; input
-;  * a - x offset from enemy for bg collision detection
+;  * a - X offset from enemy for bg collision detection
 ;  * x - enemy slot index
 ; output
 ;  * a - 0 = no wall collision, 1 = wall collision
 check_bg_wall_collision:
-    sta $00                         ; store x offset from enemy X position
+    sta $00                         ; store X offset from enemy X position
     clc
     adc ENEMY_X_POS,x               ; add X offset
     sta $01                         ; store X position to test for bg collision
@@ -1745,14 +1745,14 @@ load_banks_update_supertiles:
     asl
     asl                                                 ; shift low nibble to high (x offset)
     ora #$08                                            ; set bit 3
-    sta $0e                                             ; set second supertile x offset
+    sta $0e                                             ; set second supertile X offset
     lda $0d                                             ; load second supertile location adjustment amount byte
     and #$f0                                            ; keep high nibble (y offset)
     ora #$08                                            ; set bit 3
     clc                                                 ; clear carry in preparation for addition
     adc ENEMY_Y_POS,x                                   ; add y adjustment to enemy's Y position
     tay                                                 ; transfer to y for parameter to update supertile call
-    lda $0e                                             ; load second supertile x offset
+    lda $0e                                             ; load second supertile X offset
     clc                                                 ; clear carry in preparation for addition
     adc ENEMY_X_POS,x                                   ; add x adjustment to enemy's X position
     jsr load_banks_update_supertile_and_palette         ; update second nametable supertile (4x4 tile) and its palette at (a, y)
@@ -1776,8 +1776,8 @@ update_nametable_square_for_enemy:
 ; update 2x2 nametable tiles at position (a,y) with tiles specified by $08
 ; used by collapsible ceiling tile to set nametable to 2x2 black square
 ; input
-;  * a - x offset
-;  * y - y offset
+;  * a - X offset
+;  * y - Y offset
 ;  * $08 - index into nametable_square_update_tbl
 ; output
 ;  * carry - set when unable to update graphics buffer
@@ -2902,7 +2902,7 @@ enemy_overhead_bullet_routine_ptr_tbl:
     .addr enemy_overhead_bullet_routine_04 ; show bullet explosion, then remove enemy
 
 ; flash palette, check for bg collision
-; very similar to enemy_bullet_routine_02, but doesn't have y offset for bg collision check
+; very similar to enemy_bullet_routine_02, but doesn't have Y offset for bg collision check
 enemy_overhead_bullet_routine_02:
     inc ENEMY_DELAY,x
     lda ENEMY_DELAY,x
@@ -2913,7 +2913,7 @@ enemy_overhead_bullet_routine_02:
     jsr apply_velocity              ; apply enemy's velocity to its position, removing enemy if off-screen
     dec ENEMY_FIRING_DELAY,x        ; decrement bullet destroy delay
     beq @adv_routine                ; branch if delay elapsed to advance routine to enemy_overhead_bullet_routine_03 (destroy bullet)
-    lda #$00                        ; destroy delay hasn't elapsed, check bullet bg collision with no y offset
+    lda #$00                        ; destroy delay hasn't elapsed, check bullet bg collision with no Y offset
     jsr get_enemy_bg_collision_code ; test background collision
     tay                             ; transfer collision code to y
     lda bg_collision_test_tbl,y     ; load whether or not collision code should destroy bullet
@@ -3623,7 +3623,7 @@ soldier_fire_bullet:
     bcc @exit                          ; exit if unable to create bullet
     ldy ENEMY_VAR_4,x                  ; load whether soldier is crouching or not
                                        ; 1 = soldier fires standing up, 0 = crouches to fire
-    lda soldier_bullet_offset_tbl+1,y  ; load y offset of soldier's bullet
+    lda soldier_bullet_offset_tbl+1,y  ; load Y offset of soldier's bullet
     clc                                ; clear carry in preparation for addition
     adc ENEMY_Y_POS,x                  ; add to soldier y location
     sta $08                            ; set bullet initial Y position
@@ -3637,7 +3637,7 @@ soldier_fire_bullet:
     lda ENEMY_X_POS,x                  ; load enemy's X position
     ldx $11                            ; load created bullet enemy slot
     clc                                ; clear carry in preparation for addition
-    adc soldier_bullet_offset_tbl,y    ; add bullet initial x offset from soldier
+    adc soldier_bullet_offset_tbl,y    ; add bullet initial X offset from soldier
     sta ENEMY_X_POS,x                  ; set bullet X position
     lda $08
     sta ENEMY_Y_POS,x                  ; set bullet Y position
@@ -3663,13 +3663,13 @@ soldier_bullet_offset_tbl:
 
 ; enemy type #$04
 weapon_box_routine_ptr_tbl:
-    .addr weapon_box_routine_00      ; disable collision, set y offset, set frame, set delay
+    .addr weapon_box_routine_00      ; disable collision, set Y offset, set frame, set delay
     .addr weapon_box_routine_01      ; animate opening and closing
     .addr weapon_box_routine_02      ; enemy destroyed routine, set destroyed supertile, create weapon item
     .addr enemy_explosion_routine_01 ; animate explosion sequence
     .addr enemy_explosion_routine_03 ; mark destroyed, remove enemy
 
-; disable collision, set y offset, set frame, set delay
+; disable collision, set Y offset, set frame, set delay
 weapon_box_routine_00:
     lda #$9d
     sta ENEMY_DESTROY_ATTRS,x ; set explosion type, collision box, disable collision
@@ -4139,18 +4139,18 @@ sniper_set_bullet_pos:
     asl                     ; push horizontal sprite flip flag to carry
     lda ENEMY_FRAME,x       ; load which sprite the sniper is
     bcc @continue           ; branch if not flipping sprite horizontally
-    adc #$02                ; sniper sprite flipped horizontally, add 3 to bullet y offset amount
+    adc #$02                ; sniper sprite flipped horizontally, add 3 to bullet Y offset amount
 
 @continue:
     tay                              ; transfer to offset register
     ldx $11                          ; load newly created bullet enemy slot
     lda ENEMY_Y_POS,x                ; load bullet Y position
     clc                              ; clear carry in preparation for addition
-    adc sniper_bullet_y_offset_tbl,y ; add y offset based on sniper facing direction
+    adc sniper_bullet_y_offset_tbl,y ; add Y offset based on sniper facing direction
     sta ENEMY_Y_POS,x                ; update bullet Y position
     lda ENEMY_X_POS,x                ; load enemy's X position
     clc                              ; clear carry in preparation for addition
-    adc sniper_bullet_x_offset_tbl,y ; add x offset based on sniper facing direction
+    adc sniper_bullet_x_offset_tbl,y ; add X offset based on sniper facing direction
     sta ENEMY_X_POS,x                ; update bullet X position
     ldx ENEMY_CURRENT_SLOT           ; restore x to sniper enemy slot index
 
@@ -4460,7 +4460,7 @@ gray_turret_routine_02:
     adc ENEMY_FRAME,x                          ; add base index (0 = right or 2 = left) with frame offset
     tay                                        ; transfer to offset register
     lda gray_turret_activation_supertile_tbl,y ; load activating rotating gun supertile
-    ldy #$10                                   ; x offset = #$08, y offset = #$18 (one half supertile below)
+    ldy #$10                                   ; X offset = #$08, Y offset = #$18 (one half supertile below)
     jsr load_banks_update_enemy_supertiles     ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     lda #$01
     bcs @set_delay_exit                        ; exit if unable to update supertile to try again next frame
@@ -4569,7 +4569,7 @@ gray_turret_routine_05:
 @set_supertiles:
     sta $0c                                ; set second supertile offset (ground destroyed)
     lda #$00                               ; load blank supertile (gray turret destroyed)
-    ldy #$10                               ; x offset = #$08, y offset = #$18 (one half supertile below)
+    ldy #$10                               ; X offset = #$08, Y offset = #$18 (one half supertile below)
     jsr load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     bcs @exit                              ; branch if unable to set supertile to try again next frame
     jmp enemy_explosion_routine_00         ; set empty sprite, play optional enemy destroyed sound, disable collisions
@@ -4755,7 +4755,7 @@ enemy_door_routine_06:
     beq @begin_explosions                  ; branch if finished updated background supertiles
     sta $0c                                ; store supertile index for load_banks_update_enemy_supertiles
     lda door_destroyed_supertile_tbl2,y    ; load second supertile to be used for destroyed door
-    ldy #$01                               ; x offset = #$18, y offset = #$08 (supertile to the right)
+    ldy #$01                               ; X offset = #$18, Y offset = #$08 (supertile to the right)
     jsr load_banks_update_enemy_supertiles ; update 2 supertiles (a and $0c) at enemy position and location offset encoded in y
     bcs @exit
 
@@ -5331,8 +5331,8 @@ update_nametable_exit:
 
 ; update 2x2 nametable tiles at position (a,y) with tiles specified by $08
 ; input
-;  * a - x offset
-;  * y - y offset
+;  * a - X offset
+;  * y - Y offset
 ;  * $08 - index into nametable_square_update_tbl
 ; output
 ;  * carry - set when unable to update graphics buffer

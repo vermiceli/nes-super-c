@@ -479,7 +479,7 @@ ENEMY_DIFFICULTY:
     .res 1
 
 ; $53 - player number of lives, #$00 is last life
-;  * on game over stays #$00, but P1_GAME_OVER_STATUS becomes #$01
+;  * on game over stays #$00, but PLAYER_GAME_OVER_STATUS becomes #$01
 ;  * maximum number of lives that can be properly displayed in level screen
 ;    ("REST") is #$63 (99 in decimal)
 ; can be thought of as the number of medals shown in the player HUD
@@ -490,7 +490,7 @@ SOUND_MENU_INDEX:
     .res 1
 
 ; $54 - player 2 number of lives, #$00 is last life
-;  * on game over stays #$00, but P1_GAME_OVER_STATUS becomes #$01
+;  * on game over stays #$00, but PLAYER_GAME_OVER_STATUS becomes #$01
 PLAYER_2_NUM_LIVES:
 
 ; $54 - sound menu scroll
@@ -672,7 +672,6 @@ Y_SCROLL_SPEED:
 ; $73 - the nametable row number of the top of the visible screen
 ; used for drawing, compare to Y_SCROLL, which stores PPU vertical scroll
 ; When wraps LEVEL_Y_SCREEN is updated
-; also, horizontal scroll of bottom layer of clouds during end credits
 ; on level 2:
 ;  * starts at #$00, after first scroll initialized to #$1c
 ;    decrements by 2 as scroll up
@@ -752,10 +751,10 @@ ELEVATOR_FAST_VEL:
 INTRO_ANIM_INDEX:
     .res 1
 
-; $81 - elevator fractional velocity accumulator
+; $81 - intro animation delay timer
 INTRO_ANIM_DELAY:
 
-; $81 - intro animation delay timer
+; $81 - elevator fractional velocity accumulator
 ELEVATOR_VEL_ACCUM:
     .res 1
 
@@ -786,8 +785,8 @@ INTRO_ANIM_X_SCROLL:
     .res 1
 
 ; $84 - vertical auto-scroll mode. Used in conjunction with
-; Y_AUTOSCROLL_STOP_SCREEN andY_AUTOSCROLL_STOP_POS to auto-scroll to a position
-; on a specific screen.
+; Y_AUTOSCROLL_STOP_SCREEN and Y_AUTOSCROLL_STOP_POS to auto-scroll to a
+; position on a specific screen.
 ;  * #$00 (mode 0): vertical auto-scroll (up or down) until checkpoint
 ;  * #$01 (mode 1): vertically auto-scroll up to checkpoint while player(s) in
 ;    top 37.5% of screen. As used in the game, this is only for level 2 overhead
@@ -914,7 +913,7 @@ END_LEVEL_FADE_DELAY:
 ACTIVE_PLAYERS_FLAG:
     .res 1
 
-; $97 - y point at level in which to cause scroll
+; $97 - Y point at level in which to cause scroll
 LEVEL_Y_CENTER:
     .res 1
 
@@ -932,7 +931,7 @@ Y_AUTOSCROLL_STOP_POS:
 ENEMY_GEN_NUM:
     .res 1
 
-; $9a - used to adjust Y velocity with player collides with the stomping ceiling
+; $9a - used to adjust Y velocity when player collides with the stomping ceiling
 PLAYER_Y_VEL_BG_COLLISION_ADJ:
     .res 1
 
@@ -952,7 +951,7 @@ Y_AUTOSCROLL_STOP_SCREEN:
 .res 2
 
 ; $9f - level 2 - the number of tanks on screen. Used to prevent scroll until
-; tank(s) is/are destroyed
+; all on-screen tanks are destroyed
 NUM_TANKS:
 
 ; $9f - level 4 - used to time changing pattern table tiles for elevator so that
@@ -977,7 +976,7 @@ PLAYER_STATE:
 
 ; $a2 - variable to keep track of fractional velocity. PLAYER_Y_FRACT_VELOCITY
 ; is added to PLAYER_Y_ACCUM every frame.  Whenever PLAYER_Y_ACCUM wraps past
-; #$ff, the carry flag is set which then adds 1 additional y unit when adding
+; #$ff, the carry flag is set which then adds 1 additional Y unit when adding
 ; PLAYER_Y_FRACT_VELOCITY to the player position.
 ; this value isn't cleared between jumps
 ; another term for this variable is PLAYER_JUMP_COEFFICIENT
@@ -987,13 +986,14 @@ PLAYER_Y_ACCUM:
 
 ; $a4 - variable to keep track of fractional velocity. PLAYER_X_FRACT_VELOCITY
 ; is added to PLAYER_X_ACCUM every frame.  Whenever PLAYER_X_ACCUM wraps past
-; 255, the carry flag is set which then adds 1 additional x unit when adding
+; 255, the carry flag is set which then adds 1 additional X unit when adding
 ; PLAYER_X_FRACT_VELOCITY to the player position.
 ; $a5 - player 2
 PLAYER_X_ACCUM:
     .res 2
 
-; $a6 - player attribute
+; $a6 - player's fractional Y velocity
+; $a7 - player 2
 PLAYER_Y_FRACT_VELOCITY:
     .res 2
 
@@ -1177,7 +1177,7 @@ PLAYER_OVERHEAD_DIR:
 
 ; $d2 - end of level auto movement first of 2 checkpoints
 ;  * #$00 - not reached
-;  * #$01 = reached
+;  * #$01 - reached
 ; $d3 - player 2
 PLAYER_AUTO_MOVE_CHECKPOINT:
     .res 2
@@ -1199,9 +1199,9 @@ BOSS_DEFEATED_PLAYER_ANIM_SOUND:
 ; $d8 - when calculating X and Y scroll, used to know if should apply scroll or
 ; apply velocity to player position when player past center of screen.
 ; set twice per frame (for X and Y logic)
-;  * 0 = should scroll when player is past the center of the screen instead of
+;  * 0 - should scroll when player is past the center of the screen instead of
 ;    applying velocity.
-;  * 1 = 2 player game and player cannot be the cause of scroll.  For X scroll
+;  * 1 - 2 player game and player cannot be the cause of scroll.  For X scroll
 ;    this means the player is on the left of the other player.  The player can
 ;    be the cause of blocking scroll, e.g. the are too far to the left
 ;    preventing a right scroll
@@ -1610,12 +1610,12 @@ SOUND_LEN_TIMERS_HIGH:
 
 ; $015b - the current sound slot [#$00-#$05], slots are in priority order
 ; (highest priority to lowest priority)
-;  * #$00 = pulse 1 channel
-;  * #$01 = pulse 2 channel
-;  * #$02 = triangle channel
-;  * #$03 = noise and dmc channel
-;  * #$04 = pulse 1
-;  * #$05 = noise channel
+;  * #$00 -  pulse 1 channel
+;  * #$01 -  pulse 2 channel
+;  * #$02 -  triangle channel
+;  * #$03 -  noise and dmc channel
+;  * #$04 -  pulse 1
+;  * #$05 -  noise channel
 ; $0155 for Probotector
 SOUND_CURRENT_SLOT:
     .res 1
@@ -1658,7 +1658,7 @@ SOUND_EFFECT_VOLUME_CONTINUED:
 
 ; $016a - the value to merge with the high nibble before storing in APU channel
 ; config register, compare to SOUND_CFG_HIGH_B
-; which config is used is basd on VIBRATO_CTRL flag bit 5
+; which config is used is based on VIBRATO_CTRL flag bit 5
 ; #$06 bytes, one for each sound slot
 ; $0164 for Probotector
 SOUND_CFG_HIGH_A:
@@ -1675,6 +1675,7 @@ PAUSE_STATE_01:
 SOUND_FRAME_SKIP_COUNT:
     .res 1
 
+; $016e
 ; continuation of SOUND_CFG_HIGH_A
 .res 2
 
@@ -1839,7 +1840,7 @@ SOUND_PITCH_READ_LEN:
 
 ; $01bc - the value to merge with the high nibble before storing in APU channel
 ; config register, compare to SOUND_CFG_HIGH_A
-; which config is used is basd on VIBRATO_CTRL flag bit 5
+; which config is used is based on VIBRATO_CTRL flag bit 5
 ; $01b6 in Probotector
 SOUND_CFG_HIGH_B:
     .res 2
@@ -1993,7 +1994,7 @@ BG_COLLISION_DATA:
 SECOND_BG_COLLISION_DATA:
     .res 128
 
-; $0500 - sprites for player bullets (and intro screen cursor/logo sprite)
+; $0500 - sprite codes for player bullets (and intro screen cursor/logo sprite)
 SPRITES:
     .res 8
 
@@ -2004,7 +2005,7 @@ ENEMY_SPRITE:
 ; $0516 - !(UNUSED) probably reserved room for more enemies, max enemies is 14
 .res 2
 
-; $0518 - player sprites, references player_sprite_ptr_tbl
+; $0518 - player sprite codes, references player_sprite_ptr_tbl
 ; $0519 - player 2
 PLAYER_SPRITE:
     .res 2
@@ -2079,7 +2080,7 @@ PLAYER_SPRITE_ATTR:
     .res 2
 
 ; $0568 - the sprite codes to load for the bullet, eventually copied into
-; CPU_SPRITE_BUFFER
+; SPRITES
 ; first 8 bytes are for player 1, second 8 bytes for player 2
 PLAYER_BULLET_SPRITE_CODE:
     .res 16
@@ -2126,13 +2127,13 @@ PLAYER_BULLET_WEAPON_TYPE:
     .res 16
 
 ; $05c8 - an accumulator to keep track of PLAYER_BULLET_Y_VEL_FRACT being added
-; to itself have elapsed before adding 1 to PLAYER_BULLET_Y_POS
+; to itself before adding additional 1 to PLAYER_BULLET_Y_POS
 ; first 8 bytes are for player 1, second 8 bytes for player 2
 PLAYER_BULLET_Y_VEL_ACCUM:
     .res 16
 
 ; $05d8 - an accumulator to keep track of PLAYER_BULLET_X_VEL_FRACT being added
-; to itself have elapsed before adding 1 to PLAYER_BULLET_X_POS
+; to itself before adding additional 1 to PLAYER_BULLET_X_POS
 ; first 8 bytes are for player 1, second 8 bytes for player 2
 PLAYER_BULLET_X_VEL_ACCUM:
     .res 16
@@ -2210,14 +2211,14 @@ ENEMY_HP:
     .res 14
 
 ; $0684 - an accumulator to keep track of ENEMY_Y_VELOCITY_FRACT being added to
-; itself have elapsed before adding 1 to ENEMY_Y_POS
+; itself before adding additional 1 to ENEMY_Y_POS
 ; can be thought of as a variable to hold the accumulated fractional velocity
 ; until an overflow occurs
 ENEMY_Y_VEL_ACCUM:
     .res 14
 
 ; $0692 - an accumulator to keep track of ENEMY_X_VELOCITY_FRACT being added to
-; itself have elapsed before adding 1 to ENEMY_X_POS
+; itself before adding additional 1 to ENEMY_X_POS
 ; can be thought of as a variable to hold the accumulated fractional velocity
 ; until an overflow occurs
 ENEMY_X_VEL_ACCUM:
@@ -2361,7 +2362,7 @@ HI_SCORE_RESET_FLAG:
 
 ; $07ec - cheat code status
 ;  * 0 - cheat code not entered
-;  * 1 - 10 extra lives cheat code enteredsuccessfully
+;  * 1 - 10 extra lives cheat code entered successfully
 CHEAT_CODE_STATUS:
     .res 1
 
@@ -2408,7 +2409,7 @@ RIGHT_THIRD_QTR_CHR_BANK:
 RIGHT_FOURTH_QTR_CHR_BANK:
     .res 1
 
-; $07f6 - the PPU horizontal scroll x to use after an interrupt
+; $07f6 - the PPU horizontal scroll to use after an interrupt
 ; updating scroll during rendering does not update vertical scroll
 ; because changes to PPU t register will be ignored at the end of the line
 ; however, the second write does clear the write toggle
@@ -2431,10 +2432,10 @@ SPLIT_SCANLINE_IRQ_1:
 SPLIT_SCANLINE_IRQ_2:
     .res 1
 
-; $07fa - another SCANLINE_IRQ_1 that can be set during an irq
+; $07fa - another scanline IRQ that can be set during a scanline interrupt
 SPLIT_SCANLINE_IRQ_3:
     .res 1
 
-; $07fb - the PPU address low byte to use after an interrupt
+; $07fb - the PPU address to use after a scanline interrupt
 IRQ_HANDLER_PPUADDR:
     .res 2
