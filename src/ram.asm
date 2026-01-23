@@ -338,7 +338,7 @@ SUPERTILE_ATTRIBUTE_OVERRIDE:
 ; that table stores the structure of the level in terms of how the nametable
 ; screens are laid out horizontally and vertically.  Then after the width and
 ; height bytes, each entry represents a screen and is a pointer to
-; level_x_supertiles_screen_xx, which specifies the supretiles for the screen
+; level_x_supertiles_screen_xx, which specifies the supertiles for the screen
 LEVEL_SCREEN_LAYOUT:
     .res 2
 

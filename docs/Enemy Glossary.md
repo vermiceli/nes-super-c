@@ -677,8 +677,8 @@ One of four turrets on the Level 1 boss helicopter.
 
 ### 23 - Helicopter Bay
 
-Back at the back of the Level 1 boss helicopter that generats soldiers.  The bay
-is not harmed by bullets and destroyed when the
+Back at the back of the Level 1 boss helicopter that generates soldiers.  The
+bay is not harmed by bullets and destroyed when the
 [Helicopter Core](#21---helicopter-core) is destroyed.
 
 #### Attributes

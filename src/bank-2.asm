@@ -1,6 +1,6 @@
 ; NES Super C Disassembly - v1.01
 ; https://github.com/vermiceli/nes-super-c/
-; Bank 2 contains the enemy routines for Level 1 (Fort Firestorn) and Level 3
+; Bank 2 contains the enemy routines for Level 1 (Fort Firestorm) and Level 3
 ; (Jungle).
 ; * Enemy Type #$20 - Wall Cannon
 ; * Enemy Type #$22 - Helicopter Turret
@@ -995,7 +995,7 @@ helicopter_core_routine_01:
     sta LEFT_BOTTOM_CHR_HALF_BANK   ; set bank number of PPU $0800-$0fff (bottom half of left pattern table)
     ldy #$04                        ; helicopter enemies creation counter (4 turrets and 1 helicopter bay)
 
-; create helicotper turrets and helicopter bay
+; create helicopter turrets and helicopter bay
 @loop:
     sty $08
     lda helicopter_enemy_tbl,y         ; enemy type = #$22 or #$23 (helicopter turret or helicopter bay door)
@@ -1008,7 +1008,7 @@ helicopter_core_routine_01:
     bne @set_attrs                     ; continue to enemy configuration if not helicopter bay
     inc ENEMY_VAR_3,x                  ; increment number of turrets and helicopter bay
 
-; initialize helicotper turrets and helicopter bay
+; initialize helicopter turrets and helicopter bay
 @set_attrs:
     tya                    ; transfer offset number to a
     ldy $11                ; load enemy slot of created enemy

@@ -12,7 +12,7 @@ Each level uses different banks for their enemies and graphics.  As part of
 running the level, when necessary, PRG banks are swapped in and out.  This table
 shows which banks each level uses.
 
-For reference, this data is in the game in the following locaitons:
+For reference, this data is in the game in the following locations:
   * `level_bank_tbl`
   * `level_graphic_bank_tbl`
 

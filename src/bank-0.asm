@@ -4597,7 +4597,7 @@ end_graphic_code:
 graphic_data_ptr_tbl:
     .addr blank_nametables ; blank out entire nametable
     .addr graphic_data_01  ; intro screen nametable tiles
-    .addr graphic_data_02
+    .addr graphic_data_02  ; end of game credits mountains and clouds nametable data
 
 ; PPU address $2000 (nametable)
 ; clears nametable $2000 and $2c00 (with mirroring, this clears all nametables)

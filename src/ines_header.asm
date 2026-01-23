@@ -1,7 +1,7 @@
 ; Contra US Disassembly - v1.3
 ; https://github.com/vermiceli/nes-contra-us
 ; the 16 byte header prepended to the actual cartridge data that describes the
-; catridge.
+; cartridge.
 
 .segment "HEADER"
 

@@ -18,7 +18,7 @@ For the disassembly of _Contra_ see https://github.com/vermiceli/nes-contra-us/
 |-- build.bat - build script for Windows cmd (no PowerShell)
 |-- build.ps1 - recommended build script for Windows (PowerShell)
 |-- build.sh - bash build script for Linux/mac
-|-- contra.cfg - memory mapping of PRG banks used when building
+|-- superc.cfg - memory mapping of banks used when building
 |-- README.md
 |-- set_bytes.vbs - script used by build.bat to extract data from baserom.nes
 ```
@@ -51,6 +51,7 @@ assemble and link the 6502 assembly files.  Please install it and ensure the bin
 folder is added to your path.
 
 ## Instructions
+
 There are 3 build scripts in this repository. All of them do the same thing.  To
 build the resulting .nes rom file, simply execute the appropriate build script
 based on your environment.
@@ -72,6 +73,7 @@ based on your environment.
   environments with bash support (Git bash, WSL, etc.)
 
 ### Video Instructions
+
 If you prefer video build instructions, @jdsilva has published a video on
 YouTube called
 [Contra ROM Compiling Tutorial](https://www.youtube.com/watch?v=Sa1O3S5YK5U).
@@ -99,6 +101,7 @@ All sprites were captured and labeled for easy reference in
 [docs/sprite_library/README.md](./docs/sprite_library/README.md)
 
 # Probotector
+
 This repo can also produce a _Probotector II: Return of the Evil Forces_ rom
 file.  _Probotector_ is the PAL-specific variation of the _Super C_ (US) game.
 It is mostly identical except for different graphics.  For a full list of

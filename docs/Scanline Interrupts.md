@@ -79,7 +79,7 @@ happens to render the floor tiles.
 
 A simple scanline interrupt handler that changes left pattern table top half
 tiles (background tiles) from #$2c to #$30.  The left pattern table bottom half
-is updated, but it is set to the alreayd set value of #$2e.  This allows the
+is updated, but it is set to the already set value of #$2e.  This allows the
 area above the scanline to have the tiles for showing the skull (#2c), and the
 area below the scanline to have the tiles to animate the core (#$30).
 
