@@ -3269,13 +3269,18 @@ bullet_pos_dir_tbl:
     .byte $f5,$fa,$14,$42 ; flip horizontally
     .byte $f0,$fe,$18,$42 ; flip horizontally
 
-; clear destroyed bullets, copy bullet data to general sprite buffers
+; handles player bullets logic, then copies bullet data to general sprite
+; cpu buffers
+;  * times laser creation
+;  * destroy bullet if bg collision (or create child f flames if f weapon)
+;  * destroy bullet if travel too far (or create child f flames if f weapon)
+;  * apply bullet velocity
 ; copies half of all bullets, alternating every frame which half
 handle_player_bullets:
     ldx #$0f
 
 @loop:
-    jsr clear_bullet_if_destroyed ; set $13 to weapon type, then destroy the bullet
+    jsr handle_player_bullet ; set $13 to weapon type, then destroy the bullet
     dex
     bpl @loop
 
@@ -3305,11 +3310,16 @@ cp_bullet_to_sprite_buffers:
     bpl @loop
     rts
 
+; handles bullet logic
+;  * times laser creation
+;  * destroy bullet if bg collision (or create child f flames if f weapon)
+;  * destroy bullet if travel too far (or create child f flames if f weapon)
+;  * apply bullet velocity
 ; input
 ;  * x - player bullet index
 ; output
 ;  * $13 - weapon type (e.g. #$01 - Machine, #$02 - Spray)
-clear_bullet_if_destroyed:
+handle_player_bullet:
     lda PLAYER_BULLET_WEAPON_TYPE,x ; load weapon type and player that created the bullet
     and #$0f                        ; strip rapid fire flag and bullet owner flags
     sta $13                         ; store weapon type
@@ -3345,6 +3355,7 @@ clear_bullet_if_destroyed:
 @clear_bullet_sprite:
     jmp clear_bullet_sprite
 
+; bullet state is 1 = normal, 2 = destroyed, or 3 = just created laser
 @continue:
     dey                                  ; decrement PLAYER_BULLET_STATE (normal goes to #$00)
     bne @next_state                      ; branch if in destroyed state
@@ -3420,9 +3431,9 @@ create_f_child_flames_or_destroy:
     lda PLAYER_BULLET_WEAPON_TYPE,x ; load weapon type and player that created the bullet
     and #$0f                        ; strip rapid fire and bullet owner flags
     cmp #$04                        ; see if F (flame) weapon
-    beq create_flame_split          ; branch if flame to create 4 child flames
-    ldy #$07                        ; bullet isn't F weapon
-                                    ; create #$08 child flames for a charged F weapon
+    beq create_flame_split          ; branch if flame to create #$04 child flames
+    ldy #$07                        ; bullet isn't (uncharged) F weapon
+                                    ; create #$08 child flames if a charged F weapon
     cmp #$05                        ; see if charged F weapon (flame)
     beq create_flame_split          ; branch if charged weapon to create #$08 child flames
 
@@ -3459,15 +3470,17 @@ bullet_apply_y_scroll:
     sta PLAYER_BULLET_Y_POS,x ; set new Y position
     rts
 
-; flame weapon collision with enemy, or traveled #$1a distance
-; split into 4 smaller flame balls
+; flame weapon collision with enemy, background, or traveled #$1a distance
+; split into 4 or 8 smaller flame balls
+; !(BUG) this method uses $10 (ENEMY_CURRENT_SLOT), but does not back it up nor
+; restore it.  When called due to enemy collision, prevents executing any enemy
+; logic for enemies processed after the current enemy being collided with.
+; this bug does not occur when called from a flame background collision.
 ; input
 ;  * x - bullet offset
 ;  * y = number of children flames to spawn
-; output
-;  * $10 - !(BUG) accidentally overwrites ENEMY_CURRENT_SLOT and doesn't restore it
 create_flame_split:
-    stx $10 ; store flame bullet offset
+    stx $10 ; store flame bullet offset !(BUG)
     sty $00 ; store number of children flames to create
 
 @child_flame_loop:
@@ -4678,7 +4691,7 @@ graphic_data_01:
         .byte $93
         .byte $98,$99,$9a,$9b,$9c,$9d,$9e,$9f,$a0,$a1,$a2,$a3,$a4,$a5,$a6,$a7
         .byte $a8,$a9,$aa
-        .byte $0d,$00,
+        .byte $0d,$00
         .byte $93
         .byte $ab,$ac,$ad,$9f,$ae,$af,$b0,$9f,$b1,$b2,$00,$b3,$00,$b4,$b5,$b6
         .byte $b7,$b8,$97

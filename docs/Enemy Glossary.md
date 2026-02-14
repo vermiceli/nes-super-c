@@ -1510,6 +1510,9 @@ Other Names: Alien Cyclops Projectile, Spit
 
 ### 49 - Stomping Ceiling
 
+Enemy that appears in level 8.  Technically 2 enemies that appear one after the
+other, but looks as a single enemy to the player(s).
+
 #### Attributes
 
 ```

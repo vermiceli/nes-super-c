@@ -1986,7 +1986,7 @@ draw_score:
     rts
 
 ; draws the level screen number of lives (the part after "REST")
-; !(BUG) can only correctly render number of lives up to #$63 (99)
+; !(OBS) can only correctly render number of lives up to #$63 (99)
 ; input
 ;  * x - graphics buffer offset
 ;  * y - player index (0 = p1, 1 = p2)
@@ -6557,7 +6557,10 @@ load_banks_cp_bullet_to_sprite_buffers:
     jsr load_prg_bank_set           ; set $8000-$9fff to bank 0 and $a000-$bfff to bank 1
     jmp cp_bullet_to_sprite_buffers
 
-; create child flames for F weapon or destroy if not F weapon
+; creates either 4 or 8 child flames for F weapon or charged F weapon respectively
+; if not F weapon (nor charged F weapon), destroy the bullet
+; input
+;  * x - bullet offset
 load_banks_create_f_child_flames_or_destroy:
     lda #$30
     jsr load_prg_bank_set                ; set $8000-$9fff to bank 0 and $a000-$bfff to bank 1

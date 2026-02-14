@@ -604,7 +604,7 @@ stomping_ceiling_routine_00:
 ; initialize IRQ and IRQ-related variables
 stomping_ceiling_routine_01:
     lda X_SCROLL                    ; load PPU horizontal scroll
-    bne @exit                       ; branch if not at starting point for drop down animation
+    bne @exit                       ; exit if not at starting point for drop down animation
     lda #$00
     sta X_DRAW_ROUTINE
     sta Y_DRAW_ROUTINE              ; initialize draw routines
@@ -667,7 +667,7 @@ stomping_ceiling_routine_02:
 
 @continue:
     lda #$01
-    sta STOMP_CEILING_X_SCROLL_CTRL
+    sta STOMP_CEILING_X_SCROLL_CTRL ; prevent scrolling into next nametable
     lda #$00
     sta ENEMY_VAR_1,x
     jmp advance_enemy_routine       ; advance to next routine
@@ -2846,6 +2846,7 @@ calc_screen_row:
     clc          ; clear carry in preparation for addition
     adc X_SCREEN ; add number of horizontal screens scrolled
     sta $03      ; set index into level_xx_enemy_screen_ptr_tbl
+                 ; $03 = LEVEL_WIDTH * Y_SCREEN + X_SCREEN
 
 calc_screen_row_exit:
     rts
@@ -2897,8 +2898,10 @@ create_screen_enemies:
     tay             ; backup Y scroll position
     lda $03
     clc             ; clear carry in preparation for addition
-    adc LEVEL_WIDTH
-    sta $03         ; set screen number
+    adc LEVEL_WIDTH ; moving forward one screen horizontally
+    sta $03         ; set next screen screen number
+                    ; $03 was LEVEL_WIDTH * Y_SCREEN + X_SCREEN
+                    ; $03 now is LEVEL_WIDTH * Y_SCREEN + X_SCREEN + LEVEL_WIDTH
     tya             ; restore Y scroll position
 
 @set_enemy_gen_point:
@@ -2908,8 +2911,9 @@ create_screen_enemies:
 ;  * $02
 ;  * $03 - screen offset
 @create_screen_enemies:
-    jsr get_enemy_screen_data ; initialize ($08) to the level-specific screen-specific $03 enemy data, e.g. level_4_enemy_screen_01
-    ldy #$00                  ; initialize level_x_enemy_screen_xx read offset
+    jsr get_enemy_screen_data_addr ; set ($0a) to the level-specific screen-specific enemy data
+                                   ; e.g. if $03 is #$0b and the level is 8, then ($0a) will point to level_8_enemy_screen_11
+    ldy #$00                       ; initialize level_x_enemy_screen_xx read offset
 
 ; vertical level
 @create_lvl_enemy_loop:
@@ -2971,8 +2975,8 @@ create_screen_enemies:
     inc $03                         ; increment screen for loading enemy data
 
 @check_screen_enemies_for_pos:
-    jsr get_enemy_screen_data ; initialize ($08) to the level-specific screen-specific $03 enemy data, e.g. level_4_enemy_screen_01
-    ldy #$00
+    jsr get_enemy_screen_data_addr ; set ($0a) to the level-specific screen-specific enemy data
+    ldy #$00                       ; initialize level_x_enemy_screen_xx read offset
 
 ; horizontal level
 @check_screen_enemies:
@@ -3015,12 +3019,13 @@ create_screen_enemies:
     sta $03                           ; move to next vertical level
     jmp @check_screen_enemies_for_pos
 
-; initializes ($08) to the level-specific screen-specific enemy data, e.g. level_4_enemy_screen_01
+; initializes ($0a) to the level-specific screen-specific enemy data, e.g. level_4_enemy_screen_01
+; e.g. if $03 is #$0b and the level is 8, then ($0a) will point to level_8_enemy_screen_11
 ; input
-;  * $03 - screen offset
+;  * $03 - screen number
 ; output
-;  * ($0a) - two byte address to level-specific enemy screen data, e.g. level_4_enemy_screen_01
-get_enemy_screen_data:
+;  * ($0a) - address to level-specific enemy screen, e.g. level_4_enemy_screen_01
+get_enemy_screen_data_addr:
     lda CURRENT_LEVEL                      ; load current level
     asl                                    ; double since each entry is a #$02 byte memory address
     tay                                    ; transfer to offset register
@@ -3030,21 +3035,22 @@ get_enemy_screen_data:
     sta $09                                ; store high byte of address
     lda #$00
     sta $0a
-    lda $03                                ; doubling $03 with overflow going to $0a
+    lda $03                                ; doubling screen offset $03 with overflow going to $0a
     asl
-    rol $0a
+    rol $0a                                ; shift any overflow into the low bit of $0a
     clc                                    ; clear carry in preparation for addition
     adc $08                                ; adding 2 * $03 to low byte of level_x_enemy_screen_ptr_tbl address
     sta $08                                ; store result in $08
     lda $0a                                ; handling overflow from adding (2 * $03) + $08
     adc $09                                ; add any overflow to high byte of level_x_enemy_screen_ptr_tbl address
     sta $09                                ; store new high byte
+                                           ; $(08) now points start of level_x_enemy_screen_xx
     ldy #$00
-    lda ($08),y                            ; read low byte of address within level-specific screen enemy data
+    lda ($08),y                            ; read low byte of (level_x_enemy_screen_xx),y
     sta $0a
     iny
-    lda ($08),y                            ; read high byte of address within level-specific screen enemy data
-    sta $0b
+    lda ($08),y                            ; read high byte of (level_x_enemy_screen_xx),y
+    sta $0b                                ; $(0a) now points to start of specific screen's enemy data, e.g. level_x_enemy_screen_xx
     rts
 
 ; creates an enemy for the level screen as defined in level_x_enemy_screen_xx
