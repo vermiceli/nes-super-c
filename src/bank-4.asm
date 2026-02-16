@@ -604,6 +604,9 @@ stomping_ceiling_routine_00:
 ; initialize IRQ and IRQ-related variables
 stomping_ceiling_routine_01:
     lda X_SCROLL                    ; load PPU horizontal scroll
+                                    ; !(BUG) if X scroll is faster than 1 (ex: playing falling forward for dying animation),
+                                    ; then there is a chance that the horizontal scroll can skip being 0
+                                    ; this will prevent the stomping ceiling from initializing
     bne @exit                       ; exit if not at starting point for drop down animation
     lda #$00
     sta X_DRAW_ROUTINE

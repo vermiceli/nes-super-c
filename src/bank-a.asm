@@ -2461,11 +2461,15 @@ elevator_routine_00:
     jmp advance_enemy_routine ; advance to next routine
 
 ; wait for activation, set location and delay, advance routine
+; this is where the vulnerable code is for the elevator glitch
 elevator_routine_01:
     lda Y_SCROLL             ; load PPU vertical scroll
     bne elevator_exit        ; branch if not yet at activation point
                              ; set_elevator_vel will y autoscroll until nametable is fully visible
                              ; this will cause Y_SCROLL to be 0 and the elevator to activate
+                             ; !(BUG) due to bug in F weapon flame split create_flame_split
+                             ; if player can hit an enemy with an F weapon flame at the exact frame,
+                             ; this Y_SCROLL will skip 0 and the elevator won't initialize for an additional screen
     lda #$00                 ; player on elevator
     sta ELEVATOR_ENABLED     ; disable elevator
     lda #$c0

@@ -1,6 +1,6 @@
 # Overview
 
-This document outlines bugs and how why they occur.
+This file documents some bugs at a technical level.
 
 # 1. Random Enemy Generation Timer
 
@@ -94,3 +94,21 @@ background.  In this case, it is the other tank's turrets being redrawn for a
 recoil effect when firing the 3 bullets simultaneously.  So, if the destruction
 of one tank times correctly with the firing of the other tank's 3 bullets, then
 you can cause this glitch.
+
+# 4.  Stomping Ceiling Prevent Activation
+
+In Level 8 (The Final Stage), the stomping ceiling may fail to initialize if
+horizontal scrolling exceeds 1 pixel per frame. The trigger logic waits for the
+scroll value to equal 0. If the screen advances 2 pixels in a single frame, the
+value can wrap from 255 to 1, skipping 0 and bypassing the activation check.
+
+Normally, players scroll right at 1 pixel per frame. However, if a player dies
+while moving right, their falling movement increases horizontal scroll to 1.25
+pixels per frame. _Super C_ creates fractional velocities by averaging over
+multiple frames.  For example, at 1.25 pixels per frame, the scroll moves 1
+pixel for three frames, then 2 pixels on the fourth frame, repeating this
+pattern.
+
+If that 2-pixel frame occurs when the scroll value is 255, the scroll advances
+directly to 1, skipping 0 and preventing the stomping ceiling from initializing
+(`stomping_ceiling_routine_01`).

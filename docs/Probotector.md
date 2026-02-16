@@ -11,7 +11,7 @@ refers to code or look up table memory addresses were documented using _Super C_
 
 1. The cheat to get 10 lives in _Super C_ gives 30 lives in _Probotector_.
 2. End of level animation timing for player auto-move is slightly different for
-  level 3 (Jungle), level 7 (Headquarters), and level 8 (Final Stage).
+  level 3 (Jungle), level 7 (Headquarters), and level 8 (The Final Stage).
 3. There are always 2 scanline interrupts that don't exist in _Super C_.  They
   set and reset the character banks before and after the visible screen.
 
