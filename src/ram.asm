@@ -2283,7 +2283,7 @@ ENEMY_ATTRIBUTES:
 ;  * bit 6 - when set, set delay of #$01 when destroyed
 ;    (see set_destroyed_enemy_routine)
 ;  * bit 7
-;    * 0 - enable bullet collision
+;    * 0 - enable player bullet collision
 ;    * 1 - allow bullets to travel through enemy, e.g. weapon item
 ENEMY_DESTROY_ATTRS:
     .res 14

@@ -3313,6 +3313,8 @@ cp_bullet_to_sprite_buffers:
 ; handles bullet logic
 ;  * times laser creation
 ;  * destroy bullet if bg collision (or create child f flames if f weapon)
+;  * note that foreground collision (player bullet enemy collision) happens in
+;    test_player_bullet_collision in the enemy routine loop
 ;  * destroy bullet if travel too far (or create child f flames if f weapon)
 ;  * apply bullet velocity
 ; input

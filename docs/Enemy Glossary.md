@@ -634,8 +634,8 @@ direction (think bouncing DVD Video logo pattern).
     is also used when core is destroyed off screen to still show explosions.
 * `ENEMY_VAR_6` - number of off-screen turrets (y-axis), used to prevent opening
   [Helicopter Bay](#23---helicopter-bay) when any turret is off-screen.
-* `ENEMY_VAR_3` - incremented when [Helicopter Bay](#23---helicopter-bay) is
-  created
+* `ENEMY_VAR_3` - number of active [Helicopter Turret](#22---helicopter-turret)
+  when all turrets are destroyed, the core is activated and vulnerable
 * `ENEMY_VAR_5` - delay for door closings (0 = )
 * `ENEMY_FRAME` - which frame of the helicopter to draw. #$00 to #$05
 

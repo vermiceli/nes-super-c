@@ -365,7 +365,7 @@ helicopter_turret_routine_05:
     bcs helicopter_turret_exit      ; exit if unable to update nametable
     lda ENEMY_VAR_5,x               ; updated nametable, load helicopter core enemy slot index
     tax                             ; transfer to offset register
-    dec ENEMY_VAR_3,x               ; decrement remaining number helicopter sub-enemies, e.g. number of turrets and helicopter bay
+    dec ENEMY_VAR_3,x               ; decrement remaining number helicopter turrets
     ldx ENEMY_CURRENT_SLOT          ; load current enemy slot
     jmp enemy_explosion_routine_00  ; set empty sprite, play optional enemy destroyed sound, disable collisions
 
@@ -996,12 +996,14 @@ helicopter_core_routine_01:
     ldy #$04                        ; helicopter enemies creation counter (4 turrets and 1 helicopter bay)
 
 ; create helicopter turrets and helicopter bay
+; !(OBS) if there area lot of enemies on screen, not all turrets/bay will be created
+; this is a strategy to get the core to appear quicker
 @loop:
     sty $08
     lda helicopter_enemy_tbl,y         ; enemy type = #$22 or #$23 (helicopter turret or helicopter bay door)
     tay
     jsr try_create_enemy_from_existing ; create helicopter turret or helicopter bay door
-    bcc @continue                      ; branch if unable to create enemy
+    bcc @continue                      ; branch to skip creating rest of turrets and bay if unable to create enemy
     ldy $08                            ; created enemy, re-load offset
     lda helicopter_enemy_tbl,y         ; see what enemy was just created
     cmp #$22                           ; see if a helicopter turret
@@ -1090,20 +1092,21 @@ helicopter_core_routine_03:
 ; animate, play rotor noise, enable soldier generation when bay open, execute helicopter core mode routine
 helicopter_core_routine_04:
     dec ENEMY_DELAY,x
-    bne @continue
+    bne @check_activate_core
     lda #$04
     sta ENEMY_DELAY,x
-    lda #$09          ; sound_09 (helicopter rotor noise)
-    jsr play_sound    ; play sound_09 (helicopter rotor noise)
+    lda #$09                 ; sound_09 (helicopter rotor noise)
+    jsr play_sound           ; play sound_09 (helicopter rotor noise)
 
-@continue:
-    lda ENEMY_VAR_3,x
-    bne @exe_core_mode
-    lda ENEMY_GEN_CTRL ; helicopter bay open, initialize
+@check_activate_core:
+    lda ENEMY_VAR_3,x  ; see how many turrets are still active
+    bne @exe_core_mode ; branch to animate if turret(s) still active
+    lda ENEMY_GEN_CTRL ; all turrets destroyed, enable core
     and #$bf           ; clear bit 6 (resume random enemy generation)
     sta ENEMY_GEN_CTRL
     lda #$a7           ; sprite_a7
-    sta ENEMY_SPRITE,x ; set helicopter core sprite
+    sta ENEMY_SPRITE,x ; set helicopter core sprite (make visible)
+                       ; and enables collision
 
 @exe_core_mode:
     lda GLOBAL_TIMER
