@@ -1172,7 +1172,7 @@ play_dpcm_sample_a:
     lda dpcm_samples+2,x    ; load address of DPCM sample data (this value * #$40) + $c000 is final address
     sta APU_DMC_SAMPLE_ADDR ; set address of DPCM sample data
     lda dpcm_samples+3,x    ; load length of sample
-    sta APU_DMC_SAMPLE_LEN  ; set length of sample
+    sta APU_DMC_SAMPLE_LEN  ; set length of sample (actual length is a * #$10 + 1)
     lda #$1f                ; a = #$1f
     sta APU_STATUS          ; enable DMC, noise, triangle, and the 2 pulse channels
                             ; i.e. start DMC playback
@@ -3365,7 +3365,7 @@ sound_pitch_ctrl_07:
 ; byte 0 - sampling rate APU_DMC
 ; byte 1 - initial sample value (always #$00) APU_DMC_COUNTER
 ; byte 2 - address (computed offset from $c000) APU_DMC_SAMPLE_ADDR
-; byte 3 - sample length in bytes APU_DMC_SAMPLE_LEN
+; byte 3 - sample length in bytes APU_DMC_SAMPLE_LEN (value * #$10 + 1)
 dpcm_samples:
 ; sample #$00 - dpcm_sample_01 (#$201 bytes)
 ; 513 byte sample
@@ -3581,18 +3581,18 @@ sound_3b_slot_06:
     .byte .LOBYTE(dpcm_sample_0a>>6)
     .byte $2c
 
+; sample #$1a - dpcm_sample_0b (#$2c1 bytes)
 ; 705 byte sample at 21.3 kHz sample rate
 ; 5,640 samples
 ; .26 second sample
-; sample #$1a - dpcm_sample_0b (#$2c1 bytes)
     .byte $0d,$00
     .byte .LOBYTE(dpcm_sample_0b>>6)
     .byte $2c
 
+; sample #$1b - dpcm_sample_0c (#$2c1 bytes)
 ; 705 byte sample at 21.3 kHz sample rate
 ; 5,640 samples
 ; .26 second sample
-; sample #$1b - dpcm_sample_0c (#$2c1 bytes)
     .byte $0d,$00                    ; 21.3 kHz sample rate
     .byte .LOBYTE(dpcm_sample_0c>>6) ; sample start address
     .byte $2c                        ; 705 sample length

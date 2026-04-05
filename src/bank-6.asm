@@ -4785,10 +4785,10 @@ level_8_x_tile_routine_ptr_tbl:
     .addr level_8_x_tile_routine_06 ; level 8 stomping ceiling
     .addr level_8_x_tile_routine_07
     .addr level_8_x_tile_routine_05
-    .addr level_8_x_tile_routine_09
+    .addr level_8_x_tile_routine_09 ; wait for Y position to clear Y auto-scroll stop position
     .addr level_8_x_tile_routine_01
     .addr level_8_x_tile_routine_0b
-    .addr level_8_x_tile_routine_0c
+    .addr level_8_x_tile_routine_0c ; noop
 
 level_8_x_tile_routine_00:
     lda #$40
@@ -4834,11 +4834,12 @@ level_8_x_tile_routine_07:
     sta LEVEL_Y_SCROLL_FLAGS
     bne level_8_adv_x_tile_routine
 
+; wait for Y position to clear Y auto-scroll stop position
 level_8_x_tile_routine_09:
     lda Y_SCROLL                   ; load PPU vertical scroll
-    bne level_8_x_tile_routine_0c
+    bne level_8_x_tile_routine_0c  ; exit if not at new screen
     lda #$00
-    sta Y_AUTOSCROLL_STOP_POS
+    sta Y_AUTOSCROLL_STOP_POS      ; stop Y auto-scroll
     beq level_8_adv_x_tile_routine
 
 level_8_x_tile_routine_01:

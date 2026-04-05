@@ -182,6 +182,31 @@ being played.
 | #$3a  |               | drum tap sound                     | 6    |                  | dmc      |
 | #$3b  |               | drum tap sound                     | 6    |                  | dmc      |
 
+# Delta Pulse Coded Modulation (DPCM) Samples
+
+There are 12 delta pulse coded modulation (DPCM) samples in _Super C_ totaling
+7,888 bytes.  The 12 samples are played 16 different ways.  Almost all samples
+are played back at a 21.3 kHz sample rate, but the first sample,
+`dpcm_sample_00`, is played at 4 different sampling rates.  In total, all
+encoded sound in the game (including DPCM samples) is a little under 22 KiB.
+
+* `dpcm_sample_00` 33.1 khz sample rate - .08 second sample
+* `dpcm_sample_00` 24.9 khz sample rate - .10 second sample
+* `dpcm_sample_00` 21.3 khz sample rate - .12 second sample
+* `dpcm_sample_00` 16.9 khz sample rate - .15 second sample
+* `dpcm_sample_01` 33.1 kHz sample rate - .12 second sample
+* `dpcm_sample_02` 11.2 kHz sample rate - .01 second sample
+* `dpcm_sample_03` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_04` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_05` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_06` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_07` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_08` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_09` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_0a` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_0b` 21.3 kHz sample rate - .26 second sample
+* `dpcm_sample_0c` 21.3 kHz sample rate - .26 second sample
+
 # Notes
 
 * BGM7 is incorrectly named and should be BGM8 since it is played on The Final

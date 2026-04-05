@@ -522,7 +522,7 @@ sound_35_slot_03:
 ; unused #$21 bytes out of #$2,000 bytes total (99.60% full)
 ; unused 33 bytes out of 8,192 bytes total (99.60% full)
 ; filled with 33 #$ff bytes by superc.cfg configuration
-bank_b_unused_space:
+bank_d_unused_space:
 
 .segment "BANKD_ID"
 

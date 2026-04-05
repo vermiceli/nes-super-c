@@ -699,6 +699,9 @@ stomping_ceiling_routine_04:
     jsr stomping_ceiling_apply_x_scroll ; set X position and post-IRQ horizontal scroll based on X_SCROLL_SPEED
     lda X_SCROLL                        ; load PPU horizontal scroll
     bne stomping_ceiling_routine_exit   ; exit if not scrolled into screen yet
+                                        ; !(BUG) if X scroll is faster than 1 (ex: playing falling forward for dying animation),
+                                        ; then there is a chance that the horizontal scroll can skip being 0
+                                        ; this will prevent the stomping ceiling from de-activating
     jsr restore_scroll_and_ppuctrl      ; restore scroll and PPU control values
     lda X_SCROLL                        ; load PPU horizontal scroll
     sta IRQ_X_SCROLL
@@ -2807,29 +2810,31 @@ template_of_terror_skull_draw_supertiles_a:
     ldy #$04
     jmp temple_of_terror_draw_supertiles
 
-; calculates screen index into first horizontal screen of level_xx_enemy_screen_ptr_tbl
-; to do this, it converts scroll and Y_SCREEN into a 2-d array representing level layout
+; determine screen number for level and store in $03
+; $03 = LEVEL_WIDTH * Y_SCREEN + X_SCREEN
+; the level is represented as a 2x2 grid of screens
 ; input
 ;  * y - #$00 or #$02
 ; output
 ;  * $00 - high nibble of horizontal scroll shifted to the low nibble
-;  * $01 - high nibble of vertical scroll
-;  * $02
-;  * $03 - row number of screen
-calc_screen_row:
+;  * $01 - high nibble of vertical scroll, i.e. number of #$08-pixel nametable tiles scrolled down vertically
+;  * $02 - unchanged if screen at top of nametable
+;          if not, then high nibble set to number of #$08-pixel tiles scrolled down vertically
+;  * $03 - LEVEL_WIDTH * Y_SCREEN + X_SCREEN
+calc_screen_number:
     sty $02
     lda X_SCROLL    ; load PPU horizontal scroll
     lsr
     lsr
     lsr
     lsr
-    sta $00         ; set high nibble of X_SCROLL to $00's low nibble
+    sta $00         ; set number of #$08-pixel tiles scrolled horizontally in $00
     ldy #$00
     lda Y_SCROLL    ; load PPU vertical scroll
     and #$f0
-    sta $01         ; set high nibble of Y_SCROLL to $01
-    bne @calc_index ; branch if scrolled close to top of nametable
-    ldy $02         ; not near top of nametable, don't change
+    sta $01         ; set number of #$08-pixel tiles scrolled down vertically in high nibble of $01
+    bne @calc_index ; branch if screen not at top of nametable
+    ldy $02         ; near top of nametable, don't change
 
 @calc_index:
     sty $02           ; set high nibble of Y_SCROLL or $02
@@ -2838,7 +2843,7 @@ calc_screen_row:
     beq @add_x_amount ; branch if at top of level (more screens above)
 
 ; not at the top of the level, add LEVEL_WIDTH for each screens above current screen
-; calculating index into level_xx_enemy_screen_ptr_tbl
+; a = LEVEL_WIDTH * Y_SCREEN
 @loop:
     clc             ; clear carry in preparation for addition
     adc LEVEL_WIDTH
@@ -2851,13 +2856,13 @@ calc_screen_row:
     sta $03      ; set index into level_xx_enemy_screen_ptr_tbl
                  ; $03 = LEVEL_WIDTH * Y_SCREEN + X_SCREEN
 
-calc_screen_row_exit:
+calc_screen_num_exit:
     rts
 
-; updates tiles and sets screen enemies
+; creates screen-defined enemies for upcoming screen
 create_screen_enemies:
     lda BOSS_DEFEATED_FLAGS
-    bne calc_screen_row_exit ; exit if playing end of level music or boss is already defeated
+    bne calc_screen_num_exit ; exit if playing end of level music or boss is already defeated
     lda SCREEN_SCROLL_TYPE   ; 0 = horizontal, 1 = vertical/overhead
     bne @y_scroll            ; branch if vertical scroll
     jsr @horizontal_level    ; horizontal scroll level, e.g. level 1
@@ -2865,11 +2870,12 @@ create_screen_enemies:
 @y_scroll:
     lda LEVEL_Y_SCROLL_FLAGS
     cmp #$c0
-    beq calc_screen_row_exit
+    beq calc_screen_num_exit ; exit if can't scroll vertically up nor down
     ldy #$00
-    jsr calc_screen_row
+    jsr calc_screen_number   ; determine which screen number the player is on and store in $03
+                             ; for use in get_enemy_screen_data_addr
     lda Y_SCROLL_SPEED       ; load how many pixels vertically to scroll this frame
-    beq calc_screen_row_exit ; exit if no vertical scroll change this frame
+    beq calc_screen_num_exit ; exit if no vertical scroll change this frame
     asl
     lda #$07
     bcs @add_y_scroll        ; branch if scrolling up (Y_SCROLL_SPEED is negative)
@@ -2882,21 +2888,21 @@ create_screen_enemies:
     cmp $04                    ; compare to either #$07 (scrolling up) or #$0a (scrolling down)
     ror
     eor Y_SCROLL_SPEED
-    bpl calc_screen_row_exit
+    bpl calc_screen_num_exit
     lda $01                    ; load high nibble of vertical scroll
     cmp SCREEN_ENEMY_Y_CHECK
-    beq calc_screen_row_exit
+    beq calc_screen_num_exit
     sta SCREEN_ENEMY_Y_CHECK   ; set high nibble vertical scroll level enemy generation checkpoint
     lda Y_SCROLL_SPEED
     bmi @create_screen_enemies
     lda #$e0
     clc                        ; clear carry in preparation for addition
     adc $01
-    bcs @calc_screen_number
+    bcs @advance_screen
     cmp #$f0
     bcc @set_enemy_gen_point
 
-@calc_screen_number:
+@advance_screen:
     adc #$0f
     tay             ; backup Y scroll position
     lda $03
@@ -2933,7 +2939,7 @@ create_screen_enemies:
     lda ($0a),y                  ; re-load (X,Y) position
     and #$0f                     ; strip to just X position
     cmp $00                      ; compare to horizontal scroll shifted to high nibble
-                                 ; (set in calc_screen_row)
+                                 ; (set in calc_screen_number)
     rol
     eor $02
     lsr
@@ -2963,22 +2969,27 @@ create_screen_enemies:
     inc $03                    ; move to next screen
     jmp @create_screen_enemies
 
+; check for screen-defined enemies in upcoming screen for horizontal level
+; checks every #$10 pixels scrolled when X_SCROLL low nibble is #$08, e.g. #$48, #$58
 @horizontal_level:
     lda STOMP_CEILING_X_SCROLL_CTRL
     bne @exit
     ldy #$02
-    jsr calc_screen_row             ; determine which level row the screen is on
+    jsr calc_screen_number          ; determine which screen number the player is on and store in $03
+                                    ; for use in get_enemy_screen_data_addr
     lda X_SCROLL                    ; load PPU horizontal scroll
     and #$08
-    cmp SCREEN_ENEMY_X_CHECK
-    beq @exit
-    sta SCREEN_ENEMY_X_CHECK        ; set horizontal scroll level enemy generation checkpoint
-    and #$08
-    beq @exit
-    inc $03                         ; increment screen for loading enemy data
+    cmp SCREEN_ENEMY_X_CHECK        ; see if scrolled 8 pixels
+    beq @exit                       ; branch if haven't scrolled #$08 pixels to skip screen-defined enemy loading
+    sta SCREEN_ENEMY_X_CHECK        ; screen has scrolled 8 pixels
+                                    ; update X scroll level enemy generation screen checkpoint
+    and #$08                        ; seeing if X_SCROLL low nibble is zero
+    beq @exit                       ; exit if on X_SCROLL ending in 0 (e.g. #$40, #$50) to skip screen-defined enemy loading
+    inc $03                         ; scrolled #$10 pixels and X_SCROLL low nibble is #$08, looking ahead one screen for enemy data
 
 @check_screen_enemies_for_pos:
     jsr get_enemy_screen_data_addr ; set ($0a) to the level-specific screen-specific enemy data
+                                   ; e.g. if $03 is #$0b and the level is 8, then ($0a) will point to level_8_enemy_screen_11
     ldy #$00                       ; initialize level_x_enemy_screen_xx read offset
 
 ; horizontal level
@@ -2986,14 +2997,14 @@ create_screen_enemies:
     lda ($0a),y                  ; load enemy screen data byte 0 ((x,y) position)
     cmp #$ff                     ; see if no more enemy data
     beq @next_row                ; branch if at end of enemy screen data
-    cmp $01                      ; compare to high nibble of Y_SCROLL
+    cmp $01                      ; compare to high nibble of Y_SCROLL (how many nametable tiles scrolled down vertically)
     rol
     eor $02                      ; set to #$01 when player below Y value and on first screen
                                  ; or set to #$01 when player above Y value and on second screen
     lsr                          ; shift back, setting bit 7 to 0
     bcc @check_next_enemy
     lda ($0a),y                  ; re-load first byte of screen enemy data (enemy (x,y) position)
-    and #$0f                     ; strip to just the X position
+    and #$0f                     ; strip to just the X position high nibble value
     cmp $00                      ; compare to high nibble of X_SCROLL
     bne @next_enemy2
     jsr create_lvl_defined_enemy ; create enemy from level_x_enemy_screen_xx ($0a),y

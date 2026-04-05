@@ -830,6 +830,7 @@ LEVEL_WIDTH:
     .res 1
 
 ; $8a - used to determine when to generate level enemies based on X_SCROLL
+; alternates between #$08 or #$00 for horizontals levels
 SCREEN_ENEMY_X_CHECK:
     .res 1
 
@@ -920,7 +921,7 @@ LEVEL_Y_CENTER:
 ; $98 - specifies vertical position on screen to stop any vertical auto-scroll
 ; also specifies vertical scroll direction in vertical auto-scroll mode 0
 ; compared against Y_SCROLL
-; used by krytpo-crustacean and laser chandelier
+; used by krytpo-crustacean, laser chandelier, and level 8 X scroll
 ;  * bits 1-7: Y_SCROLL to compare against
 ;  * bit 0: 0 = up, 1 = down
 Y_AUTOSCROLL_STOP_POS:

@@ -10,6 +10,7 @@ For the disassembly of _Contra_ see https://github.com/vermiceli/nes-contra-us/
 ```
 |-- docs - supplemental documentation
 |   |-- images - files used in other documentation
+|   |-- debugging - files used to help debugging
 |   |-- lua_scripts - lua scripts for mesen2
 |   |-- sprite_library - extracted sprites for ease of viewing
 |-- src - the source code for the game
@@ -99,6 +100,35 @@ the code.  Below are some of the more important documents.
 
 All sprites were captured and labeled for easy reference in
 [docs/sprite_library/README.md](./docs/sprite_library/README.md)
+
+# Debugging
+
+One of the biggest advantages of building this rom is that the build scripts
+also build the debugging symbols.  Debugging symbols can be read by emulators
+and be included in the source view while debugging the game.  For example,
+[Mesen](https://github.com/SourMesen/Mesen2) will automatically load the
+debugging symbols as long as the `superc.dbg` file exists in the same folder as
+`superc.nes`.  Below is a screenshot of what debugging looks like with symbols.
+
+![Mesen debugger screenshot](docs/images/mesen_debugger_screenshot.png?raw=true)
+
+You can see that the debugging symbols file points to the source code to include
+comments and labels.  If you move or delete the source files, you will lose all
+the debugging information.
+
+## FCEUX NameList
+
+[FCEUX](https://fceux.com/web/home.html) doesn't support reading the debugger
+symbols, but you can load NameList (`.nl`) files.  These files aren't as fully
+featured as the debugging symbols file, but does at least allow you to label
+jump/branch locations and ram addresses.  It doesn't easily support comments on
+individual lines.
+
+I've included the `.nl` files in `docs/debugging/fceux_namelists` for both
+_Super C_ and _Probotector_.  These files were generated from the
+`-m superc.txt -vm` command line parameter to `ld65`.  Then the that file was
+converted to the `.nl` files with a custom script.  I can't promise to keep
+these up to date as the source labels change, but I will try to.
 
 # Probotector
 
