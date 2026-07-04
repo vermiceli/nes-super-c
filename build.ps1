@@ -5,6 +5,7 @@
 # Super C = [Default] US NES version
 # Probotector = European NES version
 param([String]$Game='Superc')
+
 $global:SOURCE_ROM = $null
 $GAME_HASH = "A3E9BACB35DC038186D7F59112E8A2E081F9D0E343608003B44EE76BC25526552BF4C4EAA44531B75B5626B51DBCE8C055F6B7DE87FB426C474A8F1463686841"
 $ROM_NAME = "superc.nes"
@@ -31,8 +32,11 @@ assembling.
 function Set-Bytes {
     param ($Skip, $Take, $Output)
 
+    # check if output exists and is the same size
     IF (Test-Path -Path $Output) {
-        return
+        IF ((Get-Item $Output).Length -eq $Take) {
+            return
+        }
     }
 
     # only read baserom.nes once for speed improvements

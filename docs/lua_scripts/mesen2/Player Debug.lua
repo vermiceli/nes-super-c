@@ -3,6 +3,10 @@
 function Main()
     local PLAYER_COUNT = emu.read(0x20, emu.memType.nesMemory)
     for i = 0,PLAYER_COUNT do
+        local PLAYER_Y_FRACT_VELOCITY = emu.read(0xa6 + i, emu.memType.nesMemory)
+        local PLAYER_Y_FAST_VELOCITY = emu.read(0xa8 + i, emu.memType.nesMemory)
+        local PLAYER_X_FRACT_VELOCITY = emu.read(0xaa + i, emu.memType.nesMemory)
+        local PLAYER_X_FAST_VELOCITY = emu.read(0xac + i, emu.memType.nesMemory)
         local PLAYER_X_POS = emu.read(0xcc + i, emu.memType.nesMemory)
         local PLAYER_Y_POS = emu.read(0xce + i, emu.memType.nesMemory)
         local PLAYER_CURRENT_WEAPON = emu.read(0xb8 + i, emu.memType.nesMemory)

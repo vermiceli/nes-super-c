@@ -2430,19 +2430,20 @@ set_enemy_hp_hard:
 ; sets current ENEMY_HP based on ENEMY_DIFFICULTY and provided a and y registers
 ; input
 ;  * a - starting HP amount to adjust
-;  * y - difficulty level 0, 3, or 6
+;  * y - difficulty level #$00, #$03, or #$06
 ;  * x - enemy slot index
 set_enemy_hp_from_a_and_y:
-    sta $08
-    sty $09              ; store base ENEMY_HP
-    lda ENEMY_DIFFICULTY ; load base enemy hp difficulty
-    cmp #$02             ; see if greater than max
+    sta $08              ; store base ENEMY_HP
+    sty $09              ; store difficulty level (#$00, #$03, or #$06)
+    lda ENEMY_DIFFICULTY ; load base enemy hp difficulty (#$00, #$01, or #$02)
+    cmp #$02             ; see if max or more than max difficulty
     bcc @continue        ; branch if difficulty is not greater than max
-    lda #$01             ; difficulty is greater than max, just set to max (2)
+    lda #$01             ; difficulty is max or greater than max, set to max (2)
                          ; remember carry is already set
 
 @continue:
-    adc $09                   ; add base ENEMY_HP amount index (indexes into enemy_hp_adjust_tbl)
+    adc $09                   ; add row offset (difficulty level) #$00, #$03, or #$06
+                              ; to column offset (ENEMY_DIFFICULTY) (#$00, #$01, or #$02)
     tay                       ; transfer to offset register
     lda enemy_hp_adjust_tbl,y ; load base ENEMY_HP
     clc                       ; clear carry in preparation for addition
@@ -2454,9 +2455,9 @@ set_enemy_hp_from_a_and_y:
 ; each column represents ENEMY_DIFFICULTY
 ; amount to add to HP
 enemy_hp_adjust_tbl:
-    .byte $00,$04,$07 ; easy difficulty (y register = 0)
-    .byte $00,$10,$18 ; hard difficulty (y register = 3)
-    .byte $00,$04,$08 ; medium difficulty (y register = 6)
+    .byte $00,$04,$07 ; easy difficulty (y register = #$00)
+    .byte $00,$10,$18 ; hard difficulty (y register = #$03)
+    .byte $00,$04,$08 ; medium difficulty (y register = #$06)
 
 ; creates enemy of type y at position of enemy whose slot is stored in ENEMY_CURRENT_SLOT
 ; input

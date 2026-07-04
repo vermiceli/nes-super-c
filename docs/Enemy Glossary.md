@@ -101,8 +101,6 @@ Many enemies' health is based on the `ENEMY_DIFFICULTY` variable, which is
 either 0, 1, or 2.  This value is determined by the number of players who have
 the S weapon.
 
-!(TODO) There is some code that sets this to 4, but I don't know when it executes.
-
 ## Shared Enemy Attributes
 
 Many enemies have their bit 2 set when alive, and clear when destroyed (see
@@ -362,7 +360,11 @@ bullets have a velocity of -1.75 pixels per frame and are fired with a
 
 ![sprite_26](sprite_library/super_c_sprites/sprite_26.png "sprite_26")
 
-**ENEMY HP**: #$05, #$09, or #$0d
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$05           | 5                  |
+| 1                       | #$09           | 9                  |
+| 2                       | #$0d           | 13                 |
 
 There are no attributes for this enemy type.
 
@@ -403,7 +405,11 @@ between attacks and a delay of #$0c between the bullets for the attack.
 
 Level 4 (Inner Base) elevator area and Level 5 (The Cliff) rotating gun.
 
-**ENEMY HP**: #$07, #$0b, or #$0e
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$07           | 7                  |
+| 1                       | #$0b           | 11                 |
+| 2                       | #$0e           | 14                 |
 
 #### Attributes
 
@@ -438,7 +444,11 @@ Other Names: Grey Turret
 
 After activating, targets the closest player (along y axis) every #$15 frames.
 
-**ENEMY HP**: #$08, #$0c, or #$0f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$08           | 8                  |
+| 1                       | #$0c           | 12                 |
+| 2                       | #$0f           | 15                 |
 
 #### Attributes
 
@@ -579,7 +589,11 @@ Level 1 (Fort Firestorm) cannon that pops up from the ground and can fire a
 [Bullet](#02---bullet), one at a time.  Some cannons do not fire bullets and are
 just a wall (even though they still have the gun)
 
-**ENEMY HP**: #$0c, #$10, or #$13
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$0c           | 12                 |
+| 1                       | #$10           | 16                 |
+| 2                       | #$13           | 19                 |
 
 #### Attributes
 
@@ -612,7 +626,11 @@ direction (think bouncing DVD Video logo pattern).
 
 ![sprite_a7](sprite_library/super_c_sprites/sprite_a7.png "sprite_a7")
 
-**ENEMY HP**: #$20, #$30, or #$38
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$20           | 32                 |
+| 1                       | #$30           | 48                 |
+| 2                       | #$38           | 56                 |
 
 #### Variables
 
@@ -643,7 +661,11 @@ direction (think bouncing DVD Video logo pattern).
 
 One of four turrets on the Level 1 boss helicopter.
 
-**ENEMY HP**: #$08, #$0c, or #$0f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$08           | 8                  |
+| 1                       | #$0c           | 12                 |
+| 2                       | #$0f           | 15                 |
 
 #### Attributes
 
@@ -780,10 +802,14 @@ Other Names: Rack Turret
 
 Travels left and right along a rack firing at closest player.
 
-**ENEMY HP**: #$04, #$08, or #$0b
-
 ![sprite_64](sprite_library/super_c_sprites/sprite_64.png "sprite_64")
 ![sprite_65](sprite_library/super_c_sprites/sprite_65.png "sprite_65")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$04           | 4                  |
+| 1                       | #$08           | 8                  |
+| 2                       | #$0b           | 11                 |
 
 #### Attributes
 
@@ -843,7 +869,11 @@ height requiring player to crouch to destroy.
 After activation, fires bullets delayed by #$04 frames.  This stream of bullets
 is repeated every #$80 frames.
 
-**ENEMY HP**: #$08, #$0c, or #$0f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$08           | 8                  |
+| 1                       | #$0c           | 12                 |
+| 2                       | #$0f           | 15                 |
 
 #### Attributes
 
@@ -882,7 +912,11 @@ Other Names: Ground Turret, Ground Mortar
 Level 3 (Jungle) enemy that fires [Mortar Rounds](#29---mortar-round).  When
 active, no soldiers will be generated.
 
-**ENEMY HP**: #$20, #$24, or #$27
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$24           | 36                 |
+| 2                       | #$27           | 39                 |
 
 #### Variables
 
@@ -898,9 +932,9 @@ Level 3 enemy that is fired by the [Cannon Turret](#28---cannon-turret).
 Game tries to play a sound after reaching apex of arc, but that sound has no
 audio, so no sound is played.
 
-**ENEMY HP**: #$02
-
 ![sprite_3a](sprite_library/super_c_sprites/sprite_3a.png "sprite_3a")
+
+**ENEMY HP**: #$02
 
 There are no attributes for this enemy type.
 
@@ -986,9 +1020,9 @@ Other Names: Barrel
 Ceiling tile on level 4 that falls after being shot at.  Created by
 [Collapsible Ceiling](#2c---collapsible-ceiling).
 
-**ENEMY HP**: #$04
-
 ![sprite_62](sprite_library/super_c_sprites/sprite_62.png "sprite_62")
+
+**ENEMY HP**: #$04
 
 There are no attributes for this enemy type.
 
@@ -1005,7 +1039,11 @@ is a [Tank Boss](#69---tank-boss).
 ![sprite_52](sprite_library/super_c_sprites/sprite_52.png "sprite_52")
 ![sprite_53](sprite_library/super_c_sprites/sprite_53.png "sprite_53")
 
-**ENEMY HP**: #$10, #$14, or #$17
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
 
 #### Variables
 
@@ -1031,7 +1069,11 @@ is a [Tank Boss](#69---tank-boss).
 
 ### 2f - Falling Rock
 
-**ENEMY HP**: #$05, #$09, or #$0d
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$05           | 5                  |
+| 1                       | #$09           | 9                  |
+| 2                       | #$0d           | 13                 |
 
 #### Variables
 
@@ -1093,7 +1135,11 @@ a [Turret Metal Bullet](#33---turret-metal-bullet) every #$50 frames.
 Although programed for the ability to be configured to face right and fire to
 the right, only ever fires to the left.
 
-**ENEMY HP**: #$08, #$0c, or #$0f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$08           | 8                  |
+| 1                       | #$0c           | 12                 |
+| 2                       | #$0f           | 15                 |
 
 #### Attributes
 
@@ -1250,10 +1296,14 @@ repeatedly.  This enemy is never used.
 
 ### 3b - Manooki
 
-**ENEMY HP**: #$18, #$1c, or #$1f
-
 ![sprite_90](sprite_library/super_c_sprites/sprite_90.png "sprite_90")
 ![sprite_91](sprite_library/super_c_sprites/sprite_91.png "sprite_91")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$18           | 24                 |
+| 1                       | #$1c           | 28                 |
+| 2                       | #$1f           | 31                 |
 
 #### Attributes
 
@@ -1275,6 +1325,12 @@ Other Names: Spider Spawn, Alien Spider Spawn, Cocoon
 
 Alien cocoons that create spiders on level 7 (Headquarters).
 
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
+
 There are no attributes for this enemy type.
 
 #### Variables
@@ -1283,8 +1339,6 @@ There are no attributes for this enemy type.
 * `ENEMY_VAR_1` - used to help determine whether the spider spawn is in squashed
   form and should see if can generate spider.  This variable feels unnecessary
   as it is essentially the opposite of ENEMY_FRAME,x.
-
-**ENEMY HP**: #$10, #$14, or #$17
 
 ### 3e - Bugger
 
@@ -1386,13 +1440,17 @@ Level 4 (Inner Base) boss
 
 ### 43 - Chandelier Arm
 
-**ENEMY HP**: #$10, #$14, or #$18
-
-![sprite_63](sprite_library/super_c_sprites/sprite_63.png "sprite_63")
-
 One of 9 arms of [Laser Chandelier](#42---laser-chandelier), will drop
 [Chandelier Arm Lasers](#44---chandelier-arm-laser).  When dropping a laser, the
 arm is invincible.
+
+![sprite_63](sprite_library/super_c_sprites/sprite_63.png "sprite_63")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$18           | 24                 |
 
 #### Attributes
 
@@ -1428,7 +1486,11 @@ Other Names: Alien Mouth
 Appears on the last level.  'Breathes' 5 times and then opens to generate a
 [Red Poisonous Insect Gel](#46---red-poisonous-insect-gel).
 
-**ENEMY HP**: #$0c, #$10, or #$13
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$0c           | 12                 |
+| 1                       | #$10           | 16                 |
+| 2                       | #$13           | 19                 |
 
 #### Attributes
 
@@ -1495,9 +1557,13 @@ Compare to [Boss Red Poisonous Insect Gel](#2b---boss-red-poisonous-insect-gel),
 
 Other Names: Alien Cyclops, Jagger Froid's Spit Soldier
 
-There are no attributes for this enemy type.
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
 
-**ENEMY HP**: #$10, #$14, or #$17
+There are no attributes for this enemy type.
 
 #### Variables
 
@@ -1542,7 +1608,11 @@ Other Names: Sensor
 Level 3 (Jungle) boss target.  The core is the center orb that once destroyed
 causes the entire fortress wall to be defeated.  It flashes red and black.
 
-**ENEMY HP**: #$28, #$38, or #$40
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$28           | 40                 |
+| 1                       | #$38           | 56                 |
+| 2                       | #$40           | 64                 |
 
 #### Variables
 
@@ -1558,7 +1628,11 @@ causes the entire fortress wall to be defeated.  It flashes red and black.
 
 Other Names: Spidal, Babalu Defense Mechanism
 
-**ENEMY HP**: #$30, #$40, or #$48
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$30           | 48                 |
+| 1                       | #$40           | 64                 |
+| 2                       | #$48           | 72                 |
 
 #### Variables
 
@@ -1587,12 +1661,16 @@ teal.  When purple, the turret is invincible and cannot take damage from player
 bullets, but if player is invincible (B weapon), can be destroyed through player
 enemy collision.  Having the B weapon is not possible without a game cheat.
 
-**ENEMY HP**: #$10, #$14, or #$17
-
 ![sprite_b5](sprite_library/super_c_sprites/sprite_b5.png "sprite_b5")
 ![sprite_b4](sprite_library/super_c_sprites/sprite_b4.png "sprite_b4")
 ![sprite_b6](sprite_library/super_c_sprites/sprite_b6.png "sprite_b6")
 ![sprite_b7](sprite_library/super_c_sprites/sprite_b7.png "sprite_b7")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
 
 #### Attributes
 
@@ -1622,7 +1700,11 @@ Other Names: Dethgerbis, Shadow Beast Demon Statue, Temple of Terror Skull
 
 Level 7 (Headquarters) boss
 
-**ENEMY HP**: #$20, #$30, or #$38
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$20           | 32                 |
+| 1                       | #$30           | 48                 |
+| 2                       | #$38           | 56                 |
 
 #### Variables
 
@@ -1631,7 +1713,11 @@ Level 7 (Headquarters) boss
 
 ### 52 - Temple of Terror Core
 
-**ENEMY HP**: #$18, #$1c, or #$1f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$18           | 24                 |
+| 1                       | #$1c           | 28                 |
+| 2                       | #$1f           | 31                 |
 
 #### Variables
 
@@ -1643,7 +1729,11 @@ Level 7 (Headquarters) boss
 
 Other Names: Temple of Terror Poison Drop Generator
 
-**ENEMY HP**: #$10, #$14, or #$17
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
 
 #### Variables
 
@@ -1658,7 +1748,7 @@ Other Names: Temple of Terror Core Fire Ring Projectile
 ![sprite_a3](sprite_library/super_c_sprites/sprite_a3.png "sprite_a3")
 ![sprite_a4](sprite_library/super_c_sprites/sprite_a4.png "sprite_a4")
 
-**ENEMY HP**: 3
+**ENEMY HP**: #$03
 
 ### 55 - Temple of Terror Poisonous Insect Gel
 
@@ -1731,7 +1821,11 @@ Enemy thrown out from [Krypto-Crustacean](#59---krypto-crustacean) with an
 initial X velocity of +/-0.5 and an initial Y velocity of -1.25.  Once landed on
 the ground, their HP is set to #$01, and their X velocity is set to +/-1.25.
 
-**ENEMY HP**: #$02, #$06, or #$0a
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$02           | 2                  |
+| 1                       | #$06           | 6                  |
+| 2                       | #$0a           | 10                 |
 
 #### Attributes
 
@@ -1748,7 +1842,11 @@ the ground, their HP is set to #$01, and their X velocity is set to +/-1.25.
 
 Other Names: Overhead Rotating Turret
 
-**ENEMY HP**: #$09, #$0c, or #$0f
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$09           | 9                  |
+| 1                       | #$0c           | 12                 |
+| 2                       | #$0f           | 15                 |
 
 There are no attributes for this enemy type.
 
@@ -1798,7 +1896,11 @@ Overhead level (level 2) stationary red soldier, compare to
 
 Other Names: Bakonga, Maw Type, Sarlacc, Fruit of the Doom
 
-**ENEMY HP**: #$06, #$0a, or #$0d
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$06           | 6                  |
+| 1                       | #$0a           | 10                 |
+| 2                       | #$0d           | 13                 |
 
 #### Attributes
 
@@ -1966,7 +2068,11 @@ Other Names: Hydra Alien
 Level 6 miniboss.  Plays sound #$32 "Creature from Outer Space (Boss 3)"
 (BOSS2BGM) when shown.
 
-**ENEMY HP**: #$20, #$30, or #$38
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$20           | 32                 |
+| 1                       | #$30           | 48                 |
+| 2                       | #$38           | 56                 |
 
 #### Variables
 
@@ -1986,6 +2092,12 @@ Level 6 miniboss.  Plays sound #$32 "Creature from Outer Space (Boss 3)"
 ### 65 - Jagger Froid
 
 Other Names: Gava, Emperor Demon Gava
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$40           | 64                 |
+| 1                       | #$50           | 80                 |
+| 2                       | #$58           | 88                 |
 
 #### Variables
 
@@ -2025,16 +2137,12 @@ Other Names: Gava, Emperor Demon Gava
 * `ENEMY_FIRING_DELAY` - timer for creating
   [Jagger Froid Projectiles](#68---jagger-froid-projectile)
 
-**ENEMY HP**: #$40, #$50, or #$58
-
 ### 66 - Alien Serpent
 
 Created by [Jagger Froid](#65---jagger-froid). 7 individual enemies acting as a
 single serpent monster.
 
 Other Names: Alien Worm
-
-**ENEMY HP**: #$18, #$1c, or #$1f
 
 ![sprite_88](sprite_library/super_c_sprites/sprite_88.png "sprite_88")
 ![sprite_89](sprite_library/super_c_sprites/sprite_89.png "sprite_89")
@@ -2043,6 +2151,12 @@ Other Names: Alien Worm
 ![sprite_8c](sprite_library/super_c_sprites/sprite_8c.png "sprite_8c")
 ![sprite_8d](sprite_library/super_c_sprites/sprite_8d.png "sprite_8d")
 ![sprite_8e](sprite_library/super_c_sprites/sprite_8e.png "sprite_8e")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$18           | 24                 |
+| 1                       | #$1c           | 28                 |
+| 2                       | #$1f           | 31                 |
 
 #### Variables
 
@@ -2073,11 +2187,15 @@ different from the blue tank soldiers that appear 3 times on the same level.
 Those are [Overhead Tank Soldier](#2e---overhead-tank-soldier).  Also, the 2 red
 tank soldiers on the boss tank are [Tank Gunners](#6a---tank-gunner).
 
-**ENEMY HP**: #$20, #$30, or #$38
-
 ![sprite_4e](sprite_library/super_c_sprites/sprite_4e.png "sprite_4e")
 ![sprite_4f](sprite_library/super_c_sprites/sprite_4f.png "sprite_4f")
 ![sprite_50](sprite_library/super_c_sprites/sprite_50.png "sprite_50")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$20           | 32                 |
+| 1                       | #$30           | 48                 |
+| 2                       | #$38           | 56                 |
 
 #### Variables
 
@@ -2106,11 +2224,15 @@ different from the blue tank soldiers that appear 3 times on the same level.
 Those are [Overhead Tank Soldiers](#2e---overhead-tank-soldier).  Also, the green
 tank soldier in the center of the boss tank is [Tank Boss](#69---tank-boss).
 
-**ENEMY HP**: #$10, #$14, or #$17
-
 ![sprite_4c](sprite_library/super_c_sprites/sprite_4c.png "sprite_4c")
 ![sprite_4b](sprite_library/super_c_sprites/sprite_4b.png "sprite_4b")
 ![sprite_4d](sprite_library/super_c_sprites/sprite_4d.png "sprite_4d")
+
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$10           | 16                 |
+| 1                       | #$14           | 20                 |
+| 2                       | #$17           | 23                 |
 
 #### Attributes
 
@@ -2147,9 +2269,9 @@ tank soldier in the center of the boss tank is [Tank Boss](#69---tank-boss).
 Enemy on level 4 (Base Area 3) in beginning hallway created by
 [Ceiling Vent](#6c---ceiling-vent).
 
-**ENEMY HP**: #$01
-
 ![sprite_5e](sprite_library/super_c_sprites/sprite_5e.png "sprite_5e")
+
+**ENEMY HP**: #$01
 
 There are no attributes for this enemy type.
 
@@ -2171,7 +2293,11 @@ There are no attributes for this enemy type.
 
 Other Names: Final Boss
 
-**ENEMY HP**: #$30, #$40, or #$48
+| Num Players w/ S Weapon | Enemy HP (hex) | Enemy HP (decimal) |
+|-------------------------|----------------|--------------------|
+| 0                       | #$30           | 48                 |
+| 1                       | #$40           | 64                 |
+| 2                       | #$48           | 72                 |
 
 #### Variables
 
